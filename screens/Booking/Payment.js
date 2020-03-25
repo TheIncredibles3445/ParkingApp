@@ -78,9 +78,10 @@ export default function Payment(props) {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .get();
+    let data = update.data();
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .update({ pendingAmount: update.data().pendingAmount - total });
+      .update({ pendingAmount: data.pendingAmount - total });
 
     if (!useSavedCard) {
       Alert.alert(

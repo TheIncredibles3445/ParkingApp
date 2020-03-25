@@ -311,9 +311,9 @@ export default function Checkout(props) {
     //   });
   }, []);
 
-  useEffect(() => {
-    console.log("object");
-  });
+  // useEffect(() => {
+  //   console.log("object");
+  // });
 
   const getParkingBookings = async () => {
     db.collection("booking")
@@ -460,7 +460,7 @@ export default function Checkout(props) {
       .doc(firebase.auth().currentUser.uid)
       .update({
         points: 20,
-        pending_amount: total
+        pendingAmount: total
       });
     props.navigation.navigate("Home");
   };
@@ -563,7 +563,7 @@ export default function Checkout(props) {
           icon={<Icon type="material" name="payment" size={25} color="white" />}
           iconLeft
           title="Pay Now"
-          onPress={() => alert("add the payment page")}
+          onPress={() => props.navigation.navigate("Payment")}
           //buttonStyle={{ width: "30%" }}
         />
 
