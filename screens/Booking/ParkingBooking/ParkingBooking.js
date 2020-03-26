@@ -140,7 +140,7 @@ export default function ParkingBooking(props) {
         </View>
 
         <Button title="BOOK" onPress={() => handleBooking()} />
-        <Button title="Logout" onPress={() => handleLogout()} />
+        {/* <Button title="Logout" onPress={() => handleLogout()} /> */}
         {/* <Button
           title="Navigate"
           onPress={() =>
