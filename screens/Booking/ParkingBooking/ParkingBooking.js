@@ -1,4 +1,5 @@
 // import * as WebBrowser from "expo-web-browser";
+//@refrest restart
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-native-datepicker";
 
@@ -18,7 +19,6 @@ import {
   SafeAreaView,
   StyleSheet
 } from "react-native";
-import { NavigationActions } from "react-navigation";
 export default function ParkingBooking(props) {
   // const [messages, setMessages] = useState([]);
   // const [to, setTo] = React.useState("");
@@ -40,13 +40,10 @@ export default function ParkingBooking(props) {
       querySnapshot.forEach(doc => {
         blcks.push({ id: doc.id, ...doc.data(), isSelected: false });
       });
-      // console.log(" Blocks: ", blcks);
-      // console.log(blcks);
       setBlocks([...blcks]);
     });
   }, []);
 
-  // useEffect(() => {}, [selectedBlock]);
 
   const handleLogout = () => {
     firebase.auth().signOut();
