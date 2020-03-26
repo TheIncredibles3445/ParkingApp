@@ -8,7 +8,8 @@ import {
   SegmentedControlIOSComponent,
   Image,
   // Button,
-  TextInput
+  TextInput,
+  Alert
 } from "react-native";
 import db from "../../db.js";
 import {
@@ -20,6 +21,7 @@ import {
 } from "react-native-elements";
 import firebase from "firebase/app";
 import "firebase/auth";
+import * as SMS from "expo-sms";
 
 export default AllReportsScreen = props => {
   const [reports, setReports] = useState([]);
@@ -135,6 +137,34 @@ export default AllReportsScreen = props => {
     // }
   };
 
+  const handleAlert = () => {
+    Alert.alert(
+      "Solving Issues",
+      "Are you sure you want to solve this issue??",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Cancel ..."),
+          style: "cancel"
+        },
+        { text: "Yes", onPress: () => checkAvailable() }
+      ],
+      { cancelabele: false }
+    );
+  };
+
+  const checkAvailable = async () => {
+    const isAvailable = await SMS.isAvailableAsync();
+
+    if (isAvailable) {
+      const { result } = await SMS.sendSMSAsync(
+        ["30199767"],
+        "Hello, Thank you for helping us!! 50 more points will be added to your account.:)"
+      );
+      console.log(result);
+    }
+  };
+
   return (
     <ScrollView>
       <SearchBar
@@ -148,7 +178,7 @@ export default AllReportsScreen = props => {
       {user === null ? (
         reports.map((item, i) => (
           <View key={i}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleAlert()}>
               <View style={{ flexDirection: "row" }}>
                 <Avatar
                   containerStyle={{ marginTop: 33 }}
