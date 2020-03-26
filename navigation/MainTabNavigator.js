@@ -22,6 +22,8 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
+import ChangeRole from "../screens/Admin/ChangeRole"
+import WorkerSchedule from "../screens/Profile/WorkerSchedule"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -87,6 +89,9 @@ const AdminStack = createStackNavigator({
   },
   AllReport: {
     screen: AllReportsScreen
+  },
+  ChangeRole:{
+    screen: ChangeRole
   }
 });
 
@@ -171,7 +176,8 @@ const SettingsStack = createStackNavigator(
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
     AddCard: AddCard,
-    Friends: LinksScreen
+    Friends: LinksScreen,
+    Schedule: WorkerSchedule,
   },
   config
 );
