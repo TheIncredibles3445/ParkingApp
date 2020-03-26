@@ -20,6 +20,7 @@ import "firebase/functions";
 
 export default function Parking(props) {
   const data = props.navigation.getParam("data", "No params");
+  const friend = props.navigation.getParam("friend", "No params");
   const [parkingSpots, setParkingSpots] = useState([]);
   // const [token, setToken] = useState(null);
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function Parking(props) {
           parkings.push({ id: doc.id, ...doc.data() });
         });
         setParkingSpots([...parkings]);
+        console.log("frind", friend);
       });
   }, []);
 
@@ -114,71 +116,57 @@ export default function Parking(props) {
       1}-${new Date().getDate()}`;
 
     if (!item.isBooked) {
-      // const response = await fetch(
-      //   `https://us-central1-parking-app-3b592.cloudfunctions.net/sendMail?dest=${
-      //     firebase.auth().currentUser.uid
-      //   }`
-      // );
-      // let booking = null;
-      // let bookingRef = db.collection("booking");
-      // let query = await bookingRef
-      //   .where("userId", "==", firebase.auth().currentUser.uid)
-      //   .where("date", "==", date)
-      //   .get();
-      // query.forEach(doc => {
-      //   booking = { id: doc.id, data: doc.data() };
-      // });
-      // if (booking) {
-      //   let total = booking.data.total_price;
-      //   total += item.price;
-      //   booking.data.total_price = total;
-
-      //   db.collection("booking")
-      //     .doc(booking.id)
-      //     .update(booking.data);
-
-      //   db.collection("booking")
-      //     .doc(booking.id)
-      //     .collection("parking_booking")
-      //     .add({
-      //       startTime: data.startTime,
-      //       endTime: data.endTime,
-      //       parkingId: item.id,
-      //       rating: 0
-      //     });
-
-      //   db.collection("Block")
-      //     .doc(data.selectedBlock.id)
-      //     .collection("Parking")
-      //     .doc(item.id)
-      //     .update({
-      //       isBooked: true,
-      //       location: item.location,
-      //       price: item.price,
-      //       type: item.type
-      //     });
-
-      //   props.navigation.navigate("Checkout");
-      // } else {
-
-      db.collection("booking")
-        .add({
-          date: date,
-          total_price: item.price,
-          type: "Parking",
-          userId: firebase.auth().currentUser.uid
-        })
-        .then(docRef => {
-          db.collection("booking")
-            .doc(docRef.id)
-            .collection("parking_booking")
-            .add({
-              startTime: data.startTime,
-              endTime: data.endTime,
-              parkingId: item.id,
-              rating: 0
-            });
-        });
+      if (friend != null) {
+        db.collection("booking")
+          .add({
+            date: date,
+            total_price: item.price,
+            type: "Parking",
+            userId: friend
+          })
+          .then(docRef => {
+            db.collection("booking")
+              .doc(docRef.id)
+              .collection("parking_booking")
+              .add({
+                startTime: data.startTime,
+                endTime: data.endTime,
+                parkingId: item.id,
+                rating: 0
+              });
+          });
+        let user = await db
+          .collection("users")
+          .doc(friend)
+          .get();
+        let dbpendingAmount = parseInt(
+          user.data().pendingAmount + parseInt(item.price)
+        );
+        db.collection("users")
+          .doc(friend)
+          .update({ pendingAmount: dbpendingAmount });
+        props.navigation.navigate("HomeScreen");
+      } else {
+        db.collection("booking")
+          .add({
+            date: date,
+            total_price: item.price,
+            type: "Parking",
+            userId: firebase.auth().currentUser.uid
+          })
+          .then(docRef => {
+            db.collection("booking")
+              .doc(docRef.id)
+              .collection("parking_booking")
+              .add({
+                startTime: data.startTime,
+                endTime: data.endTime,
+                parkingId: item.id,
+                rating: 0
+              });
+          });
+        props.navigation.navigate("Checkout");
+      }
 
       db.collection("Block")
         .doc(data.selectedBlock.id)
@@ -191,7 +179,6 @@ export default function Parking(props) {
           type: item.type
         });
 
-      props.navigation.navigate("Checkout");
       // }
     } else {
       alert("Booked");
