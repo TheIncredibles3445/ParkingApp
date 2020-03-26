@@ -1,50 +1,10 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const nodemailer = require("nodemailer");
-const cors = require("cors")({ origin: true });
+// const nodemailer = require("nodemailer");
+// const cors = require("cors")({ origin: true });
 admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
-// const db = admin.firestore();
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   response.send("Hello from Firebase!");
-// });
-
-// let transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: "theincredibles3445@gmail.com",
-//     pass: "TheIncredibles3445!"
-//   }
-// });
-
-// exports.sendMail = functions.https.onRequest((req, res) => {
-//   cors(req, res, () => {
-//     // getting dest email by query string
-//     const dest = req.query.dest;
-
-//     const mailOptions = {
-//       from: "theincredibles3445@gmail.com", // Something like: Jane Doe <janedoe@gmail.com>
-//       to: "wasimibrahim19@gmail.com",
-//       subject: "I'M A PICKLE!!!", // email subject
-//       html: `<p style="font-size: 16px;">Pickle Riiiiiiiiiiiiiiiick!!</p>
-//               <br />
-//               <img src="https://images.prod.meredith.com/product/fc8754735c8a9b4aebb786278e7265a5/1538025388228/l/rick-and-morty-pickle-rick-sticker" />
-//           ` // email content in HTML
-//     };
-
-//     // returning result
-//     return transporter.sendMail(mailOptions, (erro, info) => {
-//       if (erro) {
-//         return res.send(erro.toString());
-//       }
-//       return res.send("Sended");
-//     });
-//   });
-// });
 
 exports.updateUser = functions.https.onCall(async (data, context) => {
   console.log("updateUser data", data);
@@ -74,7 +34,7 @@ exports.updatePhoto = functions.https.onCall(async (data, context) => {
 
 exports.addVehicle = functions.https.onCall(async (data, context) => {
   console.log("addVehicle data", data);
-  db.collection("Users")
+  db.collection("users")
     .doc(data.uid)
     .collection("Vehicles")
     .add({
@@ -87,7 +47,7 @@ exports.addVehicle = functions.https.onCall(async (data, context) => {
 
 exports.addCard = functions.https.onCall(async (data, context) => {
   console.log("addCard data", data);
-  db.collection("Users")
+  db.collection("users")
     .doc(data.uid)
     .collection("Cards")
     .add({
@@ -117,48 +77,3 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
 
   response.send("All done ");
 });
-
-// exports.handleParkingBooking = functions.https.onCall(async (data, context) => {
-//   const date = `${new Date().getFullYear()}-0${new Date().getMonth() +
-//     1}-${new Date().getDate()}`;
-//   // console.log("data", data);
-
-//   //console.log("handleBooking data", data);
-//   // await db.collection("Booking").add({
-//   //   userId: data.user,
-//   //   type: "Parking",
-//   //   date: date,
-//   //   totalPrice: data.price
-//   // });
-//   let booking = [];
-//   await db.collection("Booking").onSnapshot(querySnapshot => {
-//     let allBookings = [];
-//     querySnapshot.forEach(async doc => {
-//       let docData = doc.data();
-//       allBookings.push({
-//         id: doc.id,
-//         date: docData.date,
-//         totalPrice: docData.totalPrice,
-//         userId: docData.userId
-//       });
-//       // console.log(docData);
-//     });
-//     // console.log("allBookings before", allBookings);
-
-//     const bookings = allBookings.filter(
-//       item => item.date === date && item.userId === data.user
-//     );
-//     booking = bookings;
-//   });
-
-//   if (booking) {
-//     //await bookSpot(data, date);
-//     console.log("empty");
-//   } else {
-//     console.log("Not empty");
-//   }
-// });
-
-// const bookSpot = async (data, date) => {
-//   // db.collection("")
-// };
