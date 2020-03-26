@@ -10,7 +10,7 @@ import {
   AsyncStorage
 } from "react-native";
 import { NavigationActions } from "react-navigation";
-
+import moment from "moment";
 import { SafeAreaView } from "react-navigation";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import db from "../../../db";
@@ -22,7 +22,6 @@ export default function Parking(props) {
   const data = props.navigation.getParam("data", "No params");
   const [parkingSpots, setParkingSpots] = useState([]);
   const [cars, setCars] = useState([]);
-  const [bookings, setBookings] = useState([]);
   const [parkingBookings, setParkingBookings] = useState([]);
 
   // const [token, setToken] = useState(null);
@@ -50,7 +49,119 @@ export default function Parking(props) {
         });
         setCars([...vehicles]);
       });
-  }, [cars]);
+  }, []);
+
+  const getAllBooking = async () => {
+    const bookingsRef = db.collection("booking");
+    const todaysBookings = await bookingsRef
+      .where("date", "==", moment().format("YYYY-MM-DD"))
+      .where("type", "==", "Parking")
+      .get();
+    let allParkings = [];
+    for (let item of todaysBookings.docs) {
+      let parkingRef = await bookingsRef
+        .doc(item.id)
+        .collection("parking_booking")
+        .get();
+      for (let parking of parkingRef.docs) {
+        allParkings.push({ id: parking.id, ...parking.data() });
+      }
+    }
+    setParkingBookings(allParkings);
+  };
+
+  const convertTime = time => {
+    const splitTime = time.split(" ");
+    if (splitTime[1] === "pm") {
+      if (splitTime[0] === "12:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `12:${split[1]}:00`));
+      } else if (splitTime[0] === "01:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `13:${split[1]}:00`));
+      } else if (splitTime[0] === "02:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `14:${split[1]}:00`));
+      } else if (splitTime[0] === "03:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `15:${split[1]}:00`));
+      } else if (splitTime[0] === "04:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `16:${split[1]}:00`));
+      } else if (splitTime[0] === "05:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `17:${split[1]}:00`));
+      } else if (splitTime[0] === "06:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `18:${split[1]}:00`));
+      } else if (splitTime[0] === "07:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `19:${split[1]}:00`));
+      }
+    } else {
+      return new Date(moment().format("YYYY-MM-DDT" + `${splitTime[0]}:00`));
+    }
+  };
+
+  const handleBookedSpots = async () => {
+    const myStartTime = convertTime(data.startTime);
+    const myEndTime = convertTime(data.endTime);
+
+    const parkings = await db
+      .collection("Block")
+      .doc(data.selectedBlock.id)
+      .collection("Parking")
+      .get();
+
+    let allParkings = [];
+    for (let item of parkings.docs) {
+      allParkings.push({ id: item.id, ...item.data() });
+    }
+    let tempAllParkingBookings = parkingBookings;
+    for (let i = 0; i < allParkings.length; i++) {
+      for (let j = 0; j < tempAllParkingBookings.length; j++) {
+        if (allParkings[i].id === tempAllParkingBookings[j].parkingId) {
+          // if(tempAllParkingBookings[j].endTime <= myEndTime) {
+          //   console.log("found it")
+          // }
+
+          // console.log(
+          //   "booked w/o conversion",
+          //   tempAllParkingBookings[j].startTime
+          // );
+          // console.log(
+          //   "booked w/o conversion",
+          //   tempAllParkingBookings[j].endTime
+          // );
+
+          const bookedStart = convertTime(tempAllParkingBookings[j].startTime);
+
+          const bookedEnd = convertTime(tempAllParkingBookings[j].endTime);
+          console.log("my start time", myStartTime, ", my end time", myEndTime);
+          console.log(
+            "booked start time",
+            bookedStart, 
+            ", booked end time",
+            bookedEnd
+          );
+          if (myStartTime <= bookedEnd && bookedStart <= myEndTime) {
+            console.log( 
+              // "booked start time",
+              bookedStart,
+              // ", booked end time",
+              bookedEnd,
+              "Hello World"
+            );
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    getAllBooking();
+    handleBookedSpots();
+  }, []);
 
   const handleModal = item => {
     Alert.alert(

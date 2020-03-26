@@ -44,7 +44,6 @@ export default function ParkingBooking(props) {
     });
   }, []);
 
-
   const handleLogout = () => {
     firebase.auth().signOut();
   };
@@ -63,10 +62,23 @@ export default function ParkingBooking(props) {
   };
 
   const handleBooking = () => {
-    if (startTime >= endTime) {
-      alert("End Time must be greater than Start Time");
-    } else if (startTime === "00:00") {
+    if (startTime === "00:00") {
       alert("Select Start Time");
+    } else if (
+      startTime === "08:00 pm" ||
+      startTime === "09:00 pm" ||
+      startTime === "10:00 pm" ||
+      startTime === "11:00 pm"
+    ) {
+      alert("IT IS TOO LATE TO BOOK");
+    } else if (
+      startTime === "01:00 am" ||
+      startTime === "02:00 am" ||
+      startTime === "04:00 am" ||
+      startTime === "03:00 am" ||
+      startTime === "05:00 am"
+    ) {
+      alert("IT IS TOO EARLY TO BOOK");
     } else if (selectedBlock === null) {
       alert("Select a block");
     } else {
@@ -78,6 +90,9 @@ export default function ParkingBooking(props) {
 
       props.navigation.navigate("Parking", { data: data });
     }
+
+    console.log("s date time", startTime);
+    console.log("e date time", endTime);
   };
 
   return (
@@ -94,10 +109,11 @@ export default function ParkingBooking(props) {
             date={startTime}
             mode="time"
             format="hh:mm a"
+            maxDate={"18:00"}
             showIcon={false}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            // is24Hour={true}
+            is24Hour={true}
             onDateChange={time => setStartTime(time)}
           />
 
@@ -110,7 +126,7 @@ export default function ParkingBooking(props) {
             format="hh:mm a"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            // is24Hour={true}
+            is24Hour={true}
             onDateChange={time => setEndTime(time)}
           />
         </View>
