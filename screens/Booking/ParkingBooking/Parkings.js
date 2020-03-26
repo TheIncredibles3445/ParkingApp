@@ -114,52 +114,14 @@ export default function Parking(props) {
       1}-${new Date().getDate()}`;
 
     if (!item.isBooked) {
-      // const response = await fetch(
-      //   `https://us-central1-parking-app-3b592.cloudfunctions.net/sendMail?dest=${
-      //     firebase.auth().currentUser.uid
-      //   }`
-      // );
-      // let booking = null;
-      // let bookingRef = db.collection("booking");
-      // let query = await bookingRef
-      //   .where("userId", "==", firebase.auth().currentUser.uid)
-      //   .where("date", "==", date)
-      //   .get();
-      // query.forEach(doc => {
-      //   booking = { id: doc.id, data: doc.data() };
-      // });
-      // if (booking) {
-      //   let total = booking.data.total_price;
-      //   total += item.price;
-      //   booking.data.total_price = total;
 
-      //   db.collection("booking")
-      //     .doc(booking.id)
-      //     .update(booking.data);
 
-      //   db.collection("booking")
-      //     .doc(booking.id)
-      //     .collection("parking_booking")
-      //     .add({
-      //       startTime: data.startTime,
-      //       endTime: data.endTime,
-      //       parkingId: item.id,
-      //       rating: 0
-      //     });
-
-      //   db.collection("Block")
-      //     .doc(data.selectedBlock.id)
-      //     .collection("Parking")
-      //     .doc(item.id)
-      //     .update({
-      //       isBooked: true,
-      //       location: item.location,
-      //       price: item.price,
-      //       type: item.type
-      //     });
-
-      //   props.navigation.navigate("Checkout");
-      // } else {
+      //if (friend != null ){
+      //   db.c......... userId : friend.id   
+      //}
+      //else{
+      //   ...wasim's code
+      //}
 
       db.collection("booking")
         .add({
@@ -197,115 +159,7 @@ export default function Parking(props) {
       alert("Booked");
       // sendPushNotification();
     }
-    // let parkingRef = await db
-    //   .collection("Block")
-    //   .doc(data.selectedBlock.id)
-    //   .collection("Parking")
-    //   .doc(item.id)
-    //   .get();
-
-    // let parkingData = parkingRef.data();
-    // console.log(parkingData);
-
-    // console.log(booking);
-
-    // let b = null;
-    // db.collection("booking").onSnapshot(async querySnapshot => {
-    //   let allBookings = [];
-    //   querySnapshot.forEach(doc => {
-    //     allBookings.push({ id: doc.id, ...doc.data() });
-    //   });
-
-    //   // setBook(allBookings);
-    //   // callBook();
-
-    //   const bookings = allBookings.filter(
-    //     item =>
-    //       item.date === date && item.userId === firebase.auth().currentUser.uid
-    //   );
-
-    //   console.log("today", date);
-    //   console.log("bookings", bookings[0]);
-    //   // if (( bookings.length) !== 0) {
-    //   //   await AsyncStorage.setItem("bookings", JSON.stringify(bookings[0]));
-    //   // }
-    //   console.log(firebase.auth().currentUser.uid);
-    // let count = 0;
-    // if (bookings.length !== 0 && count === 0) {
-    //   let userBooking = bookings[0];
-    //   let total = userBooking.total_price;
-    //   total += item.price;
-    //   userBooking.total_price = total;
-    //   console.log("total", total);
-    //   console.log("new user booking", userBooking);
-    //   await db
-    //     .collection("booking")
-    //     .doc(userBooking.id)
-    //     .update({
-    //       date: userBooking.date,
-    //       userId: userBooking.userId,
-    //       type: userBooking.type,
-    //       total_price: userBooking.total_price
-    //     });
-
-    //   db.collection("booking")
-    //     .doc(userBooking.id)
-    //     .collection("parking_booking")
-    //     .add({
-    //       parkingId: item.id,
-    //       startTime: data.startTime,
-    //       endTime: data.endTime,
-    //       rating: 0
-    //     });
-
-    //   count += 1;
-    // } else {
-    //   alert("empty");
-    // }
-    // });
-
-    // const userBookings = await AsyncStorage.getItem("bookings");
-    // if (userBookings !== null) {
-    //   alert("got the data");
-    // console.log("userBookings", userBookings);
-    // } else {
-    //   alert("Empty");
-    //   console.log("userBookings", userBookings);
-    // }
-
-    // await AsyncStorage.removeItem("bookings");
-
-    // await db.collection("Booking").add({
-    //   userId: firebase.auth().currentUser.uid,
-    //   type: "Parking",
-    //   date: date,
-    //   totalPrice: item.price
-    // });
-
-    // const booking = firebase.functions().httpsCallable("handleParkingBooking");
-    // const response = await booking({
-    //   date: date,
-    //   user: firebase.auth().currentUser.uid,
-    //   startTime: data.startTime,
-    //   endTime: data.endTime
-    // });
-
-    // db.collection("Booking").onSnapshot(querySnapshot => {
-    //   let allBookings = [];
-    //   querySnapshot.forEach(doc => {
-    //     allBookings.push({ id: doc.id, ...doc.data() });
-    //   });
-    //   console.log("all bookings before filter", allBookings);
-    //   const bookings = allBookings.filter(
-    //     item =>
-    //       item.date === date && item.userId === firebase.auth().currentUser.uid
-    //   );
-    //   if (bookings) {
-    //     alert("yeah");
-    //   } else {
-    //     alert("no");
-    //   }
-    // });
+    
   };
 
   // const callBook = () => {

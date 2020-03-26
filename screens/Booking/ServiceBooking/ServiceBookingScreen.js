@@ -56,7 +56,7 @@ export default function ServiceBookingScreen(props) {
       });
       setBlock([...block]);
     });
-    console.log(block);
+    console.log("------------------------------blocks",block);
   }, []);
 
   const getWorkers = () => {
