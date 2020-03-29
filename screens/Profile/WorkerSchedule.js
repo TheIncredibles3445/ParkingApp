@@ -19,6 +19,7 @@ import db from "../../db.js";
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { weekdaysShort } from "moment";
 import { firestore } from "firebase";
+import CollapsingToolbar from 'react-native-collapse-view';
 
 
 export default function WorkerSchedule(props) {
@@ -28,6 +29,7 @@ export default function WorkerSchedule(props) {
     const historySchedule = useRef()
     const todaySchedule = useRef()
     const [ update , setUpdate] = useState(false)
+    const service = useRef()
     useEffect(() => {
         getSchedule()
 
@@ -69,8 +71,14 @@ export default function WorkerSchedule(props) {
         setUpdate(!update)
     }, [allSchedule.current])
 
-    const getDetails = () => {
-        
+    const getDetails = async (booking , service_Booking) => {
+        console.log("here ------->",booking , service_Booking)
+        let bookingDB = await db.collection("booking").doc(booking).collection("service_booking").doc(service_Booking).get()
+        console.log("the booking id --->",bookingDB.data())
+        let service = await db.collection("service").doc(bookingDB.data().service_id).get()
+        console.log("the service",service.data().Name)
+        service.current = service.data().Name
+        return true
     }
 
     const getSchedule = async () => {
@@ -102,26 +110,37 @@ export default function WorkerSchedule(props) {
 
             </View>
 
+        <ScrollView>
             {
                 show == "H" && historySchedule.current?
                     historySchedule.current.map(t =>
-                        <View style={styles.box}>
-                            <Text style={styles.user}>Date and Time</Text>
+                        <TouchableOpacity style={styles.box}  onPress={() =>
+                            props.navigation.navigate("ScheduleDetails", {
+                              booking: t.Booking,
+                              serviceBooking: t.Service_booking
+                            })
+                          }>
+                            
                     <Text style={styles.user}>{t.dateTime}</Text>
-                        </View>
+                        </TouchableOpacity>
                     )
 
                     : show == "T" && todaySchedule.current?
                         todaySchedule.current.map(t =>
-                            <View style={styles.box}>
-                                <Text style={styles.user}>Date and Time</Text>
+                            <TouchableOpacity style={styles.box}  onPress={() =>
+                                props.navigation.navigate("ScheduleDetails", {
+                                  booking: t.Booking,
+                                  serviceBooking: t.Service_booking
+                                })
+                              }> 
+                             
                                 <Text style={styles.user}>{t.dateTime}</Text>
-                            </View>
+                            </TouchableOpacity>
                         )
                         :
                         null
             }
-
+    </ScrollView>
 
 
 
@@ -142,6 +161,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFAFA", padding: 5, flexDirection: "row", borderBottomColor: "#DCDCDC",
         borderBottomWidth: 1,
     },
-    user: { backgroundColor: "#F0FFF0", padding: 5, width: "50%", alignItems: "center" },
+    user: { marginLeft:"auto", marginRight:"auto",backgroundColor: "#F0FFF0", padding: 5, width: "50%", alignItems: "center" },
     search: { backgroundColor: "#DCDCDC", padding: 5, width: "50%", alignItems: "center" }
 });

@@ -49,7 +49,7 @@ export default function ServiceBookingScreen(props) {
         setServices([...services]);
       });
 
-    db.collection("Block").onSnapshot(querySnapshot => {
+    db.collection("block").onSnapshot(querySnapshot => {
       const block = [];
       querySnapshot.forEach(doc => {
         block.push({ id: doc.id, ...doc.data() });
@@ -79,9 +79,9 @@ export default function ServiceBookingScreen(props) {
 
   useEffect(() => {
     if (selectedBlock) {
-      db.collection("Block")
+      db.collection("block")
         .doc(selectedBlock.id)
-        .collection("Parking")
+        .collection("parking")
         .onSnapshot(querySnapshot => {
           const parking = [];
           querySnapshot.forEach(doc => {

@@ -24,6 +24,7 @@ import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/Confi
 import Payment from "../screens/Booking/Payment";
 import ChangeRole from "../screens/Admin/ChangeRole"
 import WorkerSchedule from "../screens/Profile/WorkerSchedule"
+import ScheduleDetails from "../screens/Profile/ScheuduleDetails"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -178,6 +179,7 @@ const SettingsStack = createStackNavigator(
     AddCard: AddCard,
     Friends: LinksScreen,
     Schedule: WorkerSchedule,
+    ScheduleDetails: ScheduleDetails
   },
   config
 );
