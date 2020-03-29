@@ -36,6 +36,7 @@ import Vehicle from "../screens/Profile/Vehicle";
 import AddVehicle from "../screens/Profile/AddVehicle";
 import Checkout from "../screens/Booking/Checkout";
 import AddCard from "../screens/Profile/AddCard";
+import Bookings from "../screens/Profile/Bookings";
 
 const config = Platform.select({
   web: { headerMode: "screen" },
@@ -126,24 +127,7 @@ AdminStack.path = "";
 // };
 // ServiceBookingStack.path = "";
 
-// const LinksStack = createStackNavigator(
-//   {
-//     Links: Checkout
-//   },
-//   config
-// );
-
-// LinksStack.navigationOptions = {
-//   tabBarLabel: "Links",
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-//     />
-//   )
-// };
-
-// LinksStack.path = "";
+//
 const TestStack = createStackNavigator(
   {
     Test: TestScreen
@@ -171,7 +155,8 @@ const SettingsStack = createStackNavigator(
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
     AddCard: AddCard,
-    Friends: LinksScreen
+    Friends: LinksScreen,
+    Bookings: Bookings
   },
   config
 );

@@ -98,7 +98,7 @@ export default function ConfirmServiceBookingScreen(props) {
     } else {
       db.collection("users")
         .doc(firebase.auth().currentUser.uid)
-        .set({ pendingAmount: bookingTotal.current });
+        .update({ pendingAmount: bookingTotal.current });
     }
   };
 

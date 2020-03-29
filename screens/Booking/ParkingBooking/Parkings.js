@@ -23,9 +23,14 @@ export default function Parking(props) {
   const [parkingSpots, setParkingSpots] = useState([]);
   const [cars, setCars] = useState([]);
   const [parkingBookings, setParkingBookings] = useState([]);
+  const [flag, setFlag] = useState(false);
 
   // const [token, setToken] = useState(null);
   useEffect(() => {
+    getAllParking();
+  }, []);
+
+  const getAllParking = () => {
     db.collection("Block")
       .doc(data.selectedBlock.id)
       .collection("Parking")
@@ -36,7 +41,7 @@ export default function Parking(props) {
         });
         setParkingSpots([...parkings]);
       });
-  }, []);
+  };
 
   useEffect(() => {
     db.collection("users")
@@ -49,6 +54,11 @@ export default function Parking(props) {
         });
         setCars([...vehicles]);
       });
+  }, []);
+
+  useEffect(() => {
+    getAllBooking();
+    handleBookedSpots();
   }, []);
 
   const getAllBooking = async () => {
@@ -117,51 +127,43 @@ export default function Parking(props) {
     for (let item of parkings.docs) {
       allParkings.push({ id: item.id, ...item.data() });
     }
+
     let tempAllParkingBookings = parkingBookings;
     for (let i = 0; i < allParkings.length; i++) {
       for (let j = 0; j < tempAllParkingBookings.length; j++) {
         if (allParkings[i].id === tempAllParkingBookings[j].parkingId) {
-          // if(tempAllParkingBookings[j].endTime <= myEndTime) {
-          //   console.log("found it")
-          // }
-
-          // console.log(
-          //   "booked w/o conversion",
-          //   tempAllParkingBookings[j].startTime
-          // );
-          // console.log(
-          //   "booked w/o conversion",
-          //   tempAllParkingBookings[j].endTime
-          // );
-
           const bookedStart = convertTime(tempAllParkingBookings[j].startTime);
-
           const bookedEnd = convertTime(tempAllParkingBookings[j].endTime);
-          console.log("my start time", myStartTime, ", my end time", myEndTime);
-          console.log(
-            "booked start time",
-            bookedStart, 
-            ", booked end time",
-            bookedEnd
-          );
-          if (myStartTime <= bookedEnd && bookedStart <= myEndTime) {
-            console.log( 
-              // "booked start time",
-              bookedStart,
-              // ", booked end time",
-              bookedEnd,
-              "Hello World"
-            );
+          if (!(bookedStart - myEndTime < 0 && bookedEnd - myStartTime > 0)) {
+            await handleBooked1(tempAllParkingBookings[j].parkingId);
+          } else {
+            await handleBooked2(tempAllParkingBookings[j].parkingId);
           }
         }
       }
     }
+    getAllParking();
   };
 
-  useEffect(() => {
-    getAllBooking();
-    handleBookedSpots();
-  }, []);
+  const handleBooked1 = async pId => {
+    await db
+      .collection("Block")
+      .doc(data.selectedBlock.id)
+      .collection("Parking")
+      .doc(pId)
+      .update({ isBooked: false });
+  };
+
+  const handleBooked2 = async pId => {
+    await db
+      .collection("Block")
+      .doc(data.selectedBlock.id)
+      .collection("Parking")
+      .doc(pId)
+      .update({ isBooked: true });
+  };
+
+  useEffect(() => {}, [parkingSpots]);
 
   const handleModal = item => {
     Alert.alert(
@@ -274,7 +276,7 @@ export default function Parking(props) {
                     item.isBooked ? styles.bookedMarker : styles.unBookedMarker
                   }
                 >
-                  <Text style={styles.text}>QR{item.price}</Text>
+                  <Text style={styles.text}>{item.name}</Text>
                 </View>
               </Marker>
             );
