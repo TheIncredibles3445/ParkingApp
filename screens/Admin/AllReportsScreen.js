@@ -28,6 +28,7 @@ export default AllReportsScreen = props => {
   const [plateNumber, setPlateNumber] = useState("");
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
+  // const [phoneNumber, setPhoneNumber] = useState("");
   // const [vehicels, setVehicels] = useState("");
   // const [tempVehicels, setTempVehicels] = useState("");
 
@@ -155,11 +156,11 @@ export default AllReportsScreen = props => {
 
   const checkAvailable = async () => {
     const isAvailable = await SMS.isAvailableAsync();
-
+    console.log(user);
     if (isAvailable) {
       const { result } = await SMS.sendSMSAsync(
-        ["30199767"],
-        "Hello, Thank you for helping us!! 50 more points will be added to your account.:)"
+        ["${user.phone}"],
+        "Hello, you parked wrong!! please go and fix it!"
       );
       console.log(result);
     }

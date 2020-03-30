@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Platform } from "react-native";
 import {
   TextInput,
-  Button,
+  // Button,
   ScrollView,
   StyleSheet,
   SafeAreaView,
@@ -19,6 +19,7 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import DatePicker from "react-native-datepicker";
 import * as Location from "expo-location";
+import { Button } from "react-native-elements";
 
 export default function ReportScreen() {
   const [userId, setUserId] = useState("");
@@ -168,7 +169,7 @@ export default function ReportScreen() {
             </Text>
             <TextInput
               style={{
-                width: "60%",
+                width: "60.5%",
                 height: 30,
                 borderColor: "gray",
                 borderWidth: 1,
@@ -194,11 +195,11 @@ export default function ReportScreen() {
             </Text>
             <TextInput
               style={{
-                width: "60%",
+                width: "58%",
                 height: 50,
                 borderColor: "gray",
                 borderWidth: 1,
-                marginLeft: "9%",
+                marginLeft: "9.5%",
                 textAlignVertical: "top",
                 marginBottom: "4%"
               }}
@@ -211,8 +212,8 @@ export default function ReportScreen() {
             <Text style={{ fontSize: 15, marginTop: "2%" }}>DateTime: </Text>
             <DatePicker
               style={{
-                width: 285,
-                marginLeft: "5%",
+                width: "70.5%",
+                marginLeft: "3.5%",
                 marginBottom: "6%",
                 fontSize: 15
               }}
@@ -255,11 +256,11 @@ export default function ReportScreen() {
             </Text>
             <TextInput
               style={{
-                width: "60%",
+                width: "59%",
                 height: 30,
                 borderColor: "gray",
                 borderWidth: 1,
-                marginLeft: 25,
+                marginLeft: "5.8%",
                 marginTop: "2%"
               }}
               value={plateNumber}
@@ -272,14 +273,15 @@ export default function ReportScreen() {
               style={{
                 marginBottom: 10,
                 fontSize: 15,
-                marginRight: 4,
-                marginTop: 55
+                // marginRight: 7,
+                marginTop: 55,
+                marginLeft: "1.5%"
               }}
             >
               Image:
             </Text>
             {image && <Image source={{ uri: image }} />}
-            <View
+            {/* <View
               style={{
                 width: 100,
                 height: 50,
@@ -288,30 +290,31 @@ export default function ReportScreen() {
                 // justifyContent: "center",
                 // alignItems: "center"
               }}
-            >
-              <View style={{ flexDirection: "row" }}></View>
+            > */}
+            <View style={{ flexDirection: "row" }}>
               <View
                 style={{
-                  width: "100%",
+                  width: "28%",
                   height: "2%",
-                  marginLeft: "188%",
-                  marginRight: 90,
-                  marginBottom: "0%"
+                  marginLeft: "18%",
+                  marginRight: 20,
+                  marginTop: "10%"
                 }}
               >
                 <Button title="Choose file" onPress={() => _pickImage()} />
               </View>
               <View
                 style={{
-                  width: "100%",
-                  height: "0%",
-                  marginLeft: "50%",
-                  marginBottom: "10%"
+                  width: "28%",
+                  height: "1%",
+                  marginRight: "20%",
+                  marginTop: "10%"
                 }}
               >
                 <Button title="Camera Roll" onPress={() => _openCamera()} />
               </View>
             </View>
+            {/* </View> */}
           </View>
           <View style={{ width: "30%", marginLeft: "63%", marginTop: "20%" }}>
             <Button title="Submit" onPress={handleSubmit} />
