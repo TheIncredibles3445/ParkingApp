@@ -22,7 +22,7 @@ export default function SettingsScreen(props) {
   const [photoURL, setPhotoURL] = useState("");
   const loggedInUser = useRef()
   const [update , setUpate] = useState(false)
-  // const [phone, setPhone] = useState("");
+  const[ ads , setAds] = useState([])
 
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -38,6 +38,18 @@ export default function SettingsScreen(props) {
     handleSet();
     getUser()
     askPermission();
+
+    db.collection("Advertisement").where("uid", "==", firebase.auth().currentUser.uid).onSnapshot(querySnapshot => {
+      let ads = [];
+
+      querySnapshot.forEach(doc => {
+          ads.push({ id: doc.id, ...doc.data(), isSelected: false });
+      });
+     
+      setAds([...ads]);
+    });
+
+
   }, []);
 
   const getUser = async () => {
@@ -161,6 +173,26 @@ export default function SettingsScreen(props) {
             </View>
             : 
             null
+        }
+
+        {
+          ads.length > 0 ?
+          <View style={{ flex: 4 }}>
+
+              <ListItem
+                title="My Advertisements"
+                bottomDivider
+                rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
+                onPress={() =>
+                  props.navigation.navigate("MyAdvertisement", {
+                    myAds: ads
+                  })
+                }
+              />
+            </View>
+          :
+
+          null
         }
 
       </View>

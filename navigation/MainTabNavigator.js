@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 
 import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
-import AdvertisementScreen from "../screens/Advetrisements";
+import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
 import FriendScreen from "../screens/Profile/FriendsScreen";
 
 //Lamees's imports
@@ -25,6 +25,10 @@ import Payment from "../screens/Booking/Payment";
 import ChangeRole from "../screens/Admin/ChangeRole"
 import WorkerSchedule from "../screens/Profile/WorkerSchedule"
 import ScheduleDetails from "../screens/Profile/ScheuduleDetails"
+import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails"
+import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
+import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
+import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -51,7 +55,7 @@ const HomeStack = createStackNavigator(
     ParkingBooking: ParkingBooking,
     Parking: Parking,
     Checkout: Checkout,
-    Advertisement: AdvertisementScreen,
+    Advertisement: AdvertisementRequest,
     ServiceBooking: ServiceBookingScreen,
     ConfirmBooking: ConfirmServiceBookingScreen,
     Payment: Payment,
@@ -91,9 +95,16 @@ const AdminStack = createStackNavigator({
   AllReport: {
     screen: AllReportsScreen
   },
-  ChangeRole:{
+  ChangeRole: {
     screen: ChangeRole
-  }
+  },
+  Adv: {
+    screen: AdminAdvertisements
+  },
+  AdminAdvDetails: {
+    screen: AdminAdvDetails
+  },
+
 });
 
 AdminStack.navigationOptions = {
@@ -107,49 +118,7 @@ AdminStack.navigationOptions = {
 };
 AdminStack.path = "";
 
-// const ServiceBookingStack = createStackNavigator({
-//   Main: {
-//     screen: ServiceBookingScreen
-//   },
-//   ConfirmBooking: {
-//     screen: ConfirmServiceBookingScreen
-//   },
-//   // Payment: {
-//   //   screen: Payment
-//   // },
-//   Home: {
-//     screen: HomeScreen
-//   }
-// });
-// ServiceBookingStack.navigationOptions = {
-//   tabBarLabel: "Book a Service",
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-//     />
-//   )
-// };
-// ServiceBookingStack.path = "";
 
-// const LinksStack = createStackNavigator(
-//   {
-//     Links: Checkout
-//   },
-//   config
-// );
-
-// LinksStack.navigationOptions = {
-//   tabBarLabel: "Links",
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-//     />
-//   )
-// };
-
-// LinksStack.path = "";
 const TestStack = createStackNavigator(
   {
     Test: TestScreen
@@ -179,7 +148,9 @@ const SettingsStack = createStackNavigator(
     AddCard: AddCard,
     Friends: LinksScreen,
     Schedule: WorkerSchedule,
-    ScheduleDetails: ScheduleDetails
+    ScheduleDetails: ScheduleDetails,
+    AdvertisementDetails: AdvertisementDetails,
+    MyAdvertisement: MyAdvertisement
   },
   config
 );
