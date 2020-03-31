@@ -36,8 +36,7 @@ import Vehicle from "../screens/Profile/Vehicle";
 import AddVehicle from "../screens/Profile/AddVehicle";
 import Checkout from "../screens/Booking/Checkout";
 import AddCard from "../screens/Profile/AddCard";
-import Bookings from "../screens/Profile/Bookings";
-
+import Direction from "../screens/Booking/Direction";
 const config = Platform.select({
   web: { headerMode: "screen" },
   default: {}
@@ -53,7 +52,8 @@ const HomeStack = createStackNavigator(
     ServiceBooking: ServiceBookingScreen,
     ConfirmBooking: ConfirmServiceBookingScreen,
     Payment: Payment,
-    ReportScreen: ReportScreen
+    ReportScreen: ReportScreen,
+    Direction: Direction
   },
   config
 );
@@ -130,7 +130,7 @@ AdminStack.path = "";
 //
 const TestStack = createStackNavigator(
   {
-    Test: TestScreen
+    Test: Direction
   },
   config
 );
@@ -155,8 +155,7 @@ const SettingsStack = createStackNavigator(
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
     AddCard: AddCard,
-    Friends: LinksScreen,
-    Bookings: Bookings
+    Friends: LinksScreen
   },
   config
 );

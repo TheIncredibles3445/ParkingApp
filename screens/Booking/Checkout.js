@@ -9,6 +9,8 @@ import moment from "moment";
 import { Col, Grid } from "react-native-easy-grid";
 
 export default function Checkout(props) {
+  const blockId = props.navigation.getParam("blockId", "No params");
+  const parkingId = props.navigation.getParam("parkingId", "No params");
   const [booking, setBooking] = useState([]);
   const [parkingBookings, setParkingBookings] = useState([]);
   const [serviceBookings, setServiceBookings] = useState([]);
@@ -71,13 +73,13 @@ export default function Checkout(props) {
         // allParkingsLots.map(lot => {
         //   if (lot.parkingId === pData.parkingId) {
         //     p = lot;
-        //   } 
+        //   }
         //   // console.log("line 78 ==> ", p);
         // }) ;
         allParkings.push({
           id: parking.id,
           ...parking.data(),
-          price: data.total_price,
+          price: data.total_price
           // parking: p.name
         });
       }
@@ -132,7 +134,7 @@ export default function Checkout(props) {
   const handlePayLater = () => {
     Alert.alert(
       "Confirm Booking",
-      "Are you sure you want to pay  later?",
+      "Are you sure you want to pay later?",
       [
         {
           text: "Cancel",
@@ -153,8 +155,33 @@ export default function Checkout(props) {
         points: 20,
         pendingAmount: total
       });
-    props.navigation.navigate("Home");
+
+    handleNavigationAlert();
   };
+
+  const handleNavigationAlert = () => {
+    Alert.alert(
+      "Navigation",
+      "Do You Want The Direction For Your Latest Booking?",
+      [
+        {
+          text: "No",
+          onPress: () => props.navigation.navigate("Home"),
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: () =>
+            props.navigation.navigate("Direction", {
+              blockId: blockId,
+              parkingId: parkingId
+            })
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
 
   return (
     <ScrollView
@@ -191,22 +218,25 @@ export default function Checkout(props) {
                 <Text style={styles.text2}>Price</Text>
               </Col>
             </Grid>
-            {parkingBookings.map(item => (
-              <Grid>
-                {/* <Col>
+            {parkingBookings &&
+              parkingBookings.map(item => (
+                <Grid>
+                  {/* <Col>
                   <Text style={{ textAlign: "center" }}>{item.parking}</Text>
                 </Col> */}
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.startTime}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.endTime}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.price}</Text>
-                </Col>
-              </Grid>
-            ))}
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>
+                      {item.startTime}
+                    </Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.endTime}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.price}</Text>
+                  </Col>
+                </Grid>
+              ))}
           </Card>
           <Card style={{ padding: 15, marginTop: 10 }}>
             <Text style={styles.text2}>
@@ -227,22 +257,23 @@ export default function Checkout(props) {
               </Col>
             </Grid>
 
-            {serviceBookings.map(item => (
-              <Grid>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.service}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.worker}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.price}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.time}</Text>
-                </Col>
-              </Grid>
-            ))}
+            {serviceBookings &&
+              serviceBookings.map(item => (
+                <Grid>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.service}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.worker}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.price}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.time}</Text>
+                  </Col>
+                </Grid>
+              ))}
           </Card>
         </View>
       </View>
@@ -258,7 +289,12 @@ export default function Checkout(props) {
           icon={<Icon type="material" name="payment" size={25} color="white" />}
           iconLeft
           title="Pay Now"
-          onPress={() => props.navigation.navigate("Payment")}
+          onPress={() =>
+            props.navigation.navigate("Payment", {
+              blockId: blockId,
+              parkingId: parkingId
+            })
+          }
           //buttonStyle={{ width: "30%" }}
         />
 

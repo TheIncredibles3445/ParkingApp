@@ -33,6 +33,8 @@ export default function Payment(props) {
   const [userCards, setUserCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState();
   const date = moment().format("YYYY-MM-DD T HH:mm");
+  const blockId = props.navigation.getParam("blockId", "No params");
+  const parkingId = props.navigation.getParam("parkingId", "No params");
 
   useEffect(() => {
     //console.log("props", booking, bookingId, total)
@@ -89,13 +91,36 @@ export default function Payment(props) {
         "Save Credit Card Information?",
         [
           { text: "Yes?", onPress: () => saveCreditCard() },
-          { text: "No", onPress: () => props.navigation.navigate("Home") }
+          { text: "No", onPress: () => handleNavigationAlert() }
         ],
         { cancelable: false }
       );
     } else {
       props.navigation.navigate("Home");
     }
+  };
+
+  const handleNavigationAlert = () => {
+    Alert.alert(
+      "Navigation",
+      "Do You Want The Direction For Your Latest Booking?",
+      [
+        {
+          text: "No",
+          onPress: () => props.navigation.navigate("Home"),
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: () =>
+            props.navigation.navigate("Direction", {
+              blockId: blockId,
+              parkingId: parkingId
+            })
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   const saveCreditCard = () => {
@@ -112,7 +137,7 @@ export default function Payment(props) {
         amount: 1000,
         provider
       });
-    props.navigation.navigate("Home");
+    handleNavigationAlert();
   };
 
   return (
