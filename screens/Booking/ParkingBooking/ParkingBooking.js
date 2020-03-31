@@ -43,8 +43,8 @@ export default function ParkingBooking(props) {
         querySnapShot.forEach(doc => {
           friends.push({ id: doc.id, ...doc.data() });
         });
-        console.log("my friends", friends);
-        console.log("one and only", friend);
+        // console.log("my frienxxdss", friends);
+        //console.log("one and only", friends.id);
         setFriendsList(friends);
       });
   }, []);
@@ -163,8 +163,8 @@ export default function ParkingBooking(props) {
           onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
         >
           <Picker.Item label={"Select"} value={""} disabled />
-          {friendsList.map(v => {
-            return <Picker.Item label={v.id} value={v.id} />;
+          {friendsList.map((v, index) => {
+            return <Picker.Item label={v.displayName} value={v.id} />;
           })}
         </Picker>
 
