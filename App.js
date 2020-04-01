@@ -38,6 +38,7 @@ export default function App(props) {
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged(setUser);
+    
   }, []);
 
   const handleRegister = async () => {
@@ -49,7 +50,6 @@ export default function App(props) {
       }&email=${email}`
     );
 
-    
     updateUserLogin();
   };
 
@@ -61,7 +61,7 @@ export default function App(props) {
   const updateUserLogin = () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .set({
+      .update({
         email: email,
         lastLogin: new Date()
       });

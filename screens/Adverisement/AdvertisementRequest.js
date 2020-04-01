@@ -93,7 +93,9 @@ export default FriendsScreen = props => {
       setPhotoURL(url);
     }
 
-    db.collection("Advertisement").add({
+
+      let offerid = 0
+      let adv = await db.collection("Advertisement").add({
         uid: firebase.auth().currentUser.uid,
         title : displayName,
         photoURL,
@@ -106,7 +108,13 @@ export default FriendsScreen = props => {
         offerNumber,
         adStatus: "Pending",
         handledBy:""
+      }).then(function(docRef) {
+        offerid =  docRef.id;
       });
+
+      db.collection("Advertisement").doc(offerid).collection("offers").doc("1").set({ date: moment().format() ,startDate,
+        endDate,
+        offeredAmount })
 
     alert(`Dear ${displayName} ,
     Your form has been send to the admin`);

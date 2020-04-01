@@ -29,6 +29,7 @@ import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails"
 import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
 import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
 import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
+import AdvertisementList from "../screens/Admin/AdvertisementsList"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -104,6 +105,9 @@ const AdminStack = createStackNavigator({
   AdminAdvDetails: {
     screen: AdminAdvDetails
   },
+  AdvertisementList:{
+    screen: AdvertisementList
+  }
 
 });
 
