@@ -30,11 +30,11 @@ import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
 import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
 import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
 import AdvertisementList from "../screens/Admin/AdvertisementsList"
+import ParcialPayment from "../screens/ParcialPayment"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/Profile/LinksScreen";
-import TestScreen from "../screens/TestScreen";
 import ParkingBooking from "../screens/Booking/ParkingBooking/ParkingBooking";
 import SettingsScreen from "../screens/Profile/SettingsScreen";
 import Parking from "../screens/Booking/ParkingBooking/Parkings";
@@ -123,24 +123,6 @@ AdminStack.navigationOptions = {
 AdminStack.path = "";
 
 
-const TestStack = createStackNavigator(
-  {
-    Test: TestScreen
-  },
-  config
-);
-
-TestStack.navigationOptions = {
-  tabBarLabel: "Test",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-    />
-  )
-};
-
-TestStack.path = "";
 
 const SettingsStack = createStackNavigator(
   {
@@ -154,7 +136,8 @@ const SettingsStack = createStackNavigator(
     Schedule: WorkerSchedule,
     ScheduleDetails: ScheduleDetails,
     AdvertisementDetails: AdvertisementDetails,
-    MyAdvertisement: MyAdvertisement
+    MyAdvertisement: MyAdvertisement,
+    ParcialPayment: ParcialPayment
   },
   config
 );
@@ -173,11 +156,8 @@ SettingsStack.path = "";
 
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
-  // LinksStack,
-  // TestStack,
   SettingsStack,
   AdminStack
-  // ServiceBookingStack
 });
 
 tabNavigator.path = "";

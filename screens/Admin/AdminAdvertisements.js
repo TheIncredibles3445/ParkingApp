@@ -60,7 +60,7 @@ export default function AdminAdvertisement(props) {
   const active = () => {
     getAds()
     let temp = ads
-    //temp = temp.filter( t => t.adStatus == "Declined")
+    temp = temp.filter( t =>  new Date(t.startDate).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(t.endDate).getTime())
     showAdv.current = temp
   }
   const pending = () => {

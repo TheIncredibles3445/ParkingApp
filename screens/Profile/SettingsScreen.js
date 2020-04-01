@@ -8,11 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Avatar, ListItem, Icon, Text } from "react-native-elements";
 import "firebase/auth";
 import db from "../../db.js";
-import { getSupportedVideoFormats } from "expo/build/AR";
-// import { Ionicons } from "@expo/vector-icons";
 
-// import { Text } from "react-native-animatable";
-// import { ScrollView } from "react-native-gesture-handler";
 
 
 export default function SettingsScreen(props) {
@@ -119,8 +115,8 @@ export default function SettingsScreen(props) {
   };
 
 
-  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS"];
-  const files = ["Profile", "Payment", "Vehicle", "Friends"];
+  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS","Pay"];
+  const files = ["Profile", "Payment", "Vehicle", "Friends","ParcialPayment"];
   return (
     <View style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>

@@ -1,4 +1,3 @@
-import * as WebBrowser from "expo-web-browser";
 import React, { useState, useEffect } from "react";
 import {
   Image,
@@ -12,8 +11,8 @@ import {
   View
 } from "react-native";
 import DatePicker from "react-native-datepicker";
-import moment, { updateLocale } from "moment";
-import db from "../../db"
+import moment from "moment";
+import db from "../../db";
 
 export default function AdvertisementDetails(props) {
 

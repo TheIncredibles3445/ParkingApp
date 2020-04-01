@@ -25,10 +25,9 @@ import moment from "moment";
 import * as Progress from 'react-native-progress';
 
 export default FriendsScreen = props => {
-  const [adStatus, setAdStatus] = useState("");
+
   const [feedback, setFeedback] = useState("");
   const [offerNumber, setOfferNumber] = useState(1);
-
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
@@ -98,7 +97,7 @@ export default FriendsScreen = props => {
       let adv = await db.collection("Advertisement").add({
         uid: firebase.auth().currentUser.uid,
         title : displayName,
-        photoURL,
+        photoURL: uri,
         description,
         link,
         startDate,
@@ -107,7 +106,8 @@ export default FriendsScreen = props => {
         feedback,
         offerNumber,
         adStatus: "Pending",
-        handledBy:""
+        handledBy:"",
+        viewers: 0
       }).then(function(docRef) {
         offerid =  docRef.id;
       });

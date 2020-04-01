@@ -20,7 +20,7 @@ import moment from "moment";
 import { AsyncStorage } from "react-native";
 
 export default function Payment(props) {
-  const booking = props.navigation.getParam("booking", "some default value");
+  
   const bookingId = props.navigation.getParam("id", "some default value");
   const total = props.navigation.getParam("total", "some default value");
   const [cardNumber, setCardNumber] = useState();
@@ -33,7 +33,7 @@ export default function Payment(props) {
   const [userCards, setUserCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState();
   const date = moment().format("YYYY-MM-DD T HH:mm");
-
+  
   useEffect(() => {
     //console.log("props", booking, bookingId, total)
     getMyCard();
