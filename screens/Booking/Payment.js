@@ -83,11 +83,11 @@ export default function Payment(props) {
     let data = update.data();
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .update({ pendingAmount: data.pendingAmount - total });
+      .update({ pendingAmount: data.pendingAmount - total, points: 30 });
 
     if (!useSavedCard) {
       Alert.alert(
-        "",
+        "Save Card",
         "Save Credit Card Information?",
         [
           { text: "Yes?", onPress: () => saveCreditCard() },

@@ -23,7 +23,7 @@ export default function Direction(props) {
     getDirections();
   }, []);
 
-  useEffect(() => {}, [userLocation]);
+  // useEffect(() => {}, [userLocation]);
 
   const getDirections = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -73,7 +73,6 @@ export default function Direction(props) {
     });
     setDirections(result);
   };
-
 
   return (
     <MapView

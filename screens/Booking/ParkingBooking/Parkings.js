@@ -42,7 +42,7 @@ export default function Parking(props) {
           bookingsRef
             .doc(booking.id)
             .collection("parking_booking")
-            .onSnapshot(querySnap => {
+            .onSnapshot(async querySnap => {
               for (let parkingBooking of querySnap.docs) {
                 p.push({ id: parkingBooking.id, ...parkingBooking.data() });
               }
@@ -57,27 +57,34 @@ export default function Parking(props) {
                       bookedStart - myEndTime < 0 && bookedEnd - myStartTime > 0
                     )
                   ) {
-                    console.log("wrong ", item);
                   } else {
-                    return item.parkingId;
+                    return item;
                   }
                 });
 
-                console.log("final", filteredParking);
+                const parkingIds = [];
+                console.log("filteredParking ==>", filteredParking);
+                filteredParking.map(item => parkingIds.push(item.parkingId));
+
+                db.collection("Block")
+                  .doc(data.selectedBlock.id)
+                  .collection("Parking")
+                  .onSnapshot(querySnapShot => {
+                    const parkings = [];
+                    querySnapShot.forEach(docum => {
+                      let park = docum.data();
+                      if (parkingIds.includes(docum.id)) {
+                        park.isBooked = true;
+                      } else {
+                        park.isBooked = false;
+                      }
+                      parkings.push({ id: docum.id, ...park });
+                    });
+                    setParkingSpots([...parkings]);
+                  });
               }
             });
         }
-      });
-
-    db.collection("Block")
-      .doc(data.selectedBlock.id)
-      .collection("Parking")
-      .onSnapshot(querySnapShot => {
-        const parkings = [];
-        querySnapShot.forEach(doc => {
-          parkings.push({ id: doc.id, ...doc.data() });
-        });
-        setParkingSpots([...parkings]);
       });
   };
 
@@ -183,25 +190,25 @@ export default function Parking(props) {
   // getAllParking();
   //};
 
-  const handleBooked1 = async pId => {
-    await db
-      .collection("Block")
-      .doc(data.selectedBlock.id)
-      .collection("Parking")
-      .doc(pId)
-      .update({ isBooked: false })
-      .then(() => getAllParking());
-  };
+  // const handleBooked1 = async pId => {
+  //   await db
+  //     .collection("Block")
+  //     .doc(data.selectedBlock.id)
+  //     .collection("Parking")
+  //     .doc(pId)
+  //     .update({ isBooked: false })
+  //     .then(() => getAllParking());
+  // };
 
-  const handleBooked2 = async pId => {
-    await db
-      .collection("Block")
-      .doc(data.selectedBlock.id)
-      .collection("Parking")
-      .doc(pId)
-      .update({ isBooked: true })
-      .then(() => getAllParking());
-  };
+  // const handleBooked2 = async pId => {
+  //   await db
+  //     .collection("Block")
+  //     .doc(data.selectedBlock.id)
+  //     .collection("Parking")
+  //     .doc(pId)
+  //     .update({ isBooked: true })
+  //     .then(() => getAllParking());
+  // };
 
   // useEffect(() => {}, [parkingSpots]);
 

@@ -24,14 +24,17 @@ export default function Checkout(props) {
   }, []);
 
   const getTotalAmount = () => {
-    db.collection("booking").onSnapshot(querySnap => {
-      let total = 0;
-      querySnap.forEach(doc => {
-        let data = doc.data();
-        total += data.total_price;
+    db.collection("booking")
+      .where("date", "==", moment().format("YYYY-MM-DD"))
+      .where("userId", "==", firebase.auth().currentUser.uid)
+      .onSnapshot(querySnap => {
+        let total = 0;
+        querySnap.forEach(doc => {
+          let data = doc.data();
+          total += data.total_price;
+        });
+        setTotal(total);
       });
-      setTotal(total);
-    });
   };
 
   const getAllBlocks = async () => {
@@ -55,80 +58,146 @@ export default function Checkout(props) {
   };
 
   const getParkingBookings = async () => {
-    const bookingsRef = db.collection("booking");
-    const todaysBookings = await bookingsRef
+    db.collection("booking")
+      .where("userId", "==", firebase.auth().currentUser.uid)
       .where("date", "==", moment().format("YYYY-MM-DD"))
       .where("type", "==", "Parking")
-      .get();
-    let allParkings = [];
-    for (let item of todaysBookings.docs) {
-      let data = item.data();
-      let parkingRef = await bookingsRef
-        .doc(item.id)
-        .collection("parking_booking")
-        .get();
-      for (let parking of parkingRef.docs) {
-        let pData = parking.data();
-        // let p = null;
-        // allParkingsLots.map(lot => {
-        //   if (lot.parkingId === pData.parkingId) {
-        //     p = lot;
-        //   }
-        //   // console.log("line 78 ==> ", p);
-        // }) ;
-        allParkings.push({
-          id: parking.id,
-          ...parking.data(),
-          price: data.total_price
-          // parking: p.name
-        });
-      }
-    }
-    setParkingBookings(allParkings);
+      .onSnapshot(querySnapshot => {
+        let parkingBooking = [];
+        for (let book of querySnapshot.docs) {
+          db.collection("booking")
+            .doc(book.id)
+            .collection("parking_booking")
+            .onSnapshot(query => {
+              for (let park of query.docs) {
+                parkingBooking.push({
+                  id: park.id,
+                  ...park.data(),
+                  bookingId: book.id,
+                  price: book.data().total_price
+                });
+              }
+              if (parkingBooking.length === querySnapshot.docs.length) {
+                setParkingBookings([...parkingBooking]);
+              }
+            });
+        }
+      });
+
+    // const bookingsRef = db.collection("booking");
+    // const todaysBookings = await bookingsRef
+    //   .where("date", "==", moment().format("YYYY-MM-DD"))
+    //   .where("type", "==", "Parking")
+    //   .get();
+    // let allParkings = [];
+    // for (let item of todaysBookings.docs) {
+    //   let data = item.data();
+    //   let parkingRef = await bookingsRef
+    //     .doc(item.id)
+    //     .collection("parking_booking")
+    //     .get();
+    //   for (let parking of parkingRef.docs) {
+    //     let pData = parking.data();
+    //     // let p = null;
+    //     // allParkingsLots.map(lot => {
+    //     //   if (lot.parkingId === pData.parkingId) {
+    //     //     p = lot;
+    //     //   }
+    //     //   // console.log("line 78 ==> ", p);
+    //     // }) ;
+    //     allParkings.push({
+    //       id: parking.id,
+    //       ...parking.data(),
+    //       price: data.total_price
+    //       // parking: p.name
+    //     });
+    //   }
+    // }
+    // setParkingBookings(allParkings);
   };
 
   const getServiceBookings = async () => {
     const bookingsRef = db.collection("booking");
-    const todaysBookings = await bookingsRef
+    bookingsRef
       .where("date", "==", moment().format("YYYY-MM-DD"))
+      .where("userId", "==", firebase.auth().currentUser.uid)
       .where("type", "==", "Service")
-      .get();
-    let allServices = [];
-    for (let item of todaysBookings.docs) {
-      let data = item.data();
-      let serviceRef = await bookingsRef
-        .doc(item.id)
-        .collection("service_booking")
-        .get();
-      for (let service of serviceRef.docs) {
-        let serviceData = service.data();
-        let worker = (
-          await db
-            .collection("users")
-            .doc(serviceData.worker)
-            .get()
-        ).data();
-        let serviceInfo = (
-          await db
-            .collection("service")
-            .doc(serviceData.service_id)
-            .get()
-        ).data();
+      .onSnapshot(querySnapshot => {
+        let allServiceBookings = [];
+        for (let book of querySnapshot.docs) {
+          db.collection("booking")
+            .doc(book.id)
+            .collection("service_booking")
+            .onSnapshot(async query => {
+              for (let serviceBook of query.docs) {
+                let serviceData = serviceBook.data();
+                let worker = (
+                  await db
+                    .collection("users")
+                    .doc(serviceData.worker)
+                    .get()
+                ).data();
+                let serviceInfo = (
+                  await db
+                    .collection("service")
+                    .doc(serviceData.service_id)
+                    .get()
+                ).data();
 
-        let time = serviceData.time;
-        let timeArr = time.split(" ");
-        let formattedTime = `${timeArr[0]} ${timeArr[1]}`;
-        serviceData.time = formattedTime;
-        allServices.push({
-          id: service.id,
-          ...serviceData,
-          price: data.total_price,
-          worker: worker.name,
-          service: serviceInfo.Name
-        });
-      }
-    }
-    setServiceBookings(allServices);
+                let time = serviceData.time;
+                let timeArr = time.split(" ");
+                let formattedTime = `${timeArr[0]} ${timeArr[1]}`;
+                serviceData.time = formattedTime;
+                allServiceBookings.push({
+                  id: serviceBook.id,
+                  ...serviceData,
+                  price: book.data().total_price,
+                  worker: worker.name,
+                  service: serviceInfo.Name
+                });
+              }
+              if (allServiceBookings.length === querySnapshot.docs.length) {
+                setServiceBookings([...allServiceBookings]);
+              }
+            });
+        }
+      });
+    // let allServices = [];
+    // for (let item of todaysBookings.docs) {
+    //   let data = item.data();
+    //   let serviceRef = await bookingsRef
+    //     .doc(item.id)
+    //     .collection("service_booking")
+    //     .get();
+    //   for (let service of serviceRef.docs) {
+    //     let serviceData = service.data();
+    //     let worker = (
+    //       await db
+    //         .collection("users")
+    //         .doc(serviceData.worker)
+    //         .get()
+    //     ).data();
+    //     let serviceInfo = (
+    //       await db
+    //         .collection("service")
+    //         .doc(serviceData.service_id)
+    //         .get()
+    //     ).data();
+
+    //     let time = serviceData.time;
+    //     let timeArr = time.split(" ");
+    //     let formattedTime = `${timeArr[0]} ${timeArr[1]}`;
+    //     serviceData.time = formattedTime;
+    //     allServices.push({
+    //       id: service.id,
+    //       ...serviceData,
+    //       price: data.total_price,
+    //       worker: worker.name,
+    //       service: serviceInfo.Name
+    //     });
+    //   }
+    // }
+    // setServiceBookings(allServices);
   };
 
   const handlePayLater = () => {
@@ -181,7 +250,6 @@ export default function Checkout(props) {
       { cancelable: false }
     );
   };
-
 
   return (
     <ScrollView
