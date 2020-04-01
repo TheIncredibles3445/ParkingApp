@@ -69,7 +69,7 @@ export default function ReportScreen() {
         plateNumber: plateNumber,
         status: status
       });
-
+    // gives points to the user
     const userRef = await db
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -147,7 +147,7 @@ export default function ReportScreen() {
           <Text
             style={{
               marginBottom: 30,
-              fontSize: 20,
+              fontSize: 22,
               marginLeft: "auto",
               marginRight: "auto"
             }}

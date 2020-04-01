@@ -28,7 +28,7 @@ export default AllReportsScreen = props => {
   const [plateNumber, setPlateNumber] = useState("");
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
-  // const [phoneNumber, setPhoneNumber] = useState("");
+  const [status, setStatus] = useState(false);
   // const [vehicels, setVehicels] = useState("");
   // const [tempVehicels, setTempVehicels] = useState("");
 
@@ -100,7 +100,7 @@ export default AllReportsScreen = props => {
             numbers.map(number => {
               //IF USER WITH THE PLATE NUMBER IS FOUND, SET IT TO STATE
               if (number.plateNumber === parseInt(plateNumber)) {
-                setUser(user);
+                setUser({ ...user, plateNumber: parseInt(plateNumber) });
               }
             });
             // console.log("nuimdsfksdmf", numbers);
@@ -138,7 +138,7 @@ export default AllReportsScreen = props => {
     // }
   };
 
-  const handleAlert = () => {
+  const handleAlert = plateNumber => {
     Alert.alert(
       "Solving Issues",
       "Are you sure you want to solve this issue??",
@@ -148,7 +148,10 @@ export default AllReportsScreen = props => {
           onPress: () => console.log("Cancel ..."),
           style: "cancel"
         },
-        { text: "Yes", onPress: () => checkAvailable() }
+        {
+          text: "Yes",
+          onPress: () => checkAvailable() && updateStatus(plateNumber)
+        }
       ],
       { cancelabele: false }
     );
@@ -159,11 +162,39 @@ export default AllReportsScreen = props => {
     console.log(user);
     if (isAvailable) {
       const { result } = await SMS.sendSMSAsync(
-        ["${user.phone}"],
+        [`${user.phone}`],
         "Hello, you parked wrong!! please go and fix it!"
       );
       console.log(result);
     }
+  };
+  // update the status of th report
+  const updateStatus = pNumber => {
+    reports.map(text => {
+      if (text.plateNumber === pNumber) {
+        db.collection("Reports")
+          .doc(text.id)
+          .update({ status: true });
+      }
+    });
+
+    //OK
+    //so now, loop through the reports array from the state
+    // look for this plate number in the reports array
+    // if found, the change the status of that report using the report id.
+
+    //cool ? yes
+
+    // const update = await db
+    //   .collection("Reports")
+    //   .doc(firebase.auth().currentUser.uid)
+    //   .get();
+    // const report = update.data();
+    // let reportStatus = status == true;
+    // report.status = reportStatus;
+    // db.collection("Reports")
+    //   .doc(firebase.auth().currentUser.uid)
+    //   .update(report);
   };
 
   return (
@@ -177,9 +208,9 @@ export default AllReportsScreen = props => {
         placeholder="Search Here..."
       />
       {user === null ? (
-        reports.map((item, i) => (
-          <View key={i}>
-            <TouchableOpacity onPress={() => handleAlert()}>
+        reports.map((item, i) =>
+          item.status === false ? (
+            <View key={i}>
               <View style={{ flexDirection: "row" }}>
                 <Avatar
                   containerStyle={{ marginTop: 33 }}
@@ -193,10 +224,11 @@ export default AllReportsScreen = props => {
                   </Text>
                 </View>
               </View>
-            </TouchableOpacity>
-          </View>
-        ))
+            </View>
+          ) : null
+        )
       ) : (
+        // <TouchableOpacity onPress={() => handleAlert()}>
         <View style={{ marginLeft: 50, marginTop: 35 }}>
           <Text
             style={{
@@ -213,10 +245,44 @@ export default AllReportsScreen = props => {
           </Text>
           <Text style={{ fontSize: 15 }}> User Email: {user.email}</Text>
           <Text style={{ fontSize: 15 }}> Phone Number: {user.phone}</Text>
-          <View style={{ width: "50%", marginLeft: "10%", marginTop: "20%" }}>
-            <Button title=" GO TO THE REPORTS" onPress={() => setUser(null)} />
+          <Text style={{ fontSize: 15 }}>
+            {" "}
+            Plate Number: {user.plateNumber}
+          </Text>
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <View
+              style={{
+                width: "38%",
+                // height: "2%",
+                marginLeft: "2%",
+                marginRight: 20,
+                marginTop: "10%"
+              }}
+            >
+              <Button title="GO TO REPORTS" onPress={() => setUser(null)} />
+            </View>
+            <View
+              style={{
+                width: "38%",
+                // height: "1%",
+                marginLeft: "2%",
+                marginTop: "10%"
+              }}
+            >
+              <Button
+                title="SOLVE IT"
+                onPress={() => handleAlert(user.plateNumber)}
+              />
+            </View>
           </View>
+          {/* <View style={{ width: "50%", marginLeft: "10%", marginTop: "20%" }}>
+              <Button
+                title=" GO TO THE REPORTS"
+                onPress={() => setUser(null)}
+              />
+            </View> */}
         </View>
+        // </TouchableOpacity>
       )}
       {/* {user === null ? ():null
       // reports.map((item, i) => (
