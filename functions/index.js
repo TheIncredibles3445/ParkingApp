@@ -61,9 +61,10 @@ exports.addCard = functions.https.onCall(async (data, context) => {
 exports.initUser = functions.https.onRequest(async (request, response) => {
   console.log("request", request.query.uid);
   console.log("request", request.query.email);
+  console.log("request", request.query.displayName);
 
   const result = await admin.auth().updateUser(request.query.uid, {
-    displayName: request.query.email,
+    displayName: request.query.displayName,
     photoURL:
       "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
   });
