@@ -30,7 +30,7 @@ import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
 import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
 import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
 import AdvertisementList from "../screens/Admin/AdvertisementsList"
-import ParcialPayment from "../screens/ParcialPayment"
+import PartialPayment from "../screens/PartialPayment"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -137,7 +137,7 @@ const SettingsStack = createStackNavigator(
     ScheduleDetails: ScheduleDetails,
     AdvertisementDetails: AdvertisementDetails,
     MyAdvertisement: MyAdvertisement,
-    ParcialPayment: ParcialPayment
+    PartialPayment: PartialPayment
   },
   config
 );

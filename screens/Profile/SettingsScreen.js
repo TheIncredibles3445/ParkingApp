@@ -116,7 +116,7 @@ export default function SettingsScreen(props) {
 
 
   const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS","Pay"];
-  const files = ["Profile", "Payment", "Vehicle", "Friends","ParcialPayment"];
+  const files = ["Profile", "Payment", "Vehicle", "Friends","PartialPayment"];
   return (
     <View style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>
