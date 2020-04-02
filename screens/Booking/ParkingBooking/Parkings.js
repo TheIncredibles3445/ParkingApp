@@ -100,30 +100,6 @@ export default function Parking(props) {
       });
   }, []);
 
-  // useEffect(() => {
-  //   getAllBooking();
-  //   handleBookedSpots();
-  // }, []);
-
-  // const getAllBooking = async () => {
-  //   const bookingsRef = db.collection("booking");
-  //   const todaysBookings = await bookingsRef
-  //     .where("date", "==", moment().format("YYYY-MM-DD"))
-  //     .where("type", "==", "Parking")
-  //     .get();
-  //   let allParkings = [];
-  //   for (let item of todaysBookings.docs) {
-  //     let parkingRef = await bookingsRef
-  //       .doc(item.id)
-  //       .collection("parking_booking")
-  //       .get();
-  //     for (let parking of parkingRef.docs) {
-  //       allParkings.push({ id: parking.id, ...parking.data() });
-  //     }
-  //   }
-  //   setParkingBookings(allParkings);
-  // };
-
   const convertTime = time => {
     const splitTime = time.split(" ");
     if (splitTime[1] === "pm") {
@@ -156,60 +132,6 @@ export default function Parking(props) {
       return new Date(moment().format("YYYY-MM-DDT" + `${splitTime[0]}:00`));
     }
   };
-
-  // const handleBookedSpots = async () => {
-  //   const myStartTime = convertTime(data.startTime);
-  //   const myEndTime = convertTime(data.endTime);
-
-  //   const parkings = await db
-  //     .collection("Block")
-  //     .doc(data.selectedBlock.id)
-  //     .collection("Parking")
-  //     .get();
-
-  //   let allParkings = [];
-  //   for (let item of parkings.docs) {
-  //     allParkings.push({ id: item.id, ...item.data() });
-  //   }
-
-  // let tempAllParkingBookings = parkingBookings;
-  // for (let i = 0; i < allParkings.length; i++) {
-  //   for (let j = 0; j < tempAllParkingBookings.length; j++) {
-  //     if (allParkings[i].id === tempAllParkingBookings[j].parkingId) {
-  //       const bookedStart = convertTime(tempAllParkingBookings[j].startTime);
-  //       const bookedEnd = convertTime(tempAllParkingBookings[j].endTime);
-  //       if (!(bookedStart - myEndTime < 0 && bookedEnd - myStartTime > 0)) {
-  //         await handleBooked1(tempAllParkingBookings[j].parkingId);
-  //       } else {
-  //         await handleBooked2(tempAllParkingBookings[j].parkingId);
-  //       }
-  //     }
-  //   }
-  // }
-  // getAllParking();
-  //};
-
-  // const handleBooked1 = async pId => {
-  //   await db
-  //     .collection("Block")
-  //     .doc(data.selectedBlock.id)
-  //     .collection("Parking")
-  //     .doc(pId)
-  //     .update({ isBooked: false })
-  //     .then(() => getAllParking());
-  // };
-
-  // const handleBooked2 = async pId => {
-  //   await db
-  //     .collection("Block")
-  //     .doc(data.selectedBlock.id)
-  //     .collection("Parking")
-  //     .doc(pId)
-  //     .update({ isBooked: true })
-  //     .then(() => getAllParking());
-  // };
-
-  // useEffect(() => {}, [parkingSpots]);
 
   const handleModal = item => {
     Alert.alert(
