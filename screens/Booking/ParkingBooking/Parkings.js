@@ -25,18 +25,66 @@ export default function Parking(props) {
   const [flag, setFlag] = useState(false);
   // const [token, setToken] = useState(null);
   useEffect(() => {
-    db.collection("Block")
-      .doc(data.selectedBlock.id)
-      .collection("Parking")
-      .onSnapshot(querySnapShot => {
-        const parkings = [];
-        querySnapShot.forEach(doc => {
-          parkings.push({ id: doc.id, ...doc.data() });
-        });
-        setParkingSpots([...parkings]);
-        console.log("frinddddd", friend);
-      });
+    getAllParking();
   }, []);
+
+  const getAllParking = () => {
+    const bookingsRef = db.collection("booking");
+    bookingsRef
+      .where("date", "==", moment().format("YYYY-MM-DD"))
+      .where("type", "==", "Parking")
+      .onSnapshot(querySnapShot => {
+        let p = [];
+        let filteredParking = [];
+        for (let booking of querySnapShot.docs) {
+          bookingsRef
+            .doc(booking.id)
+            .collection("parking_booking")
+            .onSnapshot(async querySnap => {
+              for (let parkingBooking of querySnap.docs) {
+                p.push({ id: parkingBooking.id, ...parkingBooking.data() });
+              }
+              if (p.length === querySnapShot.docs.length) {
+                const myStartTime = convertTime(data.startTime);
+                const myEndTime = convertTime(data.endTime);
+                filteredParking = p.filter(item => {
+                  const bookedStart = convertTime(item.startTime);
+                  const bookedEnd = convertTime(item.endTime);
+                  if (
+                    !(
+                      bookedStart - myEndTime < 0 && bookedEnd - myStartTime > 0
+                    )
+                  ) {
+                  } else {
+                    return item;
+                  }
+                });
+
+                const parkingIds = [];
+                console.log("filteredParking ==>", filteredParking);
+                filteredParking.map(item => parkingIds.push(item.parkingId));
+
+                db.collection("Block")
+                  .doc(data.selectedBlock.id)
+                  .collection("Parking")
+                  .onSnapshot(querySnapShot => {
+                    const parkings = [];
+                    querySnapShot.forEach(docum => {
+                      let park = docum.data();
+                      if (parkingIds.includes(docum.id)) {
+                        park.isBooked = true;
+                      } else {
+                        park.isBooked = false;
+                      }
+                      parkings.push({ id: docum.id, ...park });
+                    });
+                    setParkingSpots([...parkings]);
+                  });
+              }
+            });
+        }
+      });
+  };
 
   useEffect(() => {
     db.collection("users")
