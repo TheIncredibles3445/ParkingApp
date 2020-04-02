@@ -83,37 +83,6 @@ export default function Checkout(props) {
             });
         }
       });
-
-    // const bookingsRef = db.collection("booking");
-    // const todaysBookings = await bookingsRef
-    //   .where("date", "==", moment().format("YYYY-MM-DD"))
-    //   .where("type", "==", "Parking")
-    //   .get();
-    // let allParkings = [];
-    // for (let item of todaysBookings.docs) {
-    //   let data = item.data();
-    //   let parkingRef = await bookingsRef
-    //     .doc(item.id)
-    //     .collection("parking_booking")
-    //     .get();
-    //   for (let parking of parkingRef.docs) {
-    //     let pData = parking.data();
-    //     // let p = null;
-    //     // allParkingsLots.map(lot => {
-    //     //   if (lot.parkingId === pData.parkingId) {
-    //     //     p = lot;
-    //     //   }
-    //     //   // console.log("line 78 ==> ", p);
-    //     // }) ;
-    //     allParkings.push({
-    //       id: parking.id,
-    //       ...parking.data(),
-    //       price: data.total_price
-    //       // parking: p.name
-    //     });
-    //   }
-    // }
-    // setParkingBookings(allParkings);
   };
 
   const getServiceBookings = async () => {
@@ -162,42 +131,6 @@ export default function Checkout(props) {
             });
         }
       });
-    // let allServices = [];
-    // for (let item of todaysBookings.docs) {
-    //   let data = item.data();
-    //   let serviceRef = await bookingsRef
-    //     .doc(item.id)
-    //     .collection("service_booking")
-    //     .get();
-    //   for (let service of serviceRef.docs) {
-    //     let serviceData = service.data();
-    //     let worker = (
-    //       await db
-    //         .collection("users")
-    //         .doc(serviceData.worker)
-    //         .get()
-    //     ).data();
-    //     let serviceInfo = (
-    //       await db
-    //         .collection("service")
-    //         .doc(serviceData.service_id)
-    //         .get()
-    //     ).data();
-
-    //     let time = serviceData.time;
-    //     let timeArr = time.split(" ");
-    //     let formattedTime = `${timeArr[0]} ${timeArr[1]}`;
-    //     serviceData.time = formattedTime;
-    //     allServices.push({
-    //       id: service.id,
-    //       ...serviceData,
-    //       price: data.total_price,
-    //       worker: worker.name,
-    //       service: serviceInfo.Name
-    //     });
-    //   }
-    // }
-    // setServiceBookings(allServices);
   };
 
   const handlePayLater = () => {
