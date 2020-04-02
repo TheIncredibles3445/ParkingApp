@@ -132,24 +132,7 @@ AdminStack.path = "";
 // };
 // ServiceBookingStack.path = "";
 
-// const LinksStack = createStackNavigator(
-//   {
-//     Links: Checkout
-//   },
-//   config
-// );
 
-// LinksStack.navigationOptions = {
-//   tabBarLabel: "Links",
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-//     />
-//   )
-// };
-
-// LinksStack.path = "";
 const TestStack = createStackNavigator(
   {
     Test: TestScreen
