@@ -99,6 +99,41 @@ export default function Parking(props) {
       });
   }, []);
 
+  
+  const convertTime = time => {
+    const splitTime = time.split(" ");
+    if (splitTime[1] === "pm") {
+      if (splitTime[0] === "12:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `12:${split[1]}:00`));
+      } else if (splitTime[0] === "01:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `13:${split[1]}:00`));
+      } else if (splitTime[0] === "02:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `14:${split[1]}:00`));
+      } else if (splitTime[0] === "03:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `15:${split[1]}:00`));
+      } else if (splitTime[0] === "04:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `16:${split[1]}:00`));
+      } else if (splitTime[0] === "05:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `17:${split[1]}:00`));
+      } else if (splitTime[0] === "06:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `18:${split[1]}:00`));
+      } else if (splitTime[0] === "07:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `19:${split[1]}:00`));
+      }
+    } else {
+      return new Date(moment().format("YYYY-MM-DDT" + `${splitTime[0]}:00`));
+    }
+  };
+
+
   const handleModal = item => {
     Alert.alert(
       "Confirm Booking",
