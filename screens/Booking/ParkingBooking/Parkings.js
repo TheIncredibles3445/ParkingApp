@@ -9,6 +9,7 @@ import {
   Alert,
   AsyncStorage
 } from "react-native";
+import { NavigationActions } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import db from "../../../db";
@@ -148,78 +149,101 @@ export default function Parking(props) {
     );
   };
 
+  const handleRedirect = () => {
+    Alert.alert(
+      "Warning",
+      "You Did Not Register a vehicle",
+      [
+        {
+          text: "OK",
+          onPress: () =>
+            props.navigation.navigate(
+              "SettingsStack",
+              {},
+              NavigationActions.navigate({ routeName: "AddVehicle" })
+            )
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
   const handleBooking = async item => {
     console.log("item", item);
     const date = `${new Date().getFullYear()}-0${new Date().getMonth() +
       1}-${new Date().getDate()}`;
 
-    if (!item.isBooked) {
-      if (friend != null) {
-        db.collection("booking")
-          .add({
-            date: date,
-            total_price: item.price,
-            type: "Parking",
-            userId: friend
-          })
-          .then(docRef => {
-            db.collection("booking")
-              .doc(docRef.id)
-              .collection("parking_booking")
-              .add({
-                startTime: data.startTime,
-                endTime: data.endTime,
-                parkingId: item.id,
-                rating: 0
-              });
+    if (cars.length !== 0) {
+      if (!item.isBooked) {
+        if (friend != null) {
+          db.collection("booking")
+            .add({
+              date: date,
+              total_price: item.price,
+              type: "Parking",
+              userId: friend
+            })
+            .then(docRef => {
+              db.collection("booking")
+                .doc(docRef.id)
+                .collection("parking_booking")
+                .add({
+                  startTime: data.startTime,
+                  endTime: data.endTime,
+                  parkingId: item.id,
+                  rating: 0
+                });
+            });
+          let user = await db
+            .collection("users")
+            .doc(friend)
+            .get();
+          let dbpendingAmount = parseInt(
+            user.data().pendingAmount + parseInt(item.price)
+          );
+          db.collection("users")
+            .doc(friend)
+            .update({ pendingAmount: dbpendingAmount });
+          props.navigation.navigate("HomeScreen");
+        } else {
+          db.collection("booking")
+            .add({
+              date: date,
+              total_price: item.price,
+              type: "Parking",
+              userId: firebase.auth().currentUser.uid
+            })
+            .then(docRef => {
+              db.collection("booking")
+                .doc(docRef.id)
+                .collection("parking_booking")
+                .add({
+                  startTime: data.startTime,
+                  endTime: data.endTime,
+                  parkingId: item.id,
+                  rating: 0
+                });
+            });
+          props.navigation.navigate("Checkout");
+        }
+
+        db.collection("Block")
+          .doc(data.selectedBlock.id)
+          .collection("Parking")
+          .doc(item.id)
+          .update({
+            isBooked: true,
+            location: item.location,
+            price: item.price,
+            type: item.type
           });
-        let user = await db
-          .collection("users")
-          .doc(friend)
-          .get();
-        let dbpendingAmount = parseInt(
-          user.data().pendingAmount + parseInt(item.price)
-        );
-        db.collection("users")
-          .doc(friend)
-          .update({ pendingAmount: dbpendingAmount });
-        props.navigation.navigate("HomeScreen");
+
+        // }
       } else {
-        db.collection("booking")
-          .add({
-            date: date,
-            total_price: item.price,
-            type: "Parking",
-            userId: firebase.auth().currentUser.uid
-          })
-          .then(docRef => {
-            db.collection("booking")
-              .doc(docRef.id)
-              .collection("parking_booking")
-              .add({
-                startTime: data.startTime,
-                endTime: data.endTime,
-                parkingId: item.id,
-                rating: 0
-              });
-          });
-        props.navigation.navigate("Checkout");
+        alert("Booked");
       }
-
-      db.collection("Block")
-        .doc(data.selectedBlock.id)
-        .collection("Parking")
-        .doc(item.id)
-        .update({
-          isBooked: true,
-          location: item.location,
-          price: item.price,
-          type: item.type
-        });
-
-      // }
     } else {
-      alert("Booked");
+      handleRedirect();
     }
   };
 
