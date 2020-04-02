@@ -3,14 +3,14 @@ import "firebase/firestore";
 
 // Initialize Cloud Firestore through Firebase
 firebase.initializeApp({
-  apiKey: "AIzaSyCNs3ICBXqvnOHf9SP05LwfxZnXM2CXFrg",
-  authDomain: "parking-app-3b592.firebaseapp.com",
-  databaseURL: "https://parking-app-3b592.firebaseio.com",
-  projectId: "parking-app-3b592",
-  storageBucket: "parking-app-3b592.appspot.com",
-  messagingSenderId: "167019920679",
-  appId: "1:167019920679:web:848574c0f0a6bc3772bd02",
-  measurementId: "G-TYS24KVHHM"
+  apiKey: "AIzaSyAxgkqz46PpA_pT9beQphwB_B55kurYVa8",
+  authDomain: "parkingapp-38277.firebaseapp.com",
+  databaseURL: "https://parkingapp-38277.firebaseio.com",
+  projectId: "parkingapp-38277",
+  storageBucket: "parkingapp-38277.appspot.com",
+  messagingSenderId: "657425654700",
+  appId: "1:657425654700:web:4b07f82307f20539c81009",
+  measurementId: "G-DWVWXL4E8P"
   // apiKey: "AIzaSyAQTaHbGrvP6mEMLiTBVzmDL6QOYs0IHFE",
   // authDomain: "messages-c612c.firebaseapp.com",
   // databaseURL: "https://messages-c612c.firebaseio.com",
