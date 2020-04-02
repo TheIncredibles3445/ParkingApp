@@ -15,14 +15,12 @@ import db from "../../../db";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
-// import { Notifications } from "expo";
-// import * as Permissions from "expo-permissions";
 
 export default function Parking(props) {
   const data = props.navigation.getParam("data", "No params");
   const friend = props.navigation.getParam("friend", "No params");
   const [parkingSpots, setParkingSpots] = useState([]);
-  // const [token, setToken] = useState(null);
+
   useEffect(() => {
     db.collection("Block")
       .doc(data.selectedBlock.id)
@@ -36,63 +34,6 @@ export default function Parking(props) {
         console.log("frinddddd", friend);
       });
   }, []);
-
-  // useEffect(() => {
-  //   registerForPushNotifications();
-  // }, []);
-
-  // const registerForPushNotifications = async () => {
-  //   //Get the current users id So you can post the token to the user in your database
-  //   const currentUser = firebase.auth().currentUser.uid;
-  //   const { status: existingStatus } = await Permissions.getAsync(
-  //     Permissions.NOTIFICATIONS
-  //   );
-  //   let finalStatus = existingStatus;
-  //   // only ask if permissions have not already been determined, because
-  //   // iOS won't necessarily prompt the user a second time.
-  //   if (existingStatus !== "granted") {
-  //     // Android remote notification permissions are granted during the app
-  //     // install, so this will only ask on iOS
-  //     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-  //     finalStatus = status;
-  //   }
-  //   // Stop here if the user did not grant permissions
-  //   if (finalStatus !== "granted") {
-  //     return;
-  //   }
-  //   // Get the token that uniquely identifies this device
-  //   try {
-  //     let token = await Notifications.getExpoPushTokenAsync();
-  //     console.log(token);
-  //     // POST the token to your backend server from where you can retrieve it to send push notifications.
-  //     db.collection("Users")
-  //       .doc(firebase.auth().currentUser.uid)
-  //       .update({ token: token });
-  //     setToken(token)
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const sendPushNotification = () => {
-  //   // I got the user that we will send the push notification to from the database and set it to state, now I have access to the users push token.
-  //   const userExpoToken = token;
-  //   console.log(userExpoToken);
-  //   // Now we will send the message to the expo servers
-  //   let response = fetch("https://exp.host/--/api/v2/push/send", {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify({
-  //       to: userExpoToken,
-  //       sound: "default",
-  //       title: "This is a test",
-  //       body: "IT WORKING !!!"
-  //     })
-  //   });
-  // };
 
   const handleModal = item => {
     Alert.alert(
@@ -182,126 +123,9 @@ export default function Parking(props) {
       // }
     } else {
       alert("Booked");
-      // sendPushNotification();
     }
-    // let parkingRef = await db
-    //   .collection("Block")
-    //   .doc(data.selectedBlock.id)
-    //   .collection("Parking")
-    //   .doc(item.id)
-    //   .get();
 
-    // let parkingData = parkingRef.data();
-    // console.log(parkingData);
-
-    // console.log(booking);
-
-    // let b = null;
-    // db.collection("booking").onSnapshot(async querySnapshot => {
-    //   let allBookings = [];
-    //   querySnapshot.forEach(doc => {
-    //     allBookings.push({ id: doc.id, ...doc.data() });
-    //   });
-
-    //   // setBook(allBookings);
-    //   // callBook();
-
-    //   const bookings = allBookings.filter(
-    //     item =>
-    //       item.date === date && item.userId === firebase.auth().currentUser.uid
-    //   );
-
-    //   console.log("today", date);
-    //   console.log("bookings", bookings[0]);
-    //   // if (( bookings.length) !== 0) {
-    //   //   await AsyncStorage.setItem("bookings", JSON.stringify(bookings[0]));
-    //   // }
-    //   console.log(firebase.auth().currentUser.uid);
-    // let count = 0;
-    // if (bookings.length !== 0 && count === 0) {
-    //   let userBooking = bookings[0];
-    //   let total = userBooking.total_price;
-    //   total += item.price;
-    //   userBooking.total_price = total;
-    //   console.log("total", total);
-    //   console.log("new user booking", userBooking);
-    //   await db
-    //     .collection("booking")
-    //     .doc(userBooking.id)
-    //     .update({
-    //       date: userBooking.date,
-    //       userId: userBooking.userId,
-    //       type: userBooking.type,
-    //       total_price: userBooking.total_price
-    //     });
-
-    //   db.collection("booking")
-    //     .doc(userBooking.id)
-    //     .collection("parking_booking")
-    //     .add({
-    //       parkingId: item.id,
-    //       startTime: data.startTime,
-    //       endTime: data.endTime,
-    //       rating: 0
-    //     });
-
-    //   count += 1;
-    // } else {
-    //   alert("empty");
-    // }
-    // });
-
-    // const userBookings = await AsyncStorage.getItem("bookings");
-    // if (userBookings !== null) {
-    //   alert("got the data");
-    // console.log("userBookings", userBookings);
-    // } else {
-    //   alert("Empty");
-    //   console.log("userBookings", userBookings);
-    // }
-
-    // await AsyncStorage.removeItem("bookings");
-
-    // await db.collection("Booking").add({
-    //   userId: firebase.auth().currentUser.uid,
-    //   type: "Parking",
-    //   date: date,
-    //   totalPrice: item.price
-    // });
-
-    // const booking = firebase.functions().httpsCallable("handleParkingBooking");
-    // const response = await booking({
-    //   date: date,
-    //   user: firebase.auth().currentUser.uid,
-    //   startTime: data.startTime,
-    //   endTime: data.endTime
-    // });
-
-    // db.collection("Booking").onSnapshot(querySnapshot => {
-    //   let allBookings = [];
-    //   querySnapshot.forEach(doc => {
-    //     allBookings.push({ id: doc.id, ...doc.data() });
-    //   });
-    //   console.log("all bookings before filter", allBookings);
-    //   const bookings = allBookings.filter(
-    //     item =>
-    //       item.date === date && item.userId === firebase.auth().currentUser.uid
-    //   );
-    //   if (bookings) {
-    //     alert("yeah");
-    //   } else {
-    //     alert("no");
-    //   }
-    // });
   };
-
-  // const callBook = () => {
-  //   console.log("MAMA", book);
-  //   // const bookings = book.filter(
-  //   //   item =>
-  //   //     item.date === date && item.userId === firebase.auth().currentUser.uid
-  //   // );
-  // };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
