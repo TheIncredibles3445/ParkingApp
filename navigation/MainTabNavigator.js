@@ -40,6 +40,8 @@ import AddCard from "../screens/Profile/AddCard";
 import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
+import Direction from "../screens/Booking/Direction";
+
 const config = Platform.select({
   web: { headerMode: "screen" },
   default: {}
@@ -90,6 +92,9 @@ const AdminStack = createStackNavigator({
   },
   AllReport: {
     screen: AllReportsScreen
+  },
+  Discounts: {
+    screen: DiscountsScreen
   },
   ChangeRole: {
     screen: ChangeRole
