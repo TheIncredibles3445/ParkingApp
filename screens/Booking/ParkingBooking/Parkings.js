@@ -38,6 +38,19 @@ export default function Parking(props) {
       });
   }, []);
 
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Vehicles")
+      .onSnapshot(querySnap => {
+        let vehicles = [];
+        querySnap.forEach(doc => {
+          vehicles.push({ id: doc.id, ...doc.data() });
+        });
+        setCars([...vehicles]);
+      });
+  }, []);
+
   const handleModal = item => {
     Alert.alert(
       "Confirm Booking",
@@ -127,7 +140,6 @@ export default function Parking(props) {
     } else {
       alert("Booked");
     }
-
   };
 
   return (
