@@ -32,12 +32,15 @@ export default function ServiceBookingDetails(props) {
             .get();
 
           const w = users.data();
-          workerId.push([w]);
-          console.log("w ", w);
+          workerId.push(w);
+          console.log("ww ", workerId);
           // console.log("worker id" , all[i].worker)
         }
-        setWorkers(workerId);
-
+        // for (let a = 0; a < workerId.length; a++) {
+        //   setWorkers(workerId[a].email);
+        //   console.log("wordker id-=---", workerId[a].email);
+        // }
+        setWorkers([...workerId]);
         setServItemId(services);
         setDetails([...all]);
       });
@@ -176,7 +179,7 @@ export default function ServiceBookingDetails(props) {
         Service Booking Details
       </Text>
       <ScrollView>
-        {details.map(item => {
+        {details.map((item,index) => {
           return (
             <View key={item.id} style={{ marginBottom: 50 }}>
               <Text
@@ -204,7 +207,7 @@ export default function ServiceBookingDetails(props) {
                   fontWeight: "bold"
                 }}
               >
-                worker:{}
+                worker:{workers[index].email}
               </Text>
               {timeToRate(item.time, item.id) ? (
                 <Rating
