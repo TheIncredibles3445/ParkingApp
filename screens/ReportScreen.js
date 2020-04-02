@@ -234,8 +234,8 @@ export default function ReportScreen() {
                 },
                 dateInput: {
                   marginLeft: 36
-                }
-                // ... You can check the source to find the other keys.
+                },
+                datePickerCon: { color: "black" }
               }}
               onDateChange={date => {
                 console.log(date);

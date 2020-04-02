@@ -11,6 +11,7 @@ import FriendScreen from "../screens/Profile/FriendsScreen";
 //Lamees's imports
 import ReportScreen from "../screens/ReportScreen";
 import AllReportsScreen from "../screens/Admin/AllReportsScreen";
+import DiscountsScreen from "../screens/Admin/DiscountsScreen";
 import AdminScreen from "../screens/Admin/AdminScreen";
 
 //Amal's Imports
@@ -87,6 +88,9 @@ const AdminStack = createStackNavigator({
   },
   AllReport: {
     screen: AllReportsScreen
+  },
+  Discounts: {
+    screen: DiscountsScreen
   }
 });
 
