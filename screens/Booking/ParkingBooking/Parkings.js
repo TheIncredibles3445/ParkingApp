@@ -20,6 +20,7 @@ import "firebase/functions";
 
 export default function Parking(props) {
   const data = props.navigation.getParam("data", "No params");
+  const friend = props.navigation.getParam("friend", "No params");
   const [parkingSpots, setParkingSpots] = useState([]);
   const [cars, setCars] = useState([]);
   const [parkingBookings, setParkingBookings] = useState([]);

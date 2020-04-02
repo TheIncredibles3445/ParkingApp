@@ -23,6 +23,7 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
+import ChangeRole from "../screens/Admin/ChangeRole";
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -100,7 +101,7 @@ const AdminStack = createStackNavigator({
     screen: ChangeRole
   }
 });
-
+//the simulator wont work >>. i have to shut down the pc it always happen
 AdminStack.navigationOptions = {
   tabBarLabel: "Admin Panel",
   tabBarIcon: ({ focused }) => (
@@ -165,7 +166,10 @@ const SettingsStack = createStackNavigator(
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
     AddCard: AddCard,
-    Friends: LinksScreen
+    Friends: LinksScreen,
+    AllBookings: AllBookings,
+    ParkingBookingsDetails: ParkingBookingsDetails,
+    ServiceBookingDetails: ServiceBookingDetails
   },
   config
 );
