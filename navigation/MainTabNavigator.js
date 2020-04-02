@@ -37,6 +37,9 @@ import Vehicle from "../screens/Profile/Vehicle";
 import AddVehicle from "../screens/Profile/AddVehicle";
 import Checkout from "../screens/Booking/Checkout";
 import AddCard from "../screens/Profile/AddCard";
+import AllBookings from "../screens/Profile/AllBookings";
+import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
+import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
 const config = Platform.select({
   web: { headerMode: "screen" },
