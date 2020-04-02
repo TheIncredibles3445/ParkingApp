@@ -114,7 +114,8 @@ export default FriendsScreen = props => {
 
       db.collection("Advertisement").doc(offerid).collection("offers").doc("1").set({ date: moment().format() ,startDate,
         endDate,
-        offeredAmount })
+        offeredAmount,
+      feedback: "" })
 
     alert(`Dear ${displayName} ,
     Your form has been send to the admin`);

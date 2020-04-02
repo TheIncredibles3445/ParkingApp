@@ -22,7 +22,7 @@ export default function AdminAdvertisementDetails(props) {
     const adv = props.navigation.getParam('adv', 'some default value');
     const [offers, setOffers] = useState([])
     const [advertiser, setAdvertiser] = useState()
-    const [ sendAfterDis , setSendAfterDis] = useState(false)
+    const [sendAfterDis, setSendAfterDis] = useState(false)
     useEffect(() => {
         db.collection("Advertisement").doc(adv.id).collection("offers").onSnapshot(querySnapshot => {
             let offers = [];
@@ -43,11 +43,17 @@ export default function AdminAdvertisementDetails(props) {
 
 
     const handleStatus = async (status) => {
-        db.collection("Advertisement").doc(adv.id).update({ adStatus: status })
-        let pa =  parseInt(advertiser.pendingAmount) + parseInt(offers[offers.length -1].offeredAmount)  
+        db.collection("Advertisement").doc(adv.id).update({
+            adStatus: status,
+            offeredAmount: offers[offers.length - 1].offeredAmount,
+            startDate: offers[offers.length - 1].startDate,
+            endDate: offers[offers.length - 1].endDate
+        })
+
+        let pa = parseInt(advertiser.pendingAmount) + parseInt(offers[offers.length - 1].offeredAmount)
         db.collection("users")
             .doc(adv.uid)
-            .update({ advPendingAmount: pa});
+            .update({ advPendingAmount: pa });
 
         const isAvailable = await SMS.isAvailableAsync();
 
@@ -58,14 +64,14 @@ export default function AdminAdvertisementDetails(props) {
             );
             console.log(result);
         }
-            props.navigation.navigate("Adv")
+        props.navigation.navigate("Adv")
     }
 
     const sendFeedback = async () => {
         db.collection("Advertisement").doc(adv.id).collection("offers").doc(offers.length + "").update({ feedback })
         const isAvailable = await SMS.isAvailableAsync();
 
-        if (isAvailable)  {
+        if (isAvailable) {
             const { result } = await SMS.sendSMSAsync(
                 [advertiser.phone],
                 `Dear,${advertiser.displayName} \nYour ${adv.title} offer feedback is available now.`
@@ -73,60 +79,68 @@ export default function AdminAdvertisementDetails(props) {
             console.log(result);
         }
         console.log("here2")
-        props.navigation.navigate("Adv")       
+        props.navigation.navigate("Adv")
     }
-    
-    const handleAdv = () =>{
-        db.collection("Advertisement").doc(adv.id).update({ handledBy : firebase.auth().currentUser.uid})
-        props.navigation.navigate("Adv")  
+
+    const handleAdv = () => {
+        db.collection("Advertisement").doc(adv.id).update({ handledBy: firebase.auth().currentUser.uid })
+        props.navigation.navigate("Adv")
     }
 
     return (
         <View>
-            <Text style={styles.title}>{adv.title}</Text>
-            <Text style={styles.email}>User: {advertiser ? advertiser.email : null}</Text>
-            <Text style={styles.email}>Offers</Text>
-            {adv.adStatus === "Pending" && adv.handledBy === "" ?
-            <View>
-            {offers.map((o, index) =>
-                <Text style={styles.list}>OFFER NO.{index + 1}{"\n"}FROM: {o.startDate} TO: {o.endDate} {"\n"}OFFERED AMOUNT: {o.offeredAmount} QR {"\n"}UPDATED ON: {o.date}</Text>
-            )}
-        
-            <TouchableOpacity style={styles.btns2} onPress={() => handleAdv()}><Text style={styles.text}>HANDEL</Text></TouchableOpacity></View> : null}
-            {adv.adStatus === "Pending" && adv.handledBy === firebase.auth().currentUser.uid && offers.length > 0 ?
-                <View>
-                    <ScrollView style={{ height: "48%" }}>
+            
+                <Text style={styles.title}>{adv.title}</Text>
+                <Text style={styles.email}>User: {advertiser ? advertiser.email : null}</Text>
+                <Image
+                    style={{ width: 100, height: 100 , marginLeft:"4%" }}
+                    source={{ uri: adv.photoURL }}
+                />
+                <Text style={styles.email}>Offers</Text>
+                {adv.adStatus === "Pending" && adv.handledBy === "" ?
+                    <View>
                         {offers.map((o, index) =>
                             <Text style={styles.list}>OFFER NO.{index + 1}{"\n"}FROM: {o.startDate} TO: {o.endDate} {"\n"}OFFERED AMOUNT: {o.offeredAmount} QR {"\n"}UPDATED ON: {o.date}</Text>
                         )}
-                    </ScrollView>
-                    {
-                        offers[offers.length - 1].feedback ?
-                            <View style={styles.box}>
-                                <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Approved")} ><Text style={styles.text}>Approve</Text></TouchableOpacity>
-                                    <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Declined")} ><Text style={styles.text}>Decline</Text></TouchableOpacity>
-                            </View> :
-                            <View>
-                                <TextInput
-                                    value={feedback}
-                                    placeholder={"ADD A FEEDBACK"}
-                                    onChangeText={(text) => setFeedBack(text)}
-                                    style={styles.feedbackBox}
-                                    multiline
-                                />
 
-                                <View style={styles.box}>
+                        <TouchableOpacity style={styles.btns2} onPress={() => handleAdv()}><Text style={styles.text}>HANDEL</Text></TouchableOpacity></View> : null}
+                {adv.adStatus === "Pending" && adv.handledBy === firebase.auth().currentUser.uid && offers.length > 0 ?
+                    <View style={styles.adminSe}>
+                        <ScrollView style={{ height: "15%"}}>
+                            {offers.map((o, index) =>
+                                <Text style={styles.list}>OFFER NO.{index + 1}{"\n"}FROM: {o.startDate} TO: {o.endDate} {"\n"}OFFERED AMOUNT: {o.offeredAmount} QR {"\n"}UPDATED ON: {o.date}</Text>
+                            )}
+                        </ScrollView>
+                        {
+                            offers[offers.length - 1].feedback == "" ?
+                                <View>
+                                    <TextInput
+                                        value={feedback}
+                                        placeholder={"ADD A FEEDBACK"}
+                                        onChangeText={(text) => setFeedBack(text)}
+                                        style={styles.feedbackBox}
+                                        multiline
+                                    />
 
-                                    <TouchableOpacity style={styles.btns2} onPress={() => sendFeedback()} disabled={!feedback}><Text style={styles.text}>Add Feedback</Text></TouchableOpacity>
-                                    <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Approved")} ><Text style={styles.text}>Approve</Text></TouchableOpacity>
-                                    <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Declined")} ><Text style={styles.text}>Decline</Text></TouchableOpacity>
+                                    <View style={styles.box}> 
+
+                                        <TouchableOpacity style={styles.btns2} onPress={() => sendFeedback()} disabled={!feedback}><Text style={styles.text}>Add Feedback</Text></TouchableOpacity>
+                                        <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Approved")} ><Text style={styles.text}>Approve</Text></TouchableOpacity>
+                                        <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Declined")} ><Text style={styles.text}>Decline</Text></TouchableOpacity>
+
+                                     </View> 
 
                                 </View>
-                            </View>
-                    }
+                                :
+                                <View>
+                                    <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Approved")} ><Text style={styles.text}>Approve</Text></TouchableOpacity>
+                                    <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Declined")} ><Text style={styles.text}>Decline</Text></TouchableOpacity>
+                                </View>
+                        }
 
-                </View>
-                : null}
+                    </View>
+                    : null}
+            
         </View>
 
     )
@@ -144,7 +158,7 @@ const styles = StyleSheet.create({
         padding: 5,
         width: "30%",
         marginLeft: 10,
-        height: 50,
+        height: "auto",
         fontSize: 20,
         borderColor: "black",
         borderRadius: 5
@@ -162,40 +176,43 @@ const styles = StyleSheet.create({
     list: {
         marginLeft: "auto",
         marginRight: "auto",
-        backgroundColor: "#F5F5DC",
+        backgroundColor: "#F0FFF0",
         padding: 5,
         width: "90%",
         marginBottom: 4,
         height: 82,
         fontSize: 15,
-        borderColor: "#F0E68C",
+        borderColor: "#66CDAA",
         borderBottomWidth: 4,
         borderRadius: 5
     },
     feedbackBox: {
-        padding: 5,
+        
         borderWidth: 1,
-        borderColor:"#5F9EA0",
-        height: "20%",
-        marginTop: "5%",
+        borderColor: "#5F9EA0",
+        height: "40%",
+        marginTop: "2%",
         marginBottom: "5%",
         width: "85%",
         marginLeft: "auto",
         marginRight: "auto"
     },
-    title:{
-        fontSize:30,
+    title: {
+        fontSize: 30,
         color: "#5F9EA0",
-        width:"90%",
+        width: "90%",
         marginLeft: "auto",
         marginRight: "auto"
 
     },
-    email:{
-        fontSize:20,
+    email: {
+        fontSize: 20,
         color: "#5F9EA0",
-        width:"90%",
+        width: "90%",
         marginLeft: "auto",
         marginRight: "auto"
+    },
+    adminSe:{
+        //borderWidth:1
     }
 });

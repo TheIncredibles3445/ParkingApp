@@ -40,7 +40,7 @@ export default function AdvertisementDetails(props) {
   const updateOffer = () =>{
     db.collection("Advertisement").doc(item.id).collection("offers").doc(offers.length + 1+"").set({ date: moment().format() ,startDate,
       endDate,
-      offeredAmount })
+      offeredAmount , feedback:""})
   }
 
   return (
@@ -60,8 +60,12 @@ export default function AdvertisementDetails(props) {
         Link: {item.link}
       </Text>
       <Text style={{ marginLeft: 10, marginRight: 30 }}>
-        Image: {item.photoURL}
+        Image: 
       </Text>
+      <Image
+          style={{ width: 150, height: 150 }}
+          source={{ uri: item.photoURL }}
+        />
 
       <View>
         {
