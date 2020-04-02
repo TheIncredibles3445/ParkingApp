@@ -33,7 +33,7 @@ export default function Parking(props) {
           parkings.push({ id: doc.id, ...doc.data() });
         });
         setParkingSpots([...parkings]);
-        console.log("frind", friend);
+        console.log("frinddddd", friend);
       });
   }, []);
 

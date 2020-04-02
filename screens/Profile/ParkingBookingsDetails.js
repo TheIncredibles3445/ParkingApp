@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
 import { Text, Button, Icon } from "react-native-elements";
 import db from "../../db";
@@ -15,27 +15,29 @@ export default function ParkingBookingsDetails(props) {
   const [parkingName, setParkingName] = useState();
   const [gateNumber, setGateNumber] = useState();
 
-  const getParkingName = async () => {
-    db.collection("Block").onSnapshot(querySnapShot => {
+  const getParkingId = async () => {
+    await db.collection("Block").onSnapshot(querySnapShot => {
       const all = [];
       querySnapShot.forEach(doc => {
         all.push({ id: doc.id, ...doc.data() });
       });
-      console.log("all", all);
       for (let i = 0; i < all.length; i++) {
         setBlockId(all[i].id);
         setGateNumber(all[i].name);
-        console.log("all  ffffid", all[i].id);
+        
       }
     });
-    db.collection("Block")
+  };
+  const getparkingName = async () => {
+    await db
+      .collection("Block")
       .doc(blockId)
       .collection("Parking")
       .onSnapshot(querySnapShot => {
         const all = [];
+        const p = [];
         querySnapShot.forEach(doc => {
           all.push({ id: doc.id, ...doc.data() });
-          console.log("all  ffdfgdsfffss", all);
         });
         for (let i = 0; i < all.length; i++) {
           setParkingName(all[i].name);
@@ -57,9 +59,7 @@ export default function ParkingBookingsDetails(props) {
         setDetails([...all]);
       });
   };
-  const timeToRate = (stimes, id) => {
-    console.log("ddccf", stimes);
-  };
+
   const ratingCompleted = async (rating, id) => {
     //console.log("rating", rating, "id", id);
     setRating(rating);
@@ -71,9 +71,10 @@ export default function ParkingBookingsDetails(props) {
   };
 
   useEffect(() => {
-    getParkingName();
-    BookingsDetailsDB("SSS");
-  }, []);
+    getParkingId();
+    BookingsDetailsDB();
+    getparkingName();
+  }, [parkingName]);
 
   return (
     <View>
@@ -87,10 +88,9 @@ export default function ParkingBookingsDetails(props) {
       >
         Parking Booking Details
       </Text>
-
-      {details.map(item => {
-        return (
-          <ScrollView>
+      <ScrollView>
+        {details.map(item => {
+          return (
             <View key={item.id} style={{ marginBottom: 50 }}>
               <Text
                 style={{
@@ -113,7 +113,7 @@ export default function ParkingBookingsDetails(props) {
                 Start time:<Text>{item.startTime}</Text> -{" "}
                 <Text>End time: {item.endTime}</Text>
               </Text>
-              <Text>{timeToRate(item.startTime, item.id)}</Text>
+
               {item.rating > 0 ? (
                 <Rating
                   readonly
@@ -135,9 +135,9 @@ export default function ParkingBookingsDetails(props) {
                 />
               )}
             </View>
-          </ScrollView>
-        );
-      })}
+          );
+        })}
+      </ScrollView>
     </View>
   );
 }

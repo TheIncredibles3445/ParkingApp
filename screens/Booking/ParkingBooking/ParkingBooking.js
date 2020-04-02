@@ -43,9 +43,10 @@ export default function ParkingBooking(props) {
         querySnapShot.forEach(doc => {
           friends.push({ id: doc.id, ...doc.data() });
         });
-        // console.log("my frienxxdss", friends);
+     
         //console.log("one and only", friends.id);
         setFriendsList(friends);
+        console.log("my frienxxdss", friendsList);
       });
   }, []);
 

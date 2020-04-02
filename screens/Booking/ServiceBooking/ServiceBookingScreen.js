@@ -79,6 +79,7 @@ export default function ServiceBookingScreen(props) {
 
   useEffect(() => {
     if (selectedBlock) {
+      console.log(selectedBlock.id)
       db.collection("Block")
         .doc(selectedBlock.id)
         .collection("Parking")
@@ -89,6 +90,7 @@ export default function ServiceBookingScreen(props) {
           });
           setParking([...parking]);
         });
+        console.log("here in 92",parking)
     } else {
       setParking([]);
     }
@@ -128,8 +130,7 @@ export default function ServiceBookingScreen(props) {
       `3:00 PM ${moment().format("YYYY-MM-DD")}`,
       `3:30 PM ${moment().format("YYYY-MM-DD")}`,
       `4:00 PM ${moment().format("YYYY-MM-DD")}`,
-      `4:30 PM ${moment().format("YYYY-MM-DD")}`,
-      `5:00 PM ${moment().format("YYYY-MM-DD")}`
+   
     ];
     if (minute > 30 && parseInt(hour) !== 12) {
       startTime = nextHour + ":00";
@@ -148,6 +149,7 @@ export default function ServiceBookingScreen(props) {
       }
     }
     finalTimingList.current = timingsForBooking;
+    console.log("final list", finalTimingList.current)
   };
 
   const filterAvailableTimings = () => {

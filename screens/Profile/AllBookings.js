@@ -45,9 +45,9 @@ export default function AllBookings(props) {
       >
         My Bookings
       </Text>
-      {allBookings.map(item => {
-        return item.userId === firebase.auth().currentUser.uid ? (
-          <ScrollView key={item.id}>
+      <ScrollView>
+        {allBookings.map(item => {
+          return item.userId === firebase.auth().currentUser.uid ? (
             <View key={item.id}>
               {console.log("item.type", item.type)}
               <TouchableOpacity
@@ -96,9 +96,9 @@ export default function AllBookings(props) {
                 </View>
               </TouchableOpacity>
             </View>
-          </ScrollView>
-        ) : null;
-      })}
+          ) : <Text>No booking</Text>;
+        })}
+      </ScrollView>
     </View>
   );
 }
