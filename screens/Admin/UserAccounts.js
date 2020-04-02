@@ -164,4 +164,4 @@ const styles = StyleSheet.create({
     box:{backgroundColor:"#FFFAFA" , padding:5 , flexDirection:"row"},
     user:{backgroundColor: "#F0FFF0" , padding:5 , width:"50%" ,  alignItems:"center" },
     search:{backgroundColor: "#DCDCDC" , padding:5 , width:"50%" ,  alignItems:"center" }
-})
+});
