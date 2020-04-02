@@ -6,442 +6,204 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { Card } from "react-native-shadow-cards";
 import moment from "moment";
-// import * as Animatable from "react-native-animatable";
 import { Col, Grid } from "react-native-easy-grid";
 
-// export default function Checkout(props) {
-//   const [bookings, setBookings] = useState([]);
-//   const [bookedParking, setBookedParking] = useState([]);
-//   const [bookedService, setBookedService] = useState([]);
-//   const [totalPrice, setTotalPrice] = useState(0);
-//   const [flag, setFlag] = useState(false);
-
-//   const tableHeader = ["Start Time", "End Time", "Price"];
-
-//   const getUserBookings = async () => {
-//     let date = "";
-//     if (new Date().getMonth() + 1 < 10) {
-//       date = `${new Date().getFullYear()}-0${new Date().getMonth() +
-//         1}-${new Date().getDate()}`;
-//     } else {
-//       date = `${new Date().getFullYear()}-${new Date().getMonth() +
-//         1}-${new Date().getDate()}`;
-//     }
-
-//     db.collection("booking")
-//       .where("userId", "==", firebase.auth().currentUser.uid)
-//       .where("date", "==", date)
-//       .onSnapshot(querySnapshot => {
-//         let booking = [];
-//         querySnapshot.forEach(async doc => {
-//           let data = { id: doc.id, ...doc.data() };
-//           booking.push(data);
-//           let total = 0;
-//           booking.map(item => (total += item.total_price));
-//           setTotalPrice(total);
-//           setBookings(booking);
-//         });
-//       });
-//   };
-
-//   const getParkings = () => {
-//     bookings.map(item => {
-//       db.collection("booking")
-//         .doc(item.id)
-//         .collection("parking_booking")
-//         .onSnapshot(querySnap => {
-//           let parking = [];
-//           querySnap.forEach(doc => {
-//             parking.push({
-//               id: doc.id,
-//               ...doc.data(),
-//               price: item.total_price
-//             });
-//           });
-//           console.log(parking);
-//           setBookedParking(parking);
-//         });
-//     });
-//   };
-
-//   const getService = () => {
-//     bookings.map(item => {
-//       db.collection("booking")
-//         .doc(item.id)
-//         .collection("service_booking")
-//         .onSnapshot(querySnap => {
-//           let service = [];
-//           querySnap.forEach(doc => {
-//             service.push({ id: doc.id, ...doc.data() });
-//           });
-//           setBookedService(service);
-//         });
-//     });
-//   };
-
-//   useEffect(() => {
-//     async function fetchData() {
-//       await getUserBookings();
-//       getParkings();
-//       getService();
-//     }
-
-//     fetchData();
-//   }, []);
-
-//   useEffect(() => {
-//     setFlag(!flag);
-//   }, [bookedParking]);
-
-//   return (
-//     <ScrollView>
-//       <View style={{ flex: 1, alignItems: "center", marginTop: 10 }}>
-//         <Text h4>Checkout</Text>
-//       </View>
-//       <View style={{ flex: 5 }}>
-//         <View style={{ flex: 1 }}>
-//           <Text
-//             style={{
-//               fontWeight: "bold",
-//               fontSize: 15,
-//               opacity: 0.7
-//             }}
-//           >
-//             Booking Details
-//           </Text>
-//           <Text
-//             style={{
-//               fontWeight: "bold",
-//               fontSize: 15,
-//               opacity: 0.7
-//             }}
-//           >
-//             Total Price: <Text>{totalPrice}</Text>
-//           </Text>
-//         </View>
-
-//         <View style={{ alignItems: "center", flex: 5 }}>
-//           {/* <Card style={{ padding: 15 }}> */}
-//           {/* <View
-//               style={{
-//                 alignItems: "center"
-//               }}
-//             > */}
-//           <Text
-//             style={{
-//               fontWeight: "bold",
-//               fontSize: 15,
-//               opacity: 0.7
-//             }}
-//           >
-//             Booked Date: <Text>{moment().format("YYYY-MM-DD")}</Text>
-//           </Text>
-
-//           <Text
-//             style={{
-//               fontWeight: "bold",
-//               fontSize: 15,
-//               opacity: 0.7
-//             }}
-//           >
-//             Booking Type: <Text>Parking</Text>
-//           </Text>
-//           {/* </View> */}
-//           <Grid>
-//             <Col>
-//               <Text style={{ textAlign: "center" }}>Start Time</Text>
-//             </Col>
-//             <Col>
-//               <Text style={{ textAlign: "center" }}>End Time</Text>
-//             </Col>
-//             <Col>
-//               <Text style={{ textAlign: "center" }}>Price</Text>
-//             </Col>
-//           </Grid>
-
-//           {bookedParking.map(item => (
-//             <Grid>
-//               <Col>
-//                 <Text style={{ textAlign: "center" }}>Hello</Text>
-//               </Col>
-//               <Col>
-//                 <Text style={{ textAlign: "center" }}>World</Text>
-//               </Col>
-//               <Col>
-//                 <Text style={{ textAlign: "center" }}>Wasim</Text>
-//               </Col>
-//             </Grid>
-//           ))}
-
-//           <Text
-//             style={{
-//               fontWeight: "bold",
-//               fontSize: 15,
-//               opacity: 0.7
-//             }}
-//           >
-//             Booking Type: <Text>Service</Text>
-//           </Text>
-//           {/* </View> */}
-//           <Grid>
-//             <Col>
-//               <Text style={{ textAlign: "center" }}>Start Time</Text>
-//             </Col>
-//             <Col>
-//               <Text style={{ textAlign: "center" }}>End Time</Text>
-//             </Col>
-//             <Col>
-//               <Text style={{ textAlign: "center" }}>Price</Text>
-//             </Col>
-//             <Col>
-//               <Text style={{ textAlign: "center" }}>Worker</Text>
-//             </Col>
-//           </Grid>
-
-//           {bookedService.map(item => (
-//             <Grid>
-//               <Col>
-//                 <Text style={{ textAlign: "center" }}>Hello</Text>
-//               </Col>
-//               <Col>
-//                 <Text style={{ textAlign: "center" }}>World</Text>
-//               </Col>
-//               <Col>
-//                 <Text style={{ textAlign: "center" }}>Wasim</Text>
-//               </Col>
-//             </Grid>
-//           ))}
-
-//           {/* <Grid>
-//               {tableHeader.map(head => (
-//                 <Col>
-//                   <Text style={{ textAlign: "center" }}>{head}</Text>
-//                 </Col>
-//               ))}
-//             </Grid>
-//             <View style={{ flexDirection: "row" }}>
-//               <Grid>
-//                 <View>
-//                   <Col>
-//                     <Text style={{ textAlign: "center" }}>Hello</Text>
-//                   </Col>
-//                   <Col>
-//                     <Text style={{ textAlign: "center" }}>World</Text>
-//                   </Col>
-//                   <Col>
-//                     <Text style={{ textAlign: "center" }}>Wasim</Text>
-//                   </Col>
-//                 </View>
-//               </Grid>
-//             </View> */}
-//           {/* </Card> */}
-//         </View>
-//       </View>
-//     </ScrollView>
-//   );
-// }
-
-// Checkout.navigationOptions = {
-//   title: "Checkout"
-// };
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
-//   head: { height: 40, backgroundColor: "#f1f8ff" },
-//   text: { margin: 6 }
-// });
-
-// {
-//   /* <Animatable.View duration={2000}>
-//           <Animatable.Text duration={2000} easing="ease-in" animation="fadeIn">
-//             lorem ipsium
-//           </Animatable.Text>
-//           <Animatable.Text duration={2000} easing="ease-in" animation="fadeIn">
-//             lorem ipsium
-//           </Animatable.Text>
-//           <Animatable.Text duration={2000} easing="ease-in" animation="fadeIn">
-//             lorem ipsium
-//           </Animatable.Text>
-//         </Animatable.View> */
-// }
-
 export default function Checkout(props) {
+  const blockId = props.navigation.getParam("blockId", "No params");
+  const parkingId = props.navigation.getParam("parkingId", "No params");
   const [booking, setBooking] = useState([]);
   const [parkingBookings, setParkingBookings] = useState([]);
   const [serviceBookings, setServiceBookings] = useState([]);
   const [total, setTotal] = useState(0);
+  const [allParkingsLots, setAllParkings] = useState([]);
 
   useEffect(() => {
     getParkingBookings();
-    //db.collection("booking").
-    // .firestore.collection("parking_booking")
-    // .onSnapshot(query => {
-    //   let park = [];
-    //   //console.log("doc", query);
-
-    //   query.forEach(doc => {
-    //     console.log("doc", doc.data());
-    //     park.push({ id: doc.id, ...doc.data() });
-    //   });
-    //   //console.log(park);
-    //   setParkingBookings(park);
-    // });
-
-    // db.collection("booking")
-    //   .where("userId", "==", firebase.auth().currentUser.uid)
-    //   .where("date", "==", moment().format("YYYY-MM-DD"))
-    //   .onSnapshot(querySnap => {
-    //     let allBookings = [];
-    //     querySnap.forEach(doc => {
-    //       allBookings.push({ id: doc.id, ...doc.data() });
-    //     });
-
-    //     allBookings.map(item => {
-    //       db.collection("booking")
-    //         .doc(item.id)
-    //         .collection("parking_booking")
-    //         .onSnapshot(query => {
-    //           const allParking = [];
-    //           query.forEach(park => {
-    //             allParking.push({ id: park.id, ...park.data() });
-    //           });
-    //           setParkingBookings(allParking)
-    //         });
-    //     });
-    //   });
+    getTotalAmount();
+    getServiceBookings();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("object");
-  // });
+  const getTotalAmount = () => {
+    db.collection("booking")
+      .where("date", "==", moment().format("YYYY-MM-DD"))
+      .where("userId", "==", firebase.auth().currentUser.uid)
+      .onSnapshot(querySnap => {
+        let total = 0;
+        querySnap.forEach(doc => {
+          let data = doc.data();
+          total += data.total_price;
+        });
+        setTotal(total);
+      });
+  };
+
+  const getAllBlocks = async () => {
+    const blocks = await db.collection("Block").get();
+    let parkings = [];
+    for (let block of blocks.docs) {
+      const parkingsLots = await db
+        .collection("Block")
+        .doc(block.id)
+        .collection("Parking")
+        .get();
+      for (let parking of parkingsLots.docs) {
+        parkings.push({
+          block: block.id,
+          parkingId: parking.id,
+          ...parking.data()
+        });
+      }
+    }
+    setAllParkings(parkings);
+  };
 
   const getParkingBookings = async () => {
     db.collection("booking")
+      .where("userId", "==", firebase.auth().currentUser.uid)
+      .where("date", "==", moment().format("YYYY-MM-DD"))
       .where("type", "==", "Parking")
-      .get()
-      .then(query => {
-        let parkings = [];
-        query.forEach(doc => {
-          const data = { id: doc.id, ...doc.data() };
+      .onSnapshot(querySnapshot => {
+        let parkingBooking = [];
+        for (let book of querySnapshot.docs) {
           db.collection("booking")
-            .doc(data.id)
+            .doc(book.id)
             .collection("parking_booking")
-            .onSnapshot(q => {
-              let p = parkingBookings;
-              q.forEach(d => {
-                p.push(...p, {
-                  id: d.id,
-                  ...d.data(),
-                  price: data.total_price
+            .onSnapshot(query => {
+              for (let park of query.docs) {
+                parkingBooking.push({
+                  id: park.id,
+                  ...park.data(),
+                  bookingId: book.id,
+                  price: book.data().total_price
                 });
-              });
-              setParkingBookings(p);
+              }
+              if (parkingBooking.length === querySnapshot.docs.length) {
+                setParkingBookings([...parkingBooking]);
+              }
             });
-        });
+        }
       });
+
+    // const bookingsRef = db.collection("booking");
+    // const todaysBookings = await bookingsRef
+    //   .where("date", "==", moment().format("YYYY-MM-DD"))
+    //   .where("type", "==", "Parking")
+    //   .get();
+    // let allParkings = [];
+    // for (let item of todaysBookings.docs) {
+    //   let data = item.data();
+    //   let parkingRef = await bookingsRef
+    //     .doc(item.id)
+    //     .collection("parking_booking")
+    //     .get();
+    //   for (let parking of parkingRef.docs) {
+    //     let pData = parking.data();
+    //     // let p = null;
+    //     // allParkingsLots.map(lot => {
+    //     //   if (lot.parkingId === pData.parkingId) {
+    //     //     p = lot;
+    //     //   }
+    //     //   // console.log("line 78 ==> ", p);
+    //     // }) ;
+    //     allParkings.push({
+    //       id: parking.id,
+    //       ...parking.data(),
+    //       price: data.total_price
+    //       // parking: p.name
+    //     });
+    //   }
+    // }
+    // setParkingBookings(allParkings);
   };
-  // const getAllBookings = async () => {
-  //   const date = moment().format("YYYY-MM-DD");
-  //   await db
-  //     .collection("booking")
-  //     .where("userId", "==", firebase.auth().currentUser.uid)
-  //     .where("date", "==", date)
-  //     .onSnapshot(querySnapshot => {
-  //       let bookin = [];
-  //       let total = 0;
-  //       querySnapshot.forEach(async doc => {
-  //         bookin.push({ id: doc.id, ...doc.data() });
-  //       });
-  //       getParkingBookings(bookin);
-  //       getServiceBookings(bookin);
-  //       bookin.map(item => (total += item.total_price));
-  //       setTotal(total);
-  //       setBooking([...bookin]);
-  //     });
-  // };
 
-  // const getParkingBookings = async booking => {
-  //   console.log("getParkingBookings", booking);
+  const getServiceBookings = async () => {
+    const bookingsRef = db.collection("booking");
+    bookingsRef
+      .where("date", "==", moment().format("YYYY-MM-DD"))
+      .where("userId", "==", firebase.auth().currentUser.uid)
+      .where("type", "==", "Service")
+      .onSnapshot(querySnapshot => {
+        let allServiceBookings = [];
+        for (let book of querySnapshot.docs) {
+          db.collection("booking")
+            .doc(book.id)
+            .collection("service_booking")
+            .onSnapshot(async query => {
+              for (let serviceBook of query.docs) {
+                let serviceData = serviceBook.data();
+                let worker = (
+                  await db
+                    .collection("users")
+                    .doc(serviceData.worker)
+                    .get()
+                ).data();
+                let serviceInfo = (
+                  await db
+                    .collection("service")
+                    .doc(serviceData.service_id)
+                    .get()
+                ).data();
 
-  //   let tempParking = [];
-  //   let tempService = [];
-  //   booking.map(item => {
-  //     item.type === "Parking"
-  //       ? db
-  //           .collection("booking")
-  //           .doc(item.id)
-  //           .collection("parking_booking")
-  //           .onSnapshot(query => {
-  //             let parking = [];
-  //             query.forEach(doc => {
-  //               parking.push({
-  //                 id: doc.id,
-  //                 ...doc.data(),
-  //                 price: item.total_price
-  //               });
-  //             });
-  //             if (parking.length !== 0) tempParking.push(parking[0]);
-  //           })
-  //       : db
-  //           .collection("booking")
-  //           .doc(item.id)
-  //           .collection("service_booking")
-  //           .onSnapshot(query => {
-  //             let service = [];
-  //             query.forEach(doc => {
-  //               service.push({
-  //                 id: doc.id,
-  //                 ...doc.data(),
-  //                 price: item.total_price
-  //               });
-  //             });
-  //             if (service.length !== 0) tempService.push(service[0]);
-  //             setServiceBookings(tempService);
-  //           });
+                let time = serviceData.time;
+                let timeArr = time.split(" ");
+                let formattedTime = `${timeArr[0]} ${timeArr[1]}`;
+                serviceData.time = formattedTime;
+                allServiceBookings.push({
+                  id: serviceBook.id,
+                  ...serviceData,
+                  price: book.data().total_price,
+                  worker: worker.name,
+                  service: serviceInfo.Name
+                });
+              }
+              if (allServiceBookings.length === querySnapshot.docs.length) {
+                setServiceBookings([...allServiceBookings]);
+              }
+            });
+        }
+      });
+    // let allServices = [];
+    // for (let item of todaysBookings.docs) {
+    //   let data = item.data();
+    //   let serviceRef = await bookingsRef
+    //     .doc(item.id)
+    //     .collection("service_booking")
+    //     .get();
+    //   for (let service of serviceRef.docs) {
+    //     let serviceData = service.data();
+    //     let worker = (
+    //       await db
+    //         .collection("users")
+    //         .doc(serviceData.worker)
+    //         .get()
+    //     ).data();
+    //     let serviceInfo = (
+    //       await db
+    //         .collection("service")
+    //         .doc(serviceData.service_id)
+    //         .get()
+    //     ).data();
 
-  //     setParkingBookings(tempParking);
-  //   });
-
-  //   //let tempService = [];
-  //   booking.map(item => {
-  //     db.collection("booking")
-  //       .doc(item.id)
-  //       .collection("service_booking")
-  //       .onSnapshot(query => {
-  //         let service = [];
-  //         query.forEach(doc => {
-  //           service.push({
-  //             id: doc.id,
-  //             ...doc.data(),
-  //             price: item.total_price
-  //           });
-  //         });
-  //         if (service.length !== 0) tempService.push(service[0]);
-  //         setServiceBookings(tempService);
-  //       });
-  //   });
-  // };
-
-  // const getServiceBookings = async booking => {
-  //   console.log("getServiceBookings", booking);
-  // };
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     await getAllBookings();
-  //     // console.log("fetchData", booking);
-
-  //     // getParkingBookings();
-  //     // getServiceBookings();
-  //   }
-
-  //   fetchData();
-  // }, []);
+    //     let time = serviceData.time;
+    //     let timeArr = time.split(" ");
+    //     let formattedTime = `${timeArr[0]} ${timeArr[1]}`;
+    //     serviceData.time = formattedTime;
+    //     allServices.push({
+    //       id: service.id,
+    //       ...serviceData,
+    //       price: data.total_price,
+    //       worker: worker.name,
+    //       service: serviceInfo.Name
+    //     });
+    //   }
+    // }
+    // setServiceBookings(allServices);
+  };
 
   const handlePayLater = () => {
     Alert.alert(
       "Confirm Booking",
-      "Are you sure you want to pay  later?",
+      "Are you sure you want to pay later?",
       [
         {
           text: "Cancel",
@@ -462,7 +224,31 @@ export default function Checkout(props) {
         points: 20,
         pendingAmount: total
       });
-    props.navigation.navigate("Home");
+
+    handleNavigationAlert();
+  };
+
+  const handleNavigationAlert = () => {
+    Alert.alert(
+      "Navigation",
+      "Do You Want The Direction For Your Latest Booking?",
+      [
+        {
+          text: "No",
+          onPress: () => props.navigation.navigate("Home"),
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: () =>
+            props.navigation.navigate("Direction", {
+              blockId: blockId,
+              parkingId: parkingId
+            })
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -487,31 +273,38 @@ export default function Checkout(props) {
               Booking Type: <Text>Parking</Text>
             </Text>
             <Grid>
+              {/* <Col>
+                <Text style={styles.text2}>Parking Spot</Text>
+              </Col> */}
               <Col>
                 <Text style={styles.text2}>Start Time</Text>
               </Col>
               <Col>
                 <Text style={styles.text2}>End Time</Text>
               </Col>
-              {/* <Col>
+              <Col>
                 <Text style={styles.text2}>Price</Text>
-              </Col> */}
+              </Col>
             </Grid>
-            {console.log("from render", parkingBookings)
-            // parkingBookings.map(item => (
-            //   <Grid>
-            //     <Col>
-            //       <Text style={{ textAlign: "center" }}>{item.startTime}</Text>
-            //     </Col>
-            //     <Col>
-            //       <Text style={{ textAlign: "center" }}>{item.endTime}</Text>
-            //     </Col>
-            //     {/* <Col>
-            //         <Text style={{ textAlign: "center" }}>{item.price}</Text>
-            //       </Col> */}
-            //   </Grid>
-            // ))
-            }
+            {parkingBookings &&
+              parkingBookings.map(item => (
+                <Grid>
+                  {/* <Col>
+                  <Text style={{ textAlign: "center" }}>{item.parking}</Text>
+                </Col> */}
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>
+                      {item.startTime}
+                    </Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.endTime}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.price}</Text>
+                  </Col>
+                </Grid>
+              ))}
           </Card>
           <Card style={{ padding: 15, marginTop: 10 }}>
             <Text style={styles.text2}>
@@ -532,22 +325,23 @@ export default function Checkout(props) {
               </Col>
             </Grid>
 
-            {serviceBookings.map(item => (
-              <Grid>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.Service}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.Worker}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.price}</Text>
-                </Col>
-                <Col>
-                  <Text style={{ textAlign: "center" }}>{item.time}</Text>
-                </Col>
-              </Grid>
-            ))}
+            {serviceBookings &&
+              serviceBookings.map(item => (
+                <Grid>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.service}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.worker}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.price}</Text>
+                  </Col>
+                  <Col>
+                    <Text style={{ textAlign: "center" }}>{item.time}</Text>
+                  </Col>
+                </Grid>
+              ))}
           </Card>
         </View>
       </View>
@@ -563,7 +357,12 @@ export default function Checkout(props) {
           icon={<Icon type="material" name="payment" size={25} color="white" />}
           iconLeft
           title="Pay Now"
-          onPress={() => props.navigation.navigate("Payment")}
+          onPress={() =>
+            props.navigation.navigate("Payment", {
+              blockId: blockId,
+              parkingId: parkingId
+            })
+          }
           //buttonStyle={{ width: "30%" }}
         />
 

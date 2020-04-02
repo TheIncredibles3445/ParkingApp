@@ -23,7 +23,7 @@ export default function SettingsScreen(props) {
   };
 
   useEffect(() => {
-    console.log(firebase.auth().currentUser);
+    // console.log(firebase.auth().currentUser);
     askPermission();
   }, []);
 

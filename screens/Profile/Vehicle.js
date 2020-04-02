@@ -17,7 +17,7 @@ export default function Vehicle(props) {
   const [userVehicles, setUserVehicles] = useState([]);
 
   useEffect(() => {
-    db.collection("Users")
+    db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Vehicles")
       .onSnapshot(querySnapshot => {

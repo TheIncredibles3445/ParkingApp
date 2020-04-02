@@ -5,7 +5,6 @@ import DatePicker from "react-native-datepicker";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-
 import {
   Modal,
   TouchableOpacity,
@@ -18,74 +17,42 @@ import {
 import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
-export default function HomeScreen(props) {
-  // const [messages, setMessages] = useState([]);
-  // const [to, setTo] = React.useState("");
-  // const [text, setText] = React.useState("");
-  // const [id, setId] = React.useState("");
 
+export default function HomeScreen(props) {
   //============================ START DATE AND TIME ============================
 
-  const [user, setUser] = useState(null);
-
-  // const [startTime, setStartTime] = useState("00:00");
-
-  // const [endTime, setEndTime] = useState("00:00");
-  // const [selectedBlock, setSelectedBlock] = useState(null);
-  // const [blocks, setBlocks] = useState([]);
+  const [isVerified, setIsVerified] = useState(true);
 
   useEffect(() => {
-    // db.collection("users").onSnapshot(querySnapshot => {
-    //   // let blcks = [];
-    //   // querySnapshot.forEach(doc => {
-    //   //   blcks.push({ id: doc.id, ...doc.data(), isSelected: false });
-    //   // });
-    //   // // console.log(" Blocks: ", blcks);
-    //   // // console.log(blcks);
-    //   // setBlocks([...blcks]);
-    // });
+    // const user = firebase.auth().currentUser;
+    // if (!user.emailVerified) {
+    //   user
+    //     .sendEmailVerification()
+    //     .then(function() {
+    //       alert("Verify your email!");
+    //     })
+    //     .catch(function(error) {
+    //       console.log("Error", error);
+    //     });
+    // }
+    // console.log(user);
+    // setIsVerified(user.emailVerified);
   }, []);
 
-  const getUser = async () => {
-    const loggedInUser = await db
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    const data = { id: loggedInUser.id, ...loggedInUser.data() };
-    setUser(data);
-  };
-
-  // useEffect(() => {}, [selectedBlock]);
-
-  // const handleSelectedBlock = (item, index) => {
-  //   //console.log(item);
-  //   let tempBlocks = blocks;
-  //   tempBlocks.map(tempItem => {
-  //     if (tempItem.isSelected) {
-  //       tempItem.isSelected = false;
-  //     }
-  //   });
-  //   tempBlocks[index].isSelected = true;
-  //   setSelectedBlock(item);
-  //   setBlocks(tempBlocks);
+  // const getUser = async () => {
+  //   const loggedInUser = await db
+  //     .collection("users")
+  //     .doc(firebase.auth().currentUser.uid)
+  //     .get();
+  //   const data = { id: loggedInUser.id, ...loggedInUser.data() };
+  //   setUser(data);
   // };
 
-  // const handleBooking = () => {
-  //   if (startTime >= endTime) {
-  //     alert("End Time must be greater than Start Time");
-  //   } else if (startTime === "00:00") {
-  //     alert("Select Start Time");
-  //   } else if (selectedBlock === null) {
-  //     alert("Select a block");
-  //   } else {
-  //     const data = {
-  //       startTime: startTime,
-  //       endTime: endTime,
-  //       selectedBlock: selectedBlock
-  //     };
-
-  //     props.navigation.navigate("Parking", { data: data });
-  //   }
+  // const handleSend = async () => {
+  //   const response = await fetch(
+  //     "https://us-central1-parking-app-3b592.cloudfunctions.net/sendEmail"
+  //   );
+  //   console.log(response);
   // };
 
   return (
@@ -101,107 +68,46 @@ export default function HomeScreen(props) {
       >
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 30 }}>Welcome</Text>
-          {/* <Text style={{ fontSize: 30 }}>Book your desired Parking spot!</Text> */}
         </View>
         <View style={{ flex: 5 }}>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
             <TouchableOpacity
               style={{ width: "50%" }}
+              disabled={!isVerified}
               onPress={() => props.navigation.navigate("ParkingBooking")}
             >
               <Card
-                //containerStyle={{ width: "40%" }}
                 title="Parking Booking"
                 image={require("../assets/images/parking.png")}
                 imageWrapperStyle={{ padding: 15 }}
               ></Card>
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={!isVerified}
               style={{ width: "50%" }}
               onPress={() => props.navigation.navigate("ServiceBooking")}
             >
               <Card
                 title="Service Booking"
-                //containerStyle={{ width: "40%" }}
                 image={require("../assets/images/services.png")}
                 imageWrapperStyle={{ padding: 15 }}
               ></Card>
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={!isVerified}
               style={{ width: "50%" }}
               onPress={() => props.navigation.navigate("ReportScreen")}
             >
               <Card
-                // containerStyle={{ width: "40%" }}
                 title="Report"
                 image={require("../assets/images/report.png")}
                 imageWrapperStyle={{ padding: 15 }}
               ></Card>
             </TouchableOpacity>
           </View>
-
-          {/* <View style={{ flex: 2, alignItems: "center" }}>
-          <Text style={{ fontSize: 20 }}>SELECT START TIME</Text>
-          <DatePicker
-            style={{ width: "80%" }}
-            date={startTime}
-            mode="time"
-            format="hh:mm a"
-            showIcon={false}
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            // is24Hour={true}
-            onDateChange={time => setStartTime(time)}
-          />
-
-          <Text style={{ fontSize: 20 }}>SELECT END TIME</Text>
-          <DatePicker
-            style={{ width: "80%" }}
-            date={endTime}
-            mode="time"
-            showIcon={false}
-            format="hh:mm a"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            // is24Hour={true}
-            onDateChange={time => setEndTime(time)}
-          />
-        </View>
-        <View
-          style={{
-            flex: 4,
-            alignItems: "center",
-            justifyContent: "space-evenly"
-          }}
-        >
-          <Text style={{ fontSize: 20 }}>Select Block</Text>
-          {blocks.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleSelectedBlock(item, index)}
-            >
-              <View
-                style={item.isSelected ? styles.selected : styles.notSelected}
-              >
-                <Text>{item.name}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Button title="BOOK" onPress={() => handleBooking()} />
-        <Button title="Logout" onPress={() => handleLogout()} />
-        <Button
-          title="Navigate"
-          onPress={() =>
-            props.navigation.navigate(
-              "LinksStack",
-              {},
-              NavigationActions.navigate({ routeName: "LinksScreen" })
-            )
-          }
-        /> */}
-          {/* <Button title="Logout" onPress={() => handleLogout()} /> */}
+          {/* <View>
+            <Button title="Send Email" onPress={handleSend} />
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>

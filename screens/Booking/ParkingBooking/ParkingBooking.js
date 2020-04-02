@@ -20,11 +20,6 @@ import {
   StyleSheet
 } from "react-native";
 export default function ParkingBooking(props) {
-  // const [messages, setMessages] = useState([]);
-  // const [to, setTo] = React.useState("");
-  // const [text, setText] = React.useState("");
-  // const [id, setId] = React.useState("");
-
   //============================ START DATE AND TIME ============================
 
   const [startTime, setStartTime] = useState("00:00");
@@ -44,13 +39,11 @@ export default function ParkingBooking(props) {
     });
   }, []);
 
-
   const handleLogout = () => {
     firebase.auth().signOut();
   };
 
   const handleSelectedBlock = (item, index) => {
-    //console.log(item);
     let tempBlocks = blocks;
     tempBlocks.map(tempItem => {
       if (tempItem.isSelected) {
@@ -63,10 +56,23 @@ export default function ParkingBooking(props) {
   };
 
   const handleBooking = () => {
-    if (startTime >= endTime) {
-      alert("End Time must be greater than Start Time");
-    } else if (startTime === "00:00") {
+    if (startTime === "00:00") {
       alert("Select Start Time");
+    } else if (
+      startTime === "08:00 pm" ||
+      startTime === "09:00 pm" ||
+      startTime === "10:00 pm" ||
+      startTime === "11:00 pm"
+    ) {
+      alert("IT IS TOO LATE TO BOOK");
+    } else if (
+      startTime === "01:00 am" ||
+      startTime === "02:00 am" ||
+      startTime === "04:00 am" ||
+      startTime === "03:00 am" ||
+      startTime === "05:00 am"
+    ) {
+      alert("IT IS TOO EARLY TO BOOK");
     } else if (selectedBlock === null) {
       alert("Select a block");
     } else {
@@ -81,9 +87,8 @@ export default function ParkingBooking(props) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 20 }}>Welcome</Text>
+    <View style={{flex: 1}}>
+      <View style={{ flex: 1, alignItems: "center" }}>
         <Text style={{ fontSize: 20 }}>Book your desired Parking spot!</Text>
       </View>
       <View style={{ flex: 5 }}>
@@ -97,7 +102,10 @@ export default function ParkingBooking(props) {
             showIcon={false}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            // is24Hour={true}
+            is24Hour={true}
+            customStyles={{
+              datePickerCon: { color: "black" }
+            }}
             onDateChange={time => setStartTime(time)}
           />
 
@@ -110,7 +118,10 @@ export default function ParkingBooking(props) {
             format="hh:mm a"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            // is24Hour={true}
+            is24Hour={true}
+            customStyles={{
+              datePickerCon: { color: "black" }
+            }}
             onDateChange={time => setEndTime(time)}
           />
         </View>
@@ -149,7 +160,7 @@ export default function ParkingBooking(props) {
           }
         /> */}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
