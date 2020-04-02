@@ -54,7 +54,6 @@ export default function App(props) {
     return firebase.auth().onAuthStateChanged(setUser);
   }, []);
 
-  
   useEffect(() => {
     Dimensions.addEventListener("change", onChange);
     return () => {
@@ -70,10 +69,22 @@ export default function App(props) {
           firebase.auth().currentUser.uid
         }&email=${email}&displayName=${userName}`
       );
+
+      const user = firebase.auth().currentUser;
+      const verify = await user.sendEmailVerification();
+
       updateUserLogin();
     } else {
       alert("Enter All Credentials");
     }
+  };
+
+  const setUpUser = () => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .set({
+        lastLogin: new Date()
+      });
   };
 
   const handleShowRegister = value => {
@@ -92,8 +103,7 @@ export default function App(props) {
   const updateUserLogin = () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .set({
-        email: email,
+      .update({
         lastLogin: new Date()
       });
   };

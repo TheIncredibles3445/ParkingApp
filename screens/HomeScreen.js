@@ -5,7 +5,6 @@ import DatePicker from "react-native-datepicker";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-
 import {
   Modal,
   TouchableOpacity,
@@ -18,30 +17,26 @@ import {
 import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
-export default function HomeScreen(props) {
-  // const [messages, setMessages] = useState([]);
-  // const [to, setTo] = React.useState("");
-  // const [text, setText] = React.useState("");
-  // const [id, setId] = React.useState("");
 
+export default function HomeScreen(props) {
   //============================ START DATE AND TIME ============================
 
-  const [isVerified, setIsVerified] = useState(false);
+  const [isVerified, setIsVerified] = useState(true);
 
   useEffect(() => {
-    const user = firebase.auth().currentUser;
-    if (!user.emailVerified) {
-      user
-        .sendEmailVerification()
-        .then(function() {
-          alert("Verify your email!");
-        })
-        .catch(function(error) {
-          console.log("Error", error);
-        });
-    }
-    console.log(user);
-    setIsVerified(user.emailVerified);
+    // const user = firebase.auth().currentUser;
+    // if (!user.emailVerified) {
+    //   user
+    //     .sendEmailVerification()
+    //     .then(function() {
+    //       alert("Verify your email!");
+    //     })
+    //     .catch(function(error) {
+    //       console.log("Error", error);
+    //     });
+    // }
+    // console.log(user);
+    // setIsVerified(user.emailVerified);
   }, []);
 
   // const getUser = async () => {
@@ -51,6 +46,13 @@ export default function HomeScreen(props) {
   //     .get();
   //   const data = { id: loggedInUser.id, ...loggedInUser.data() };
   //   setUser(data);
+  // };
+
+  // const handleSend = async () => {
+  //   const response = await fetch(
+  //     "https://us-central1-parking-app-3b592.cloudfunctions.net/sendEmail"
+  //   );
+  //   console.log(response);
   // };
 
   return (
@@ -103,6 +105,9 @@ export default function HomeScreen(props) {
               ></Card>
             </TouchableOpacity>
           </View>
+          {/* <View>
+            <Button title="Send Email" onPress={handleSend} />
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>

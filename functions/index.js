@@ -1,6 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-// const nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 // const cors = require("cors")({ origin: true });
 admin.initializeApp(functions.config().firebase);
 
@@ -56,6 +56,31 @@ exports.addCard = functions.https.onCall(async (data, context) => {
       provider: data.provider,
       expiry: data.expiry
     });
+});
+
+exports.sendEmail = functions.https.onRequest(async (request, response) => {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: "boris.skiles@ethereal.email", // generated ethereal user
+      pass: "5cSeqg89n6DsZRCGHR" // generated ethereal password
+    }
+  });
+
+  console.log("transporter", transporter);
+
+  let info = await transporter.sendMail({
+    from: "wasimibrahim19@outlook.com>", // sender address
+    to: "wasimibrahim1992@gmail.com", // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello world?", // plain text body
+    html: "<b>Hello world?</b>" // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 });
 
 exports.initUser = functions.https.onRequest(async (request, response) => {
