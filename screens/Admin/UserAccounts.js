@@ -115,6 +115,9 @@ export default function UserAccounts(props) {
           <Picker.Item label="Worker" value="worker" />
           <Picker.Item label="Advertiser" value="Advertiser" />
         </Picker>
+        {/* <View>
+           <Button title="search" onPress={()=>filter()}/> 
+           </View> */}
       </View>
 
       {filteredUsers.length > 0 ? (
