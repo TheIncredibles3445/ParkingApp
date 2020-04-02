@@ -99,7 +99,6 @@ export default function Parking(props) {
       });
   }, []);
 
-  
   const convertTime = time => {
     const splitTime = time.split(" ");
     if (splitTime[1] === "pm") {
@@ -132,7 +131,6 @@ export default function Parking(props) {
       return new Date(moment().format("YYYY-MM-DDT" + `${splitTime[0]}:00`));
     }
   };
-
 
   const handleModal = item => {
     Alert.alert(
