@@ -24,11 +24,6 @@ export default function Parking(props) {
   const [cars, setCars] = useState([]);
   const [parkingBookings, setParkingBookings] = useState([]);
   const [flag, setFlag] = useState(false);
-  
-  const [cars, setCars] = useState([]);
-  const [parkingBookings, setParkingBookings] = useState([]);
-  const [flag, setFlag] = useState(false);
-
   // const [token, setToken] = useState(null);
   useEffect(() => {
     getAllParking();
