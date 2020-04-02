@@ -10,7 +10,7 @@ import {
   AsyncStorage
 } from "react-native";
 import { NavigationActions } from "react-navigation";
-import { SafeAreaView } from "react-navigation";
+import moment from "moment";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import db from "../../../db";
 import firebase from "firebase/app";
