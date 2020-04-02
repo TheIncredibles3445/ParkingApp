@@ -95,6 +95,9 @@ const AdminStack = createStackNavigator({
   },
   Discounts: {
     screen: DiscountsScreen
+  },
+  ChangeRole: {
+    screen: ChangeRole
   }
 });
 
