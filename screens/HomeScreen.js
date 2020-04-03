@@ -96,8 +96,8 @@ export default function HomeScreen(props) {
               >
                 <Card
                   title="Service Booking"
-                  image={require("../assets/images/carservices.png")}
-                  imageWrapperStyle={{ padding: 15 }}
+                  image={require("../assets/images/car-wash.png")}
+                  imageWrapperStyle={{ padding: 15, color:"black" }}
                 ></Card>
               </TouchableOpacity>
               <TouchableOpacity
