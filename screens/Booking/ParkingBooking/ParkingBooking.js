@@ -2,7 +2,6 @@
 //@refrest restart
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-native-datepicker";
-
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../../../db.js";
@@ -17,16 +16,34 @@ import {
   Platform,
   Button,
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
+  Picker
 } from "react-native";
 export default function ParkingBooking(props) {
   //============================ START DATE AND TIME ============================
 
   const [startTime, setStartTime] = useState("00:00");
-
+  const [friend, setfriend] = useState();
+  const [friendsList, setFriendsList] = useState([]);
   const [endTime, setEndTime] = useState("00:00");
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [blocks, setBlocks] = useState([]);
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Friends")
+      .onSnapshot(querySnapShot => {
+        let friends = [];
+        querySnapShot.forEach(doc => {
+          friends.push({ id: doc.id, ...doc.data() });
+        });
+     
+        //console.log("one and only", friends.id);
+        setFriendsList(friends);
+        console.log("my frienxxdss", friendsList);
+      });
+  }, []);
 
   useEffect(() => {
     db.collection("Block").onSnapshot(querySnapshot => {
@@ -82,7 +99,7 @@ export default function ParkingBooking(props) {
         selectedBlock: selectedBlock
       };
 
-      props.navigation.navigate("Parking", { data: data });
+      props.navigation.navigate("Parking", { data: data, friend: friend });
     }
   };
 
@@ -146,6 +163,19 @@ export default function ParkingBooking(props) {
             </TouchableOpacity>
           ))}
         </View>
+        <Text>Book for af friends</Text>
+
+        <Picker
+          mode="dropdown"
+          selectedValue={friend}
+          style={{ height: 50, width: 150 }}
+          onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
+        >
+          <Picker.Item label={"Select"} value={""} disabled />
+          {friendsList.map((v, index) => {
+            return <Picker.Item label={v.displayName} value={v.id} />;
+          })}
+        </Picker>
 
         <Button title="BOOK" onPress={() => handleBooking()} />
         {/* <Button title="Logout" onPress={() => handleLogout()} /> */}

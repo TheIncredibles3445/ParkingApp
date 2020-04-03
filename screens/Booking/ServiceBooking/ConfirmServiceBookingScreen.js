@@ -27,7 +27,7 @@ export default function ConfirmServiceBookingScreen(props) {
   const bookingTotal2 = useRef();
 
   useEffect(() => {
-    console.log("-------------<<<< Confirm Booking >>>>-----------");
+    console.log("-------------<<<< Confirm Booking >>>>-----------", booking);
 
     addBookings();
   }, []);
@@ -67,7 +67,7 @@ export default function ConfirmServiceBookingScreen(props) {
           service_id: booking[i].service.id,
           time: booking[i].time,
           worker: booking[i].worker.id,
-          parking: booking[i].parking.number,
+          parking: booking[i].parking.name,
           block: booking[i].block.name,
           rating: 0
         });

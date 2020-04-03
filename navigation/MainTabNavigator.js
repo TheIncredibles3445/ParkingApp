@@ -23,6 +23,7 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
+import ChangeRole from "../screens/Admin/ChangeRole";
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -37,6 +38,9 @@ import Vehicle from "../screens/Profile/Vehicle";
 import AddVehicle from "../screens/Profile/AddVehicle";
 import Checkout from "../screens/Booking/Checkout";
 import AddCard from "../screens/Profile/AddCard";
+import AllBookings from "../screens/Profile/AllBookings";
+import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
+import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
 const config = Platform.select({
   web: { headerMode: "screen" },
@@ -92,9 +96,12 @@ const AdminStack = createStackNavigator({
   },
   Discounts: {
     screen: DiscountsScreen
+  },
+  ChangeRole: {
+    screen: ChangeRole
   }
 });
-
+//the simulator wont work >>. i have to shut down the pc it always happen
 AdminStack.navigationOptions = {
   tabBarLabel: "Admin Panel",
   tabBarIcon: ({ focused }) => (
@@ -159,7 +166,10 @@ const SettingsStack = createStackNavigator(
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
     AddCard: AddCard,
-    Friends: LinksScreen
+    Friends: LinksScreen,
+    AllBookings: AllBookings,
+    ParkingBookingsDetails: ParkingBookingsDetails,
+    ServiceBookingDetails: ServiceBookingDetails
   },
   config
 );
