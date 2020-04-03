@@ -4,7 +4,6 @@
 // - modify firebase version in package.json to "7.11.0"
 // - do a yarn install
 // - change App.js to fix bug (see top of file)
-
 var firebase = require("firebase/app");
 require("firebase/firestore");
 
@@ -36,20 +35,27 @@ const parkings = [];
 const init = async () => {
   // do once only, not a listener
   const querySnapshot = await db.collection("Block").get();
-  querySnapshot.forEach(doc => {
-    messages.push({ id: doc.id, ...doc.data() });
-  });
-  console.log("done init: ", messages);
+  for (let block of querySnapshot.docs) {
+    let parking = await db
+      .collection("Block")
+      .doc(block.id)
+      .collection("Parking")
+      .get();
+    for (let park of parking.docs) {
+      parkings.push({ id: park.id, ...park.data(), blockId: block.id });
+    }
+  }
+  console.log("done init: ", parkings);
 };
 
 const simulate = async () => {
   // get necessary data from db for simulation to start
   await init();
 
-  // simulate something (e.g. db update) every DELAY seconds
+  // // simulate something (e.g. db update) every DELAY seconds
   setInterval(async () => {
     // select a random item
-    const i = Math.floor(Math.random() * messages.length);
+    const i = Math.floor(Math.random() * parkings.length);
 
     // change it somehow
     // - must modify local copy of db data
@@ -57,25 +63,27 @@ const simulate = async () => {
     const rnd = Math.random();
     let choice = "";
 
+    let parkingSpot = parkings[i];
+    console.log("parking before changing line 67 => ", parkingSpot);
+    
     // - use percentages to decide what to do
     // - change to suit your own needs
-    if (rnd < 0.3333) {
-      choice = " ;)";
-    } else if (rnd < 0.6666) {
-      choice = " :(";
+    if (rnd < 0.6666) {
+      parking.isParked = true;
     } else {
-      choice = " :/";
+      parking.isParked = false;
     }
-    messages[i].text += choice;
-
+    console.log("parking before changing line 75 => ", parkingSpot);
+    console.log("Parking Object in the array => ", parkings[i]);
+    
     // update the db
-    const { id, ...message } = messages[i];
-    await db
-      .collection("messages")
-      .doc(id)
-      .set(message);
+    const { id, ...parking } = parkings[i];
+    // await db
+    //   .collection("Block").doc(parking.blockId).c
+    //   .doc(id)
+    //   .set(message);
 
-    console.log("simulated with item[", i, "]: ", message.text);
+    console.log("simulated with item[", i, "]: ", parking);
   }, DELAY * 1000);
 };
 

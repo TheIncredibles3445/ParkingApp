@@ -46,7 +46,7 @@ export default function ParkingBooking(props) {
   }, []);
 
   useEffect(() => {
-    db.collection("Block").onSnapshot(querySnapshot => {
+    db.collection("block").onSnapshot(querySnapshot => {
       let blcks = [];
 
       querySnapshot.forEach(doc => {
