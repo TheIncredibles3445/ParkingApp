@@ -37,6 +37,7 @@ export default function AdminPanel(props) {
           title="Discounts"
           onPress={() => props.navigation.navigate("Discounts")}
         />
+
         <Text style={{ marginBottom: 10 }}></Text>
         <Button title="others.." onPress={() => console.log("go to others")} />
       </View>
