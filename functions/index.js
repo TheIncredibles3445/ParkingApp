@@ -10,7 +10,7 @@ exports.updateUser = functions.https.onCall(async (data, context) => {
   console.log("updateUser data", data);
   const result = await admin.auth().updateUser(data.uid, {
     displayName: data.displayName,
-    phoneNumber: data.phoneNumber
+    phoneNumber: data.phoneNumber,
   });
   console.log("after set", result);
 });
@@ -18,7 +18,7 @@ exports.updateUser = functions.https.onCall(async (data, context) => {
 exports.updateDisplayName = functions.https.onCall(async (data, context) => {
   console.log("updateDisplayName data", data);
   const result = await admin.auth().updateUser(data.uid, {
-    displayName: data.displayName
+    displayName: data.displayName,
   });
   console.log("after set", result);
 });
@@ -27,35 +27,29 @@ exports.updatePhoto = functions.https.onCall(async (data, context) => {
   console.log("updatePhoto data", data);
   const result = await admin.auth().updateUser(data.uid, {
     // displayName: data.displayName,
-    photoURL: data.photoURL
+    photoURL: data.photoURL,
   });
   console.log("after set", result);
 });
 
 exports.addVehicle = functions.https.onCall(async (data, context) => {
   console.log("addVehicle data", data);
-  db.collection("users")
-    .doc(data.uid)
-    .collection("Vehicles")
-    .add({
-      make: data.make,
-      model: data.model,
-      type: data.type,
-      number: data.number
-    });
+  db.collection("users").doc(data.uid).collection("Vehicles").add({
+    make: data.make,
+    model: data.model,
+    type: data.type,
+    number: data.number,
+  });
 });
 
 exports.addCard = functions.https.onCall(async (data, context) => {
   console.log("addCard data", data);
-  db.collection("users")
-    .doc(data.uid)
-    .collection("Cards")
-    .add({
-      number: data.number,
-      type: data.type,
-      provider: data.provider,
-      expiry: data.expiry
-    });
+  db.collection("users").doc(data.uid).collection("Cards").add({
+    number: data.number,
+    type: data.type,
+    provider: data.provider,
+    expiry: data.expiry,
+  });
 });
 
 exports.sendEmail = functions.https.onRequest(async (request, response) => {
@@ -65,8 +59,8 @@ exports.sendEmail = functions.https.onRequest(async (request, response) => {
     secure: false, // true for 465, false for other ports
     auth: {
       user: "boris.skiles@ethereal.email", // generated ethereal user
-      pass: "5cSeqg89n6DsZRCGHR" // generated ethereal password
-    }
+      pass: "5cSeqg89n6DsZRCGHR", // generated ethereal password
+    },
   });
 
   console.log("transporter", transporter);
@@ -76,7 +70,7 @@ exports.sendEmail = functions.https.onRequest(async (request, response) => {
     to: "wasimibrahim1992@gmail.com", // list of receivers
     subject: "Hello ✔", // Subject line
     text: "Hello world?", // plain text body
-    html: "<b>Hello world?</b>" // html body
+    html: "<b>Hello world?</b>", // html body
   });
 
   console.log("Message sent: %s", info.messageId);
@@ -91,13 +85,13 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
   const result = await admin.auth().updateUser(request.query.uid, {
     displayName: request.query.displayName,
     photoURL:
-      "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+      "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
   });
   console.log("after set", result);
 
   const listUsersResult = await admin.auth().listUsers(1000);
 
-  listUsersResult.users.forEach(userRecord => {
+  listUsersResult.users.forEach((userRecord) => {
     console.log("user", userRecord.toJSON());
   });
 
