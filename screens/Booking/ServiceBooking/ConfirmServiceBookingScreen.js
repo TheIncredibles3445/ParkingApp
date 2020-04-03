@@ -70,7 +70,9 @@ export default function ConfirmServiceBookingScreen(props) {
           parking: booking[i].parking.name,
           block: booking[i].block.name,
           rating: 0
-        });
+        }).then(function(docRef) {
+          AsyncStorage.setItem("service_booking_id", docRef.id);
+        });;
       let sch = await db
         .collection("worker")
         .doc(booking[i].worker.id)
@@ -78,6 +80,7 @@ export default function ConfirmServiceBookingScreen(props) {
       let info = sch.data();
       info.schedule.push({
         Booking: await AsyncStorage.getItem("booking_id"),
+        Service_booking: await AsyncStorage.getItem("service_booking_id"),
         dateTime: booking[i].time
       });
       db.collection("worker")

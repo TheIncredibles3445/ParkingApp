@@ -49,14 +49,14 @@ export default function ServiceBookingScreen(props) {
         setServices([...services]);
       });
 
-    db.collection("Block").onSnapshot(querySnapshot => {
+    db.collection("block").onSnapshot(querySnapshot => {
       const block = [];
       querySnapshot.forEach(doc => {
         block.push({ id: doc.id, ...doc.data() });
       });
       setBlock([...block]);
     });
-    console.log(block);
+    console.log("------------------------------blocks",block);
   }, []);
 
   const getWorkers = () => {
