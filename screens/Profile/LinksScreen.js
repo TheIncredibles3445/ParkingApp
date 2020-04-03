@@ -18,6 +18,7 @@ import "firebase/auth";
 import { SearchBar, Badge, Divider, Avatar } from "react-native-elements";
 import db from "../../db.js";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { user } from "firebase-functions/lib/providers/auth";
 // import { ScrollView } from "react-native-gesture-handler";
 
 const LinksScreen = props => {
@@ -47,22 +48,7 @@ const LinksScreen = props => {
         //mapping
         users.push({ id: doc.id, ...doc.data() });
       });
-      console.log("handleUsers user[]", users);
-      const allExceptFriends = [];
-      for (let n = 0; n < users.length; n++) {
-        if (myfriends.length > 0) {
-          for (let i = 0; i < myfriends.length; i++) {
-            if (users[n].id !== myfriends[i].id) {
-              allExceptFriends.push(users[n]);
-            }
-          }
-          console.log("handleUsers allexcept[]", allExceptFriends);
-
-          setUsers([...allExceptFriends]);
-        } else {
-          setUsers([...users]);
-        }
-      }
+      setUsers([...users]);
       setArrayHolder(users);
     });
   };
@@ -82,6 +68,7 @@ const LinksScreen = props => {
   };
 
   useEffect(() => {}, [myfriendList]);
+  useEffect(() => {}, [myfriends]);
 
   useEffect(() => {
     handleUsers();
@@ -183,7 +170,8 @@ const LinksScreen = props => {
       .doc(firebase.auth().currentUser.uid)
       .delete();
     setmodalVisible(!modalVisible);
-    setCountReq(friendsRequestList.length);
+    setCountReq(friendsRequestList.length - 1);
+    console.log("friendsRequestList.length", friendsRequestList.length);
   };
   const getFriends = async () => {
     db.collection("users")
@@ -220,7 +208,11 @@ const LinksScreen = props => {
       .collection("Friends")
       .doc(item.id)
       .set({
-        displayName: item.email,
+        displayName: item.displayName,
+        email: item.email,
+        photoURL: item.photoURL,
+        uid: item.id,
+        phone: item.phone
         // phone: item.phone,
         // photoURL: item.photoURL,
         // points: item.points
@@ -251,7 +243,7 @@ const LinksScreen = props => {
       });
     getMyFriends();
     getFriends();
-    setCountReq(friendsRequestList.length)
+    setCountReq(friendsRequestList.length - 1);
     setmodalVisible(!modalVisible);
   };
 
@@ -273,7 +265,7 @@ const LinksScreen = props => {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <SearchBar
         placeholder="Type Here..."
         lightTheme
@@ -330,62 +322,67 @@ const LinksScreen = props => {
             >
               Follow Requests
             </Text>
-            <View style={styles.viewStyle}>
-              <FlatList
-                data={friendsRequestList}
-                //Item Separator View
-                renderItem={({ item }) => {
-                  return (
-                    <View key={item.id}>
-                      <View style={{ flexDirection: "row" }}>
-                        <Avatar
-                          rounded
-                          source={{ uri: item.photoURL }}
-                          size={70}
-                        />
-                        <Text style={{ marginTop: 30, marginLeft: 10 }}>
-                          {item.email}
-                        </Text>
-                      </View>
-                      <View style={{ flexDirection: "row" }}>
-                        <View style={{ marginLeft: "60%", marginRight: 8 }}>
-                          <Button
-                            title="Accept"
-                            onPress={() => handleAccept(item)}
-                          ></Button>
-                      {console.log("Error removing document-----: ", item.id)}
+            <ScrollView>
+              <View style={styles.viewStyle}>
+                <FlatList
+                  data={friendsRequestList}
+                  //Item Separator View
+                  renderItem={({ item }) => {
+                    return (
+                      <View key={item.id}>
+                        <View style={{ flexDirection: "row" }}>
+                          <Avatar
+                            rounded
+                            source={{ uri: item.photoURL }}
+                            size={70}
+                          />
+                          <Text style={{ marginTop: 30, marginLeft: 10 }}>
+                            {item.displayName}
+                          </Text>
                         </View>
-                        <View>
-                          <Button
-                            title="Decline"
-                            onPress={() => declineRequest(item.id)}
-                          ></Button>
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ marginLeft: "60%", marginRight: 8 }}>
+                            <Button
+                              title="Accept"
+                              onPress={() => handleAccept(item)}
+                            ></Button>
+                            {console.log(
+                              "Error removing document-----: ",
+                              item.id
+                            )}
+                          </View>
+                          <View>
+                            <Button
+                              title="Decline"
+                              onPress={() => declineRequest(item.id)}
+                            ></Button>
+                          </View>
                         </View>
                       </View>
-                    </View>
-                  );
-                }}
-                enableEmptySections={true}
-                style={{ marginTop: 10 }}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </View>
-            <TouchableHighlight
-              onPress={() => {
-                ssetModalVisible(!modalVisible);
-              }}
-            >
-              <Text
-                style={{
-                  marginTop: 50,
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  fontSize: 25
+                    );
+                  }}
+                  enableEmptySections={true}
+                  style={{ marginTop: 10 }}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+              <TouchableHighlight
+                onPress={() => {
+                  ssetModalVisible(!modalVisible);
                 }}
               >
-                <Ionicons name="ios-exit" size={50} />
-              </Text>
-            </TouchableHighlight>
+                <Text
+                  style={{
+                    marginTop: 50,
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontSize: 25
+                  }}
+                >
+                  <Ionicons name="ios-exit" size={50} />
+                </Text>
+              </TouchableHighlight>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -437,69 +434,74 @@ const LinksScreen = props => {
             >
               Friends List
             </Text>
-            <View style={styles.viewStyle}>
-              {myfriends && (
-                <FlatList
-                  data={myfriends}
-                  renderItem={({ item }) => {
-                    return (
-                      <View key={item.id}>
-                        {console.log("userssssssssssssss:,", item.id, item)}
-                        <View>
-                          <Avatar
-                            rounded
-                            source={{ uri: item.photoURL }}
-                            size={70}
-                          />
-                          <Text style={{ marginTop: 30, marginLeft: 10 }}>
-                            {item.email}
+            <ScrollView>
+              <View style={styles.viewStyle}>
+                {myfriends && (
+                  <FlatList
+                    data={myfriends}
+                    renderItem={({ item }) => {
+                      return (
+                        <View key={item.id}>
+                          {console.log("userssssssssssssss:,", item.id, item)}
+                          <View style={{ marginLeft: 15 }}>
+                            <Avatar
+                              rounded
+                              source={{ uri: item.photoURL }}
+                              size={70}
+                            />
+                            <Text style={{ marginTop: 10, marginLeft: 10 }}>
+                              {item.displayName}
 
-                            {console.log("item.displayName", item.displayName)}
-                          </Text>
-                        </View>
-                        <View>
-                          <View style={{ flexDirection: "row" }}>
-                            <View style={{ marginLeft: "47%", marginRight: 8 }}>
-                              <Button
-                                style={{ color: "red" }}
-                                title="Share Location"
-                                onPress={() => handleShareLocation(item.id)}
-                              />
-                            </View>
-                            <View>
-                              <Button
-                                title="Remove"
-                                onPress={() => handleRemoveFriend(item.id)}
-                              />
+                              {console.log(
+                                "item.displayName",
+                                item.displayName
+                              )}
+                            </Text>
+                          </View>
+                          <View>
+                            <View style={{ flexDirection: "row" }}>
+                              <View
+                                style={{
+                                  marginLeft: "47%",
+                                  marginRight: 8,
+                                  width: 120
+                                }}
+                              ></View>
+                              <View>
+                                <Button
+                                  title="Remove"
+                                  onPress={() => handleRemoveFriend(item.id)}
+                                />
+                              </View>
                             </View>
                           </View>
                         </View>
-                      </View>
-                    );
-                  }}
-                  enableEmptySections={true}
-                  style={{ marginTop: 10 }}
-                  keyExtractor={(item, index) => index.toString()}
-                />
-              )}
-            </View>
+                      );
+                    }}
+                    enableEmptySections={true}
+                    style={{ marginTop: 10 }}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                )}
+              </View>
 
-            <TouchableHighlight
-              onPress={() => {
-                ssetModalVisible2(!modalVisible2);
-              }}
-            >
-              <Text
-                style={{
-                  marginTop: 50,
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  fontSize: 25
+              <TouchableHighlight
+                onPress={() => {
+                  ssetModalVisible2(!modalVisible2);
                 }}
               >
-                <Ionicons name="ios-exit" size={50} />
-              </Text>
-            </TouchableHighlight>
+                <Text
+                  style={{
+                    marginTop: 50,
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontSize: 25
+                  }}
+                >
+                  <Ionicons name="ios-exit" size={50} />
+                </Text>
+              </TouchableHighlight>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -515,49 +517,62 @@ const LinksScreen = props => {
         {" "}
         Discover People
       </Text>
-      <FlatList
-        data={users}
-        //Item Separator View
-        renderItem={({ item }) => {
-          return item.id !== firebase.auth().currentUser.uid &&
-            item.id !== myfriends.includes(item.id) ? (
-            <View>
-              <View key={item.id} style={{ flexDirection: "row" }}>
-                <Image
-                  style={{
-                    width: 100,
-                    height: 80
-                  }}
-                  source={{ uri: item.photoURL }}
-                />
+      <ScrollView>
+        <View>
+          <FlatList
+            data={users}
+            //Item Separator View
+            renderItem={({ item }) => {
+              return item.id !== firebase.auth().currentUser.uid &&
+                item.id !== myfriends.includes(item.id) ? (
+                <View>
+                  {console.log("hey--",)}
+                  <View key={item.id} style={{ flexDirection: "row" }}>
+                    <Image
+                      style={{
+                        width: 100,
+                        height: 80,
+                        marginLeft: 15
+                      }}
+                      source={{ uri: item.photoURL }}
+                    />
 
-                <View
-                  style={
-                    myfriendList.includes(item.id) ? styles.num2 : styles.num
-                  }
-                >
-                  <Button
-                    onPress={
-                      myfriendList.includes(item.id)
-                        ? () => handleUnFollow(item.id)
-                        : () => handleFollow(item.id)
-                    }
-                    title={
-                      myfriendList.includes(item.id) ? "Requested" : "Follow"
-                    }
-                  />
+                    <View
+                      style={
+                        myfriendList.includes(item.id)
+                          ? styles.num2
+                          : styles.num
+                      }
+                    >
+                      <Button
+                        onPress={
+                          myfriendList.includes(item.id)
+                            ? () => handleUnFollow(item.id)
+                            : () => handleFollow(item.id)
+                        }
+                        title={
+                          myfriendList.includes(item.id)
+                            ? "Requested"
+                            : "Follow"
+                        }
+                      />
+                    </View>
+                  </View>
+                  <Text
+                    style={{ marginTop: 2, marginLeft: 30, marginBottom: 20 }}
+                  >
+                    {item.displayName}
+                  </Text>
                 </View>
-              </View>
-              <Text style={{ marginTop: 2, marginLeft: 10, marginBottom: 20 }}>
-                {item.email}
-              </Text>
-            </View>
-          ) : null;
-        }}
-        enableEmptySections={true}
-        style={{ marginTop: 10 }}
-        keyExtractor={(item, index) => index.toString()}
-      />
+              ) : null;
+            }}
+            enableEmptySections={true}
+            style={{ marginTop: 10 }}
+            key
+            Extractor={(item, index) => index.toString()}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -575,7 +590,7 @@ const styles = StyleSheet.create({
   num: {
     width: 100,
     height: 35,
-    marginLeft: "46%",
+    marginLeft: "42%",
 
     marginTop: 30,
     backgroundColor: "#0084ff",
@@ -584,7 +599,7 @@ const styles = StyleSheet.create({
   num2: {
     width: 100,
     height: 35,
-    marginLeft: "46%",
+    marginLeft: "42%",
     marginTop: 30,
     backgroundColor: "#0084ff",
     color: "white"

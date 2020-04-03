@@ -73,7 +73,7 @@ export default function App(props) {
       const user = firebase.auth().currentUser;
       const verify = await user.sendEmailVerification();
 
-      updateUserLogin();
+      setUpUser();
     } else {
       alert("Enter All Credentials");
     }
@@ -83,6 +83,15 @@ export default function App(props) {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .set({
+        email: firebase.auth().currentUser.email,
+        displayName: userName,
+        phoneNumber: firebase.auth().currentUser.phoneNumber,
+        points: 0,
+        pendingAmount: 0,
+        advPendingAmount: 0,
+        role: "user",
+        photoURL:
+          "https://image.shutterstock.com/image-vector/blank-avatar-photo-place-holder-260nw-1114445501.jpg",
         lastLogin: new Date()
       });
   };

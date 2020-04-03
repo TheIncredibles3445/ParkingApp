@@ -12,7 +12,8 @@ import {
   Alert,
   Platform,
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
+  ImageBackground,
 } from "react-native";
 import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
@@ -20,7 +21,10 @@ import { ScrollView } from "react-native-gesture-handler";
 
 export default function HomeScreen(props) {
   //============================ START DATE AND TIME ============================
-
+  const image = {
+    uri:
+      "https://i.pinimg.com/originals/74/c9/77/74c977831ee070c93e3afa82d17f5af3.jpg",
+  };
   const [isVerified, setIsVerified] = useState(true);
 
   useEffect(() => {
@@ -56,66 +60,70 @@ export default function HomeScreen(props) {
   // };
 
   return (
-    <SafeAreaView
-      style={
-        Platform.OS !== "ios"
-          ? { flex: 1, marginTop: 10, justifyContent: "space-evenly" }
-          : { flex: 1 }
-      }
-    >
-      <ScrollView
-        style={Platform.OS !== "ios" ? { flex: 1, marginTop: 10 } : { flex: 1 }}
+    <ImageBackground source={image} style={styles.image}>
+      <SafeAreaView
+        style={
+          Platform.OS !== "ios"
+            ? { flex: 1, marginTop: 10, justifyContent: "space-evenly" }
+            : { flex: 1 }
+        }
       >
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 30 }}>Welcome</Text>
-        </View>
-        <View style={{ flex: 5 }}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            <TouchableOpacity
-              style={{ width: "50%" }}
-              disabled={!isVerified}
-              onPress={() => props.navigation.navigate("ParkingBooking")}
-            >
-              <Card
-                title="Parking Booking"
-                image={require("../assets/images/parking.png")}
-                imageWrapperStyle={{ padding: 15 }}
-              ></Card>
-            </TouchableOpacity>
-            <TouchableOpacity
-              disabled={!isVerified}
-              style={{ width: "50%" }}
-              onPress={() => props.navigation.navigate("ServiceBooking")}
-            >
-              <Card
-                title="Service Booking"
-                image={require("../assets/images/services.png")}
-                imageWrapperStyle={{ padding: 15 }}
-              ></Card>
-            </TouchableOpacity>
-            <TouchableOpacity
-              disabled={!isVerified}
-              style={{ width: "50%" }}
-              onPress={() => props.navigation.navigate("ReportScreen")}
-            >
-              <Card
-                title="Report"
-                image={require("../assets/images/report.png")}
-                imageWrapperStyle={{ padding: 15 }}
-              ></Card>
-            </TouchableOpacity>
+        <ScrollView
+          style={
+            Platform.OS !== "ios" ? { flex: 1, marginTop: 10 } : { flex: 1 }
+          }
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 30 }}>Welcome</Text>
           </View>
-          {/* <View>
+          <View style={{ flex: 5 }}>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              <TouchableOpacity
+                style={{ width: "50%" }}
+                disabled={!isVerified}
+                onPress={() => props.navigation.navigate("ParkingBooking")}
+              >
+                <Card
+                  title="Parking Booking"
+                  image={require("../assets/images/parking.png")}
+                  imageWrapperStyle={{ padding: 15 }}
+                ></Card>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={!isVerified}
+                style={{ width: "50%" }}
+                onPress={() => props.navigation.navigate("ServiceBooking")}
+              >
+                <Card
+                  title="Service Booking"
+                  image={require("../assets/images/services.png")}
+                  imageWrapperStyle={{ padding: 15 }}
+                ></Card>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={!isVerified}
+                style={{ width: "50%" }}
+                onPress={() => props.navigation.navigate("ReportScreen")}
+              >
+                <Card
+                  title="Report"
+                  image={require("../assets/images/report.png")}
+                  imageWrapperStyle={{ padding: 15 }}
+                ></Card>
+              </TouchableOpacity>
+            </View>
+            {/* <View>
             <Button title="Send Email" onPress={handleSend} />
           </View> */}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 HomeScreen.navigationOptions = {
-  header: null
+  header: null,
 };
 
 function DevelopmentModeNotice() {
@@ -162,7 +170,7 @@ const styles = StyleSheet.create({
     paddingRight: "35%",
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: "lightgreen"
+    backgroundColor: "lightgreen",
   },
   notSelected: {
     borderColor: "black",
@@ -171,7 +179,12 @@ const styles = StyleSheet.create({
     paddingLeft: "35%",
     paddingRight: "35%",
     paddingTop: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
+  },
+  image: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center"
   }
 });
 
