@@ -14,6 +14,7 @@ import {
   SafeAreaView,
   StyleSheet,
   ImageBackground,
+  Image,
 } from "react-native";
 import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
@@ -23,7 +24,7 @@ export default function HomeScreen(props) {
   //============================ START DATE AND TIME ============================
   const image = {
     uri:
-      "https://i.pinimg.com/originals/74/c9/77/74c977831ee070c93e3afa82d17f5af3.jpg",
+      "https://ak2.picdn.net/shutterstock/videos/28857412/thumb/7.jpg",
   };
   const [isVerified, setIsVerified] = useState(true);
 
@@ -58,7 +59,7 @@ export default function HomeScreen(props) {
   //   );
   //   console.log(response);
   // };
-
+  //width:"100%"
   return (
     <ImageBackground source={image} style={styles.image}>
       <SafeAreaView
@@ -75,7 +76,12 @@ export default function HomeScreen(props) {
         >
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 30 }}>Welcome</Text>
+            <Image
+              source={require("../assets/images/cnaq.png")}
+              style={{ width: "100%", height: 60 }}
+            />
           </View>
+
           <View style={{ flex: 5 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               <TouchableOpacity
@@ -86,7 +92,7 @@ export default function HomeScreen(props) {
                 <Card
                   title="Parking Booking"
                   image={require("../assets/images/parking-lot.jpg")}
-                  imageWrapperStyle={{ padding: 15 }}
+                  imageWrapperStyle={{ padding: 10 }}
                 ></Card>
               </TouchableOpacity>
               <TouchableOpacity
@@ -97,7 +103,7 @@ export default function HomeScreen(props) {
                 <Card
                   title="Service Booking"
                   image={require("../assets/images/car-wash.png")}
-                  imageWrapperStyle={{ padding: 15, color:"black" }}
+                  imageWrapperStyle={{ padding: 10 }}
                 ></Card>
               </TouchableOpacity>
               <TouchableOpacity
@@ -108,7 +114,7 @@ export default function HomeScreen(props) {
                 <Card
                   title="Report"
                   image={require("../assets/images/report-icon.png")}
-                  imageWrapperStyle={{ padding: 15 }}
+                  imageWrapperStyle={{ padding: 1 }}
                 ></Card>
               </TouchableOpacity>
             </View>
