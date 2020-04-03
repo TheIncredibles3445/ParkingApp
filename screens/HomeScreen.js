@@ -85,7 +85,7 @@ export default function HomeScreen(props) {
               >
                 <Card
                   title="Parking Booking"
-                  image={require("../assets/images/parking.png")}
+                  image={require("../assets/images/parking-lot.jpg")}
                   imageWrapperStyle={{ padding: 15 }}
                 ></Card>
               </TouchableOpacity>
@@ -96,7 +96,7 @@ export default function HomeScreen(props) {
               >
                 <Card
                   title="Service Booking"
-                  image={require("../assets/images/services.png")}
+                  image={require("../assets/images/carservices.png")}
                   imageWrapperStyle={{ padding: 15 }}
                 ></Card>
               </TouchableOpacity>
@@ -107,7 +107,7 @@ export default function HomeScreen(props) {
               >
                 <Card
                   title="Report"
-                  image={require("../assets/images/report.png")}
+                  image={require("../assets/images/report-icon.png")}
                   imageWrapperStyle={{ padding: 15 }}
                 ></Card>
               </TouchableOpacity>
@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: "cover",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
 
 // const styles = StyleSheet.create({
