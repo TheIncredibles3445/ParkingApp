@@ -5,7 +5,6 @@ import DatePicker from "react-native-datepicker";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-
 import {
   Modal,
   TouchableOpacity,
@@ -24,7 +23,7 @@ export default function HomeScreen(props) {
   const [ads, setAds] = useState([])
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([])
-
+  const [isVerified, setIsVerified] = useState(true);
 
   useEffect(() => {
     db.collection("Advertisement").where("adStatus","==","Approved").get()
@@ -86,6 +85,42 @@ export default function HomeScreen(props) {
     console.log("clicked ---------->>>>>")
   }
 
+
+  //============================ START DATE AND TIME ============================
+
+
+  useEffect(() => {
+    // const user = firebase.auth().currentUser;
+    // if (!user.emailVerified) {
+    //   user
+    //     .sendEmailVerification()
+    //     .then(function() {
+    //       alert("Verify your email!");
+    //     })
+    //     .catch(function(error) {
+    //       console.log("Error", error);
+    //     });
+    // }
+    // console.log(user);
+    // setIsVerified(user.emailVerified);
+  }, []);
+
+  // const getUser = async () => {
+  //   const loggedInUser = await db
+  //     .collection("users")
+  //     .doc(firebase.auth().currentUser.uid)
+  //     .get();
+  //   const data = { id: loggedInUser.id, ...loggedInUser.data() };
+  //   setUser(data);
+  // };
+
+  // const handleSend = async () => {
+  //   const response = await fetch(
+  //     "https://us-central1-parking-app-3b592.cloudfunctions.net/sendEmail"
+  //   );
+  //   console.log(response);
+  // };
+
   return (
     <SafeAreaView
       style={
@@ -114,52 +149,59 @@ export default function HomeScreen(props) {
       <ScrollView
         style={Platform.OS !== "ios" ? { flex: 1, marginTop: 10 } : { flex: 1 }}
       >
-        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-
-          <TouchableOpacity
-            style={styles.cards}
-            onPress={() => props.navigation.navigate("ParkingBooking")}
-          >
-            <Card
-              //containerStyle={{ width: "40%" }}
-              title="Parking Booking"
-              image={require("../assets/images/parking.png")}
-              imageWrapperStyle={{}}
-            ></Card>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 30 }}>Welcome</Text>
+        </View>
+        <View style={{ flex: 5 }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <TouchableOpacity
+              style={{ width: "50%" }}
+              disabled={!isVerified}
+              onPress={() => props.navigation.navigate("ParkingBooking")}
+            >
+              <Card
+                title="Parking Booking"
+                image={require("../assets/images/parking.png")}
+                imageWrapperStyle={{ padding: 15 }}
+              ></Card>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={!isVerified}
+              style={{ width: "50%" }}
+              onPress={() => props.navigation.navigate("ServiceBooking")}
+            >
+              <Card
+                title="Service Booking"
+                image={require("../assets/images/services.png")}
+                imageWrapperStyle={{ padding: 15 }}
+              ></Card>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={!isVerified}
+              style={{ width: "50%" }}
+              onPress={() => props.navigation.navigate("ReportScreen")}
+            >
+              <Card
+                title="Report"
+                image={require("../assets/images/report.png")}
+                imageWrapperStyle={{ padding: 15 }}
+              ></Card>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cards}
+              onPress={() => props.navigation.navigate("Advertisement")}
+            >
+              <Card
+                title="Advertise?"
+                //containerStyle={{ width: "40%" }}
+                image={require("../assets/images/advertisement.png")}
+                imageWrapperStyle={{}}
+              ></Card>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cards}
-            onPress={() => props.navigation.navigate("ServiceBooking")}
-          >
-            <Card
-              title="Service Booking"
-              //containerStyle={{ width: "80%", height:"50%" }}
-              image={require("../assets/images/services.png")}
-
-            ></Card>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cards}
-            onPress={() => props.navigation.navigate("ReportScreen")}
-          >
-            <Card
-              //containerStyle={{ width: "40%" }}
-              title="Report"
-              image={require("../assets/images/report.png")}
-              imageWrapperStyle={{}}
-            ></Card>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cards}
-            onPress={() => props.navigation.navigate("Advertisement")}
-          >
-            <Card
-              title="Advertise?"
-              //containerStyle={{ width: "40%" }}
-              image={require("../assets/images/advertisement.png")}
-              imageWrapperStyle={{}}
-            ></Card>
-          </TouchableOpacity>
+          </View>
+          {/* <View>
+            <Button title="Send Email" onPress={handleSend} />
+          </View> */}
         </View>
 
       </ScrollView>

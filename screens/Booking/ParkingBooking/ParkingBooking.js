@@ -1,7 +1,7 @@
 // import * as WebBrowser from "expo-web-browser";
+//@refrest restart
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-native-datepicker";
-
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../../../db.js";
@@ -16,22 +16,34 @@ import {
   Platform,
   Button,
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
+  Picker
 } from "react-native";
-import { NavigationActions } from "react-navigation";
 export default function ParkingBooking(props) {
-  // const [messages, setMessages] = useState([]);
-  // const [to, setTo] = React.useState("");
-  // const [text, setText] = React.useState("");
-  // const [id, setId] = React.useState("");
-
   //============================ START DATE AND TIME ============================
 
   const [startTime, setStartTime] = useState("00:00");
-
+  const [friend, setfriend] = useState();
+  const [friendsList, setFriendsList] = useState([]);
   const [endTime, setEndTime] = useState("00:00");
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [blocks, setBlocks] = useState([]);
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Friends")
+      .onSnapshot(querySnapShot => {
+        let friends = [];
+        querySnapShot.forEach(doc => {
+          friends.push({ id: doc.id, ...doc.data() });
+        });
+     
+        //console.log("one and only", friends.id);
+        setFriendsList(friends);
+        console.log("my frienxxdss", friendsList);
+      });
+  }, []);
 
   useEffect(() => {
     db.collection("Block").onSnapshot(querySnapshot => {
@@ -40,20 +52,15 @@ export default function ParkingBooking(props) {
       querySnapshot.forEach(doc => {
         blcks.push({ id: doc.id, ...doc.data(), isSelected: false });
       });
-      // console.log(" Blocks: ", blcks);
-      // console.log(blcks);
       setBlocks([...blcks]);
     });
   }, []);
-
-  // useEffect(() => {}, [selectedBlock]);
 
   const handleLogout = () => {
     firebase.auth().signOut();
   };
 
   const handleSelectedBlock = (item, index) => {
-    //console.log(item);
     let tempBlocks = blocks;
     tempBlocks.map(tempItem => {
       if (tempItem.isSelected) {
@@ -66,10 +73,23 @@ export default function ParkingBooking(props) {
   };
 
   const handleBooking = () => {
-    if (startTime >= endTime) {
-      alert("End Time must be greater than Start Time");
-    } else if (startTime === "00:00") {
+    if (startTime === "00:00") {
       alert("Select Start Time");
+    } else if (
+      startTime === "08:00 pm" ||
+      startTime === "09:00 pm" ||
+      startTime === "10:00 pm" ||
+      startTime === "11:00 pm"
+    ) {
+      alert("IT IS TOO LATE TO BOOK");
+    } else if (
+      startTime === "01:00 am" ||
+      startTime === "02:00 am" ||
+      startTime === "04:00 am" ||
+      startTime === "03:00 am" ||
+      startTime === "05:00 am"
+    ) {
+      alert("IT IS TOO EARLY TO BOOK");
     } else if (selectedBlock === null) {
       alert("Select a block");
     } else {
@@ -79,14 +99,13 @@ export default function ParkingBooking(props) {
         selectedBlock: selectedBlock
       };
 
-      props.navigation.navigate("Parking", { data: data });
+      props.navigation.navigate("Parking", { data: data, friend: friend });
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 20 }}>Welcome</Text>
+    <View style={{flex: 1}}>
+      <View style={{ flex: 1, alignItems: "center" }}>
         <Text style={{ fontSize: 20 }}>Book your desired Parking spot!</Text>
       </View>
       <View style={{ flex: 5 }}>
@@ -100,7 +119,10 @@ export default function ParkingBooking(props) {
             showIcon={false}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            // is24Hour={true}
+            is24Hour={true}
+            customStyles={{
+              datePickerCon: { color: "black" }
+            }}
             onDateChange={time => setStartTime(time)}
           />
 
@@ -113,7 +135,10 @@ export default function ParkingBooking(props) {
             format="hh:mm a"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            // is24Hour={true}
+            is24Hour={true}
+            customStyles={{
+              datePickerCon: { color: "black" }
+            }}
             onDateChange={time => setEndTime(time)}
           />
         </View>
@@ -138,9 +163,22 @@ export default function ParkingBooking(props) {
             </TouchableOpacity>
           ))}
         </View>
+        <Text>Book for af friends</Text>
+
+        <Picker
+          mode="dropdown"
+          selectedValue={friend}
+          style={{ height: 50, width: 150 }}
+          onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
+        >
+          <Picker.Item label={"Select"} value={""} disabled />
+          {friendsList.map((v, index) => {
+            return <Picker.Item label={v.displayName} value={v.id} />;
+          })}
+        </Picker>
 
         <Button title="BOOK" onPress={() => handleBooking()} />
-        <Button title="Logout" onPress={() => handleLogout()} />
+        {/* <Button title="Logout" onPress={() => handleLogout()} /> */}
         {/* <Button
           title="Navigate"
           onPress={() =>
@@ -152,7 +190,7 @@ export default function ParkingBooking(props) {
           }
         /> */}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

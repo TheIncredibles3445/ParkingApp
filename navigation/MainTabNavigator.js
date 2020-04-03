@@ -11,6 +11,7 @@ import FriendScreen from "../screens/Profile/FriendsScreen";
 //Lamees's imports
 import ReportScreen from "../screens/ReportScreen";
 import AllReportsScreen from "../screens/Admin/AllReportsScreen";
+import DiscountsScreen from "../screens/Admin/DiscountsScreen";
 import AdminScreen from "../screens/Admin/AdminScreen";
 
 //Amal's Imports
@@ -44,7 +45,10 @@ import Vehicle from "../screens/Profile/Vehicle";
 import AddVehicle from "../screens/Profile/AddVehicle";
 import Checkout from "../screens/Booking/Checkout";
 import AddCard from "../screens/Profile/AddCard";
-
+import AllBookings from "../screens/Profile/AllBookings";
+import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
+import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
+import Direction from "../screens/Booking/Direction";
 const config = Platform.select({
   web: { headerMode: "screen" },
   default: {}
@@ -60,7 +64,8 @@ const HomeStack = createStackNavigator(
     ServiceBooking: ServiceBookingScreen,
     ConfirmBooking: ConfirmServiceBookingScreen,
     Payment: Payment,
-    ReportScreen: ReportScreen
+    ReportScreen: ReportScreen,
+    Direction: Direction
   },
   config
 );
@@ -96,9 +101,6 @@ const AdminStack = createStackNavigator({
   AllReport: {
     screen: AllReportsScreen
   },
-  ChangeRole: {
-    screen: ChangeRole
-  },
   Adv: {
     screen: AdminAdvertisements
   },
@@ -107,10 +109,16 @@ const AdminStack = createStackNavigator({
   },
   AdvertisementList:{
     screen: AdvertisementList
+  },
+  Discounts: {
+    screen: DiscountsScreen
+  },
+  ChangeRole: {
+    screen: ChangeRole
   }
 
 });
-
+//the simulator wont work >>. i have to shut down the pc it always happen
 AdminStack.navigationOptions = {
   tabBarLabel: "Admin Panel",
   tabBarIcon: ({ focused }) => (
@@ -122,6 +130,48 @@ AdminStack.navigationOptions = {
 };
 AdminStack.path = "";
 
+// const ServiceBookingStack = createStackNavigator({
+//   Main: {
+//     screen: ServiceBookingScreen
+//   },
+//   ConfirmBooking: {
+//     screen: ConfirmServiceBookingScreen
+//   },
+//   // Payment: {
+//   //   screen: Payment
+//   // },
+//   Home: {
+//     screen: HomeScreen
+//   }
+// });
+// ServiceBookingStack.navigationOptions = {
+//   tabBarLabel: "Book a Service",
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
+//     />
+//   )
+// };
+// ServiceBookingStack.path = "";
+
+//
+const TestStack = createStackNavigator(
+  {
+    Test: Direction
+  },
+  config
+);
+
+TestStack.navigationOptions = {
+  tabBarLabel: "Test",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
+    />
+  )
+};
 
 
 const SettingsStack = createStackNavigator(
@@ -137,7 +187,10 @@ const SettingsStack = createStackNavigator(
     ScheduleDetails: ScheduleDetails,
     AdvertisementDetails: AdvertisementDetails,
     MyAdvertisement: MyAdvertisement,
-    PartialPayment: PartialPayment
+    PartialPayment: PartialPayment,
+    AllBookings: AllBookings,
+    ParkingBookingsDetails: ParkingBookingsDetails,
+    ServiceBookingDetails: ServiceBookingDetails
   },
   config
 );

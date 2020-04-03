@@ -7,90 +7,147 @@ import {
   Modal,
   TouchableOpacity,
   Alert,
+  SafeAreaView,
   AsyncStorage
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { NavigationActions } from "react-navigation";
+import moment from "moment";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import db from "../../../db";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
-// import { Notifications } from "expo";
-// import * as Permissions from "expo-permissions";
 
 export default function Parking(props) {
   const data = props.navigation.getParam("data", "No params");
+  const friend = props.navigation.getParam("friend", "No params");
   const [parkingSpots, setParkingSpots] = useState([]);
+  const [cars, setCars] = useState([]);
+  const [parkingBookings, setParkingBookings] = useState([]);
+  const [flag, setFlag] = useState(false);
   // const [token, setToken] = useState(null);
   useEffect(() => {
-    db.collection("Block")
-      .doc(data.selectedBlock.id)
-      .collection("Parking")
-      .onSnapshot(querySnapShot => {
-        const parkings = [];
-        querySnapShot.forEach(doc => {
-          parkings.push({ id: doc.id, ...doc.data() });
+    getAllParking();
+  }, []);
+
+  const getAllParking = () => {
+    const bookingsRef = db.collection("booking");
+    const parkingRef = bookingsRef
+      .where("date", "==", moment().format("YYYY-MM-DD"))
+      .where("type", "==", "Parking");
+    parkingRef.onSnapshot(querySnapShot => {
+      let p = [];
+      let filteredParking = [];
+      if (querySnapShot.docs.length !== 0) {
+        for (let booking of querySnapShot.docs) {
+          bookingsRef
+            .doc(booking.id)
+            .collection("parking_booking")
+            .onSnapshot(async querySnap => {
+              for (let parkingBooking of querySnap.docs) {
+                p.push({ id: parkingBooking.id, ...parkingBooking.data() });
+              }
+              if (p.length === querySnapShot.docs.length) {
+                const myStartTime = convertTime(data.startTime);
+                const myEndTime = convertTime(data.endTime);
+                filteredParking = p.filter(item => {
+                  const bookedStart = convertTime(item.startTime);
+                  const bookedEnd = convertTime(item.endTime);
+                  if (
+                    !(
+                      bookedStart - myEndTime < 0 && bookedEnd - myStartTime > 0
+                    )
+                  ) {
+                  } else {
+                    return item;
+                  }
+                });
+
+                const parkingIds = [];
+                console.log("filteredParking ==>", filteredParking);
+                filteredParking.map(item => parkingIds.push(item.parkingId));
+
+                db.collection("Block")
+                  .doc(data.selectedBlock.id)
+                  .collection("Parking")
+                  .onSnapshot(querySnapShot => {
+                    const parkings = [];
+                    querySnapShot.forEach(docum => {
+                      let park = docum.data();
+                      if (parkingIds.includes(docum.id)) {
+                        park.isBooked = true;
+                      } else {
+                        park.isBooked = false;
+                      }
+                      parkings.push({ id: docum.id, ...park });
+                    });
+                    setParkingSpots([...parkings]);
+                  });
+              }
+            });
+        }
+      } else {
+        db.collection("Block")
+          .doc(data.selectedBlock.id)
+          .collection("Parking")
+          .onSnapshot(query => {
+            let parkings = [];
+            query.forEach(docs => {
+              let data = docs.data();
+              data.isBooked = false;
+              parkings.push({ id: docs.id, ...data });
+            });
+            setParkingSpots([...parkings]);
+          });
+      }
+    });
+  };
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Vehicles")
+      .onSnapshot(querySnap => {
+        let vehicles = [];
+        querySnap.forEach(doc => {
+          vehicles.push({ id: doc.id, ...doc.data() });
         });
-        setParkingSpots([...parkings]);
+        setCars([...vehicles]);
       });
   }, []);
 
-  // useEffect(() => {
-  //   registerForPushNotifications();
-  // }, []);
-
-  // const registerForPushNotifications = async () => {
-  //   //Get the current users id So you can post the token to the user in your database
-  //   const currentUser = firebase.auth().currentUser.uid;
-  //   const { status: existingStatus } = await Permissions.getAsync(
-  //     Permissions.NOTIFICATIONS
-  //   );
-  //   let finalStatus = existingStatus;
-  //   // only ask if permissions have not already been determined, because
-  //   // iOS won't necessarily prompt the user a second time.
-  //   if (existingStatus !== "granted") {
-  //     // Android remote notification permissions are granted during the app
-  //     // install, so this will only ask on iOS
-  //     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-  //     finalStatus = status;
-  //   }
-  //   // Stop here if the user did not grant permissions
-  //   if (finalStatus !== "granted") {
-  //     return;
-  //   }
-  //   // Get the token that uniquely identifies this device
-  //   try {
-  //     let token = await Notifications.getExpoPushTokenAsync();
-  //     console.log(token);
-  //     // POST the token to your backend server from where you can retrieve it to send push notifications.
-  //     db.collection("Users")
-  //       .doc(firebase.auth().currentUser.uid)
-  //       .update({ token: token });
-  //     setToken(token)
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const sendPushNotification = () => {
-  //   // I got the user that we will send the push notification to from the database and set it to state, now I have access to the users push token.
-  //   const userExpoToken = token;
-  //   console.log(userExpoToken);
-  //   // Now we will send the message to the expo servers
-  //   let response = fetch("https://exp.host/--/api/v2/push/send", {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify({
-  //       to: userExpoToken,
-  //       sound: "default",
-  //       title: "This is a test",
-  //       body: "IT WORKING !!!"
-  //     })
-  //   });
-  // };
+  const convertTime = time => {
+    const splitTime = time.split(" ");
+    if (splitTime[1] === "pm") {
+      if (splitTime[0] === "12:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `12:${split[1]}:00`));
+      } else if (splitTime[0] === "01:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `13:${split[1]}:00`));
+      } else if (splitTime[0] === "02:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `14:${split[1]}:00`));
+      } else if (splitTime[0] === "03:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `15:${split[1]}:00`));
+      } else if (splitTime[0] === "04:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `16:${split[1]}:00`));
+      } else if (splitTime[0] === "05:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `17:${split[1]}:00`));
+      } else if (splitTime[0] === "06:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `18:${split[1]}:00`));
+      } else if (splitTime[0] === "07:00") {
+        const split = splitTime[0].split(":");
+        return new Date(moment().format("YYYY-MM-DDT" + `19:${split[1]}:00`));
+      }
+    } else {
+      return new Date(moment().format("YYYY-MM-DDT" + `${splitTime[0]}:00`));
+    }
+  };
 
   const handleModal = item => {
     Alert.alert(
@@ -108,67 +165,105 @@ export default function Parking(props) {
     );
   };
 
-  const handleBooking = async item => {
-    console.log("item", item);
-    const date = `${new Date().getFullYear()}-0${new Date().getMonth() +
-      1}-${new Date().getDate()}`;
-
-    if (!item.isBooked) {
-
-
-      //if (friend != null ){
-      //   db.c......... userId : friend.id   
-      //}
-      //else{
-      //   ...wasim's code
-      //}
-
-      db.collection("booking")
-        .add({
-          date: date,
-          total_price: item.price,
-          type: "Parking",
-          userId: firebase.auth().currentUser.uid
-        })
-        .then(docRef => {
-          db.collection("booking")
-            .doc(docRef.id)
-            .collection("parking_booking")
-            .add({
-              startTime: data.startTime,
-              endTime: data.endTime,
-              parkingId: item.id,
-              rating: 0
-            });
-        });
-
-      db.collection("Block")
-        .doc(data.selectedBlock.id)
-        .collection("Parking")
-        .doc(item.id)
-        .update({
-          isBooked: true,
-          location: item.location,
-          price: item.price,
-          type: item.type
-        });
-
-      props.navigation.navigate("Checkout");
-      // }
-    } else {
-      alert("Booked");
-      // sendPushNotification();
-    }
-    
+  const handleRedirect = () => {
+    Alert.alert(
+      "Warning",
+      "You Did Not Register a vehicle",
+      [
+        {
+          text: "OK",
+          onPress: () =>
+            props.navigation.navigate(
+              "SettingsStack",
+              {},
+              NavigationActions.navigate({ routeName: "AddVehicle" })
+            )
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
-  // const callBook = () => {
-  //   console.log("MAMA", book);
-  //   // const bookings = book.filter(
-  //   //   item =>
-  //   //     item.date === date && item.userId === firebase.auth().currentUser.uid
-  //   // );
-  // };
+  const handleBooking = async item => {
+    console.log("item", item);
+    const date = moment().format("YYYY-MM-DD");
+
+    if (cars.length !== 0) {
+      if (!item.isBooked) {
+        if (friend != null) {
+          db.collection("booking")
+            .add({
+              date: date,
+              total_price: item.price,
+              type: "Parking",
+              userId: friend
+            })
+            .then(docRef => {
+              db.collection("booking")
+                .doc(docRef.id)
+                .collection("parking_booking")
+                .add({
+                  startTime: data.startTime,
+                  endTime: data.endTime,
+                  parkingId: item.id,
+                  rating: 0
+                });
+            });
+          let user = await db
+            .collection("users")
+            .doc(friend)
+            .get();
+          let dbpendingAmount = parseInt(
+            user.data().pendingAmount + parseInt(item.price)
+          );
+          db.collection("users")
+            .doc(friend)
+            .update({ pendingAmount: dbpendingAmount });
+          props.navigation.navigate("HomeScreen");
+        } else {
+          db.collection("booking")
+            .add({
+              date: date,
+              total_price: item.price,
+              type: "Parking",
+              userId: firebase.auth().currentUser.uid
+            })
+            .then(docRef => {
+              db.collection("booking")
+                .doc(docRef.id)
+                .collection("parking_booking")
+                .add({
+                  startTime: data.startTime,
+                  endTime: data.endTime,
+                  parkingId: item.id,
+                  rating: 0
+                });
+            });
+          props.navigation.navigate("Checkout", {
+            blockId: data.selectedBlock.id,
+            parkingId: item.id
+          });
+        }
+
+        db.collection("Block")
+          .doc(data.selectedBlock.id)
+          .collection("Parking")
+          .doc(item.id)
+          .update({
+            isBooked: true,
+            location: item.location,
+            price: item.price,
+            type: item.type
+          });
+
+        // }
+      } else {
+        alert("Booked");
+      }
+    } else {
+      handleRedirect();
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -199,54 +294,12 @@ export default function Parking(props) {
                     item.isBooked ? styles.bookedMarker : styles.unBookedMarker
                   }
                 >
-                  <Text style={styles.text}>QR{item.price}</Text>
+                  <Text style={styles.text}>{item.name}</Text>
                 </View>
               </Marker>
             );
           })}
-
-        {/* <Marker coordinate={coordinates[0]} />
-          <Marker coordinate={coordinates[1]} />
-          {console.log(directions)}
-          <Polyline
-            coordinates={directions}
-            strokeColor="#FF0000" // fallback for when `strokeColors` is not supported by the map-provider
-            strokeWidth={2}
-          /> */}
       </MapView>
-      {/* <Modal animationType="slide" transparent={false} visible={visible}>
-        <SafeAreaView style={{ flex: 1 }}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "space-between"
-            }}
-          >
-            <View style={{ marginTop: "1%", marginLeft: "1%" }}>
-              <Text style={{ fontSize: 20 }}>BOOK SPOT</Text>
-            </View>
-            <View style={{ marginTop: "1%", marginRight: "1%" }}>
-              <TouchableOpacity onPress={() => handleCloseModal()}>
-                <View
-                  style={{
-                    // borderWidth: 1,
-                    // borderStyle: "solid",
-                    // borderColor: "red",
-                    // backgroundColor: "red",
-                    paddingLeft: 20,
-                    paddingRight: 20
-                  }}
-                >
-                  <Text style={{ fontSize: 20 }}>X</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          
-        </SafeAreaView>
-      </Modal> */}
     </SafeAreaView>
   );
 }

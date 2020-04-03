@@ -114,9 +114,8 @@ export default function SettingsScreen(props) {
     }
   };
 
-
-  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS","Pay"];
-  const files = ["Profile", "Payment", "Vehicle", "Friends","PartialPayment"];
+  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "My BOOKINGS", "Pay"];
+  const files = ["Profile", "Payment", "Vehicle", "Friends", "AllBookings","PartialPayment"];
   return (
     <View style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>

@@ -3,15 +3,17 @@ import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import React, { useState, useEffect } from "react";
 // import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Input, Icon, Button, Text, Overlay } from "react-native-elements";
 
 import {
   Platform,
   StatusBar,
   StyleSheet,
   View,
-  TextInput,
-  Button,
-  SafeAreaView
+  TouchableWithoutFeedback,
+  Keyboard,
+  SafeAreaView,
+  Dimensions
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { encode, decode } from "base-64";
@@ -29,41 +31,93 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import db from "./db";
 console.disableYellowBox = true;
+
+const screen = Dimensions.get("screen");
+
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState("");
   const [isLogin, setIsLogin] = useState(false);
+  const [register, setRegister] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [dimensions, setDimensions] = useState({ screen });
+  const [forgotEmail, setForgotEmail] = useState("");
+
+  const onChange = ({ screen }) => {
+    setDimensions({ screen });
+  };
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged(setUser);
     
   }, []);
 
+  useEffect(() => {
+    Dimensions.addEventListener("change", onChange);
+    return () => {
+      Dimensions.removeEventListener("change", onChange);
+    };
+  }, []);
+
   const handleRegister = async () => {
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
+    if (userName !== "" && email !== "" && password !== "") {
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const response = await fetch(
+        `https://us-central1-parking-app-3b592.cloudfunctions.net/initUser?uid=${
+          firebase.auth().currentUser.uid
+        }&email=${email}&displayName=${userName}`
+      );
 
-    const response = await fetch(
-      `https://us-central1-parking-app-3b592.cloudfunctions.net/initUser?uid=${
-        firebase.auth().currentUser.uid
-      }&email=${email}`
-    );
+      const user = firebase.auth().currentUser;
+      const verify = await user.sendEmailVerification();
 
-    updateUserLogin();
+      updateUserLogin();
+    } else {
+      alert("Enter All Credentials");
+    }
+  };
+
+  const setUpUser = () => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .set({
+        lastLogin: new Date()
+      });
+  };
+
+  const handleShowRegister = value => {
+    setRegister(value);
   };
 
   const handleLogin = async () => {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
-    updateUserLogin();
+    if (email !== "" && password !== "") {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+      updateUserLogin();
+    } else {
+      alert("Enter Email and Password");
+    }
   };
 
   const updateUserLogin = () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
-        email: email,
         lastLogin: new Date()
+      });
+  };
+
+  const handleSubmit = () => {
+    firebase
+      .auth()
+      .sendPasswordResetEmail(forgotEmail)
+      .then(() => {
+        alert("Check Your Email");
+      })
+      .catch(error => {
+        console.log("Error !", error);
       });
   };
 
@@ -76,27 +130,230 @@ export default function App(props) {
       />
     );
   } else if (!user) {
-    return (
-      <SafeAreaView
-        style={Platform.OS !== "ios" ? styles.contentContainer : null}
-      >
-        <TextInput
-          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-          onChangeText={setEmail}
-          placeholder="Email"
-          value={email}
-          keyboardType="email-address"
-          autoFocus={true}
-        />
-        <TextInput
-          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-          onChangeText={setPassword}
-          placeholder="Password"
-          secureTextEntry={true}
-          value={password}
-        />
-        <Button title="Register" onPress={handleRegister} />
-        <Button title="Login" onPress={handleLogin} />
+    return !register ? (
+      <SafeAreaView style={Platform.OS !== "ios" ? { marginTop: "5%" } : null}>
+        <View>
+          <Text
+            style={{
+              marginLeft: "2%",
+              color: "black",
+              fontWeight: "bold",
+              fontSize: 25,
+              opacity: 0.4
+            }}
+          >
+            Login
+          </Text>
+        </View>
+        <View style={{ marginTop: "5%" }}>
+          <Input
+            label="Email"
+            keyboardType="email-address"
+            autoFocus={true}
+            value={email}
+            placeholder="Email"
+            onChangeText={setEmail}
+            rightIcon={
+              <Icon name="email" type="material" size={24} color="black" />
+            }
+          />
+        </View>
+        <View style={{ marginTop: "5%" }}>
+          <Input
+            inputContainerStyleStyle={{ marginTop: "10%" }}
+            label="Password"
+            value={password}
+            placeholder="Password"
+            onChangeText={setPassword}
+            secureTextEntry={true}
+            rightIcon={
+              <Icon name="lock" type="font-awesome" size={25} color="black" />
+            }
+          />
+        </View>
+        <View style={{ alignItems: "center" }}>
+          <Button
+            type="clear"
+            title="Forgot Password ?"
+            onPress={() => setVisible(true)}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginTop: "2%"
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              marginLeft: "2%",
+              alignItems: "center",
+              marginTop: "2%"
+            }}
+          >
+            Don't have an account ?
+          </Text>
+          <Button
+            type="clear"
+            title="Register"
+            onPress={() => handleShowRegister(true)}
+          />
+        </View>
+        <View style={{ alignItems: "center", marginTop: "5%" }}>
+          <Button
+            buttonStyle={{
+              borderRadius: 30,
+              paddingLeft: "30%",
+              paddingRight: "30%"
+            }}
+            title="Login"
+            onPress={handleLogin}
+          />
+        </View>
+        <Overlay
+          isVisible={visible}
+          windowBackgroundColor="rgba(255, 255, 255, .5)"
+          width={dimensions.screen.width}
+          height={dimensions.screen.height}
+        >
+          <SafeAreaView
+            style={Platform.OS !== "ios" ? { marginTop: "40%" } : null}
+          >
+            <View>
+              <Text
+                style={{
+                  marginLeft: "2%",
+                  color: "black",
+                  fontWeight: "bold",
+                  fontSize: 25,
+                  opacity: 0.4
+                }}
+              >
+                Forgot Password
+              </Text>
+            </View>
+            <View style={{ marginTop: "5%" }}>
+              <Input
+                label="Email"
+                keyboardType="email-address"
+                autoFocus={true}
+                value={forgotEmail}
+                placeholder="Email"
+                onChangeText={setForgotEmail}
+                rightIcon={
+                  <Icon name="email" type="material" size={24} color="black" />
+                }
+              />
+            </View>
+
+            <View style={{ alignItems: "center", marginTop: "5%" }}>
+              <Button
+                buttonStyle={{
+                  borderRadius: 30,
+                  paddingLeft: "30%",
+                  paddingRight: "30%"
+                }}
+                title="Submit"
+                onPress={handleSubmit}
+              />
+            </View>
+
+            <View style={{ alignItems: "center", marginTop: "5%" }}>
+              <Button
+                buttonStyle={{
+                  borderRadius: 30,
+                  paddingLeft: "30%",
+                  paddingRight: "30%"
+                }}
+                title="Close"
+                onPress={() => setVisible(false)}
+              />
+            </View>
+          </SafeAreaView>
+        </Overlay>
+      </SafeAreaView>
+    ) : (
+      <SafeAreaView style={Platform.OS !== "ios" ? { marginTop: "5%" } : null}>
+        <View>
+          <Text
+            style={{
+              marginLeft: "2%",
+              color: "black",
+              fontWeight: "bold",
+              fontSize: 25,
+              opacity: 0.4
+            }}
+          >
+            Register
+          </Text>
+        </View>
+        <View style={{ marginTop: "5%" }}>
+          <Input
+            label="Email"
+            keyboardType="email-address"
+            autoFocus={true}
+            value={email}
+            placeholder="Email"
+            onChangeText={setEmail}
+            rightIcon={
+              <Icon name="email" type="material" size={24} color="black" />
+            }
+          />
+        </View>
+        <View style={{ marginTop: "5%" }}>
+          <Input
+            inputContainerStyleStyle={{ marginTop: "10%" }}
+            label="Password"
+            value={password}
+            placeholder="Password"
+            onChangeText={setPassword}
+            secureTextEntry={true}
+            rightIcon={
+              <Icon name="lock" type="font-awesome" size={25} color="black" />
+            }
+          />
+        </View>
+        <View
+          style={{
+            marginTop: "5%"
+          }}
+        >
+          <Input
+            inputContainerStyleStyle={{ marginTop: "10%" }}
+            label="Username"
+            value={userName}
+            placeholder="Username"
+            onChangeText={setUserName}
+            rightIcon={
+              <Icon name="user" type="font-awesome" size={25} color="black" />
+            }
+          />
+        </View>
+
+        <View style={{ alignItems: "center", marginTop: "5%" }}>
+          <Button
+            buttonStyle={{
+              borderRadius: 30,
+              paddingLeft: "30%",
+              paddingRight: "30%"
+            }}
+            title="Register"
+            onPress={handleRegister}
+          />
+        </View>
+        <View style={{ alignItems: "center", marginTop: "5%" }}>
+          <Button
+            buttonStyle={{
+              borderRadius: 30,
+              paddingLeft: "30%",
+              paddingRight: "30%"
+            }}
+            title="Go Back"
+            onPress={() => handleShowRegister(false)}
+          />
+        </View>
       </SafeAreaView>
     );
   } else {
@@ -141,7 +398,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0FFFF"
   },
   contentContainer: {
-    paddingTop: 25
+    paddingTop: "10%",
+    // justifyContent: "space-around",
+    flex: 1,
+    backgroundColor: "#fff"
   },
   welcomeContainer: {
     alignItems: "center",

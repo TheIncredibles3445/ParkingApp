@@ -21,6 +21,7 @@ import { AntDesign, Ionicons } from "@expo/vector-icons";
 // import { ScrollView } from "react-native-gesture-handler";
 
 const LinksScreen = props => {
+  const data = props.navigation.getParam("data", "No params");
   const [users, setUsers] = useState([]);
   const [text, setText] = useState("");
   const [arrayholder, setArrayHolder] = useState([]);
@@ -169,7 +170,7 @@ const LinksScreen = props => {
   };
 
   const declineRequest = async item => {
-    //delete record from my request amd his requst
+    //delete record from my request and his requst
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Request")
@@ -182,6 +183,7 @@ const LinksScreen = props => {
       .doc(firebase.auth().currentUser.uid)
       .delete();
     setmodalVisible(!modalVisible);
+    setCountReq(friendsRequestList.length);
   };
   const getFriends = async () => {
     db.collection("users")
@@ -199,6 +201,7 @@ const LinksScreen = props => {
 
   //accept button function / change status to 3 ----------------------
   const handleAccept = async item => {
+    //console.log("Error removing document-----: ", item.id)
     const currentUser = firebase.auth().currentUser;
     const userRef = await db
       .collection("users")
@@ -217,10 +220,10 @@ const LinksScreen = props => {
       .collection("Friends")
       .doc(item.id)
       .set({
-        displayName: item.displayName,
-        phone: item.phone,
-        photoURL: item.photoURL,
-        points: item.points
+        displayName: item.email,
+        // phone: item.phone,
+        // photoURL: item.photoURL,
+        // points: item.points
       });
 
     db.collection("users")
@@ -248,7 +251,7 @@ const LinksScreen = props => {
       });
     getMyFriends();
     getFriends();
-    //setCountReq(myfriends.length)
+    setCountReq(friendsRequestList.length)
     setmodalVisible(!modalVisible);
   };
 
@@ -341,7 +344,7 @@ const LinksScreen = props => {
                           size={70}
                         />
                         <Text style={{ marginTop: 30, marginLeft: 10 }}>
-                          {item.displayName}
+                          {item.email}
                         </Text>
                       </View>
                       <View style={{ flexDirection: "row" }}>
@@ -350,6 +353,7 @@ const LinksScreen = props => {
                             title="Accept"
                             onPress={() => handleAccept(item)}
                           ></Button>
+                      {console.log("Error removing document-----: ", item.id)}
                         </View>
                         <View>
                           <Button
@@ -448,7 +452,7 @@ const LinksScreen = props => {
                             size={70}
                           />
                           <Text style={{ marginTop: 30, marginLeft: 10 }}>
-                            {item.displayName}
+                            {item.email}
 
                             {console.log("item.displayName", item.displayName)}
                           </Text>
@@ -545,7 +549,7 @@ const LinksScreen = props => {
                 </View>
               </View>
               <Text style={{ marginTop: 2, marginLeft: 10, marginBottom: 20 }}>
-                {item.displayName}
+                {item.email}
               </Text>
             </View>
           ) : null;
