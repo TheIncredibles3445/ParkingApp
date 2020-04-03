@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { encode, decode } from "base-64";
@@ -65,7 +65,7 @@ export default function App(props) {
     if (userName !== "" && email !== "" && password !== "") {
       await firebase.auth().createUserWithEmailAndPassword(email, password);
       const response = await fetch(
-        `https://us-central1-parking-app-3b592.cloudfunctions.net/initUser?uid=${
+        `https://us-central1-parking-assistant-d2d25.cloudfunctions.net/initUser?uid=${
           firebase.auth().currentUser.uid
         }&email=${email}&displayName=${userName}`
       );
@@ -80,23 +80,21 @@ export default function App(props) {
   };
 
   const setUpUser = () => {
-    db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .set({
-        email: firebase.auth().currentUser.email,
-        displayName: userName,
-        phoneNumber: firebase.auth().currentUser.phoneNumber,
-        points: 0,
-        pendingAmount: 0,
-        advPendingAmount: 0,
-        role: "user",
-        photoURL:
-          "https://image.shutterstock.com/image-vector/blank-avatar-photo-place-holder-260nw-1114445501.jpg",
-        lastLogin: new Date()
-      });
+    db.collection("users").doc(firebase.auth().currentUser.uid).set({
+      email: firebase.auth().currentUser.email,
+      displayName: userName,
+      phoneNumber: firebase.auth().currentUser.phoneNumber,
+      points: 0,
+      pendingAmount: 0,
+      advPendingAmount: 0,
+      role: "user",
+      photoURL:
+        "https://image.shutterstock.com/image-vector/blank-avatar-photo-place-holder-260nw-1114445501.jpg",
+      lastLogin: new Date(),
+    });
   };
 
-  const handleShowRegister = value => {
+  const handleShowRegister = (value) => {
     setRegister(value);
   };
 
@@ -110,11 +108,9 @@ export default function App(props) {
   };
 
   const updateUserLogin = () => {
-    db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        lastLogin: new Date()
-      });
+    db.collection("users").doc(firebase.auth().currentUser.uid).update({
+      lastLogin: new Date(),
+    });
   };
 
   const handleSubmit = () => {
@@ -124,7 +120,7 @@ export default function App(props) {
       .then(() => {
         alert("Check Your Email");
       })
-      .catch(error => {
+      .catch((error) => {
         console.log("Error !", error);
       });
   };
@@ -147,7 +143,7 @@ export default function App(props) {
               color: "black",
               fontWeight: "bold",
               fontSize: 25,
-              opacity: 0.4
+              opacity: 0.4,
             }}
           >
             Login
@@ -190,7 +186,7 @@ export default function App(props) {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            marginTop: "2%"
+            marginTop: "2%",
           }}
         >
           <Text
@@ -198,7 +194,7 @@ export default function App(props) {
               fontSize: 16,
               marginLeft: "2%",
               alignItems: "center",
-              marginTop: "2%"
+              marginTop: "2%",
             }}
           >
             Don't have an account ?
@@ -214,7 +210,7 @@ export default function App(props) {
             buttonStyle={{
               borderRadius: 30,
               paddingLeft: "30%",
-              paddingRight: "30%"
+              paddingRight: "30%",
             }}
             title="Login"
             onPress={handleLogin}
@@ -236,7 +232,7 @@ export default function App(props) {
                   color: "black",
                   fontWeight: "bold",
                   fontSize: 25,
-                  opacity: 0.4
+                  opacity: 0.4,
                 }}
               >
                 Forgot Password
@@ -261,7 +257,7 @@ export default function App(props) {
                 buttonStyle={{
                   borderRadius: 30,
                   paddingLeft: "30%",
-                  paddingRight: "30%"
+                  paddingRight: "30%",
                 }}
                 title="Submit"
                 onPress={handleSubmit}
@@ -273,7 +269,7 @@ export default function App(props) {
                 buttonStyle={{
                   borderRadius: 30,
                   paddingLeft: "30%",
-                  paddingRight: "30%"
+                  paddingRight: "30%",
                 }}
                 title="Close"
                 onPress={() => setVisible(false)}
@@ -291,7 +287,7 @@ export default function App(props) {
               color: "black",
               fontWeight: "bold",
               fontSize: 25,
-              opacity: 0.4
+              opacity: 0.4,
             }}
           >
             Register
@@ -325,7 +321,7 @@ export default function App(props) {
         </View>
         <View
           style={{
-            marginTop: "5%"
+            marginTop: "5%",
           }}
         >
           <Input
@@ -345,7 +341,7 @@ export default function App(props) {
             buttonStyle={{
               borderRadius: 30,
               paddingLeft: "30%",
-              paddingRight: "30%"
+              paddingRight: "30%",
             }}
             title="Register"
             onPress={handleRegister}
@@ -356,7 +352,7 @@ export default function App(props) {
             buttonStyle={{
               borderRadius: 30,
               paddingLeft: "30%",
-              paddingRight: "30%"
+              paddingRight: "30%",
             }}
             title="Go Back"
             onPress={() => handleShowRegister(false)}
@@ -378,15 +374,15 @@ async function loadResourcesAsync() {
   await Promise.all([
     Asset.loadAsync([
       require("./assets/images/robot-dev.png"),
-      require("./assets/images/robot-prod.png")
+      require("./assets/images/robot-prod.png"),
     ]),
     Font.loadAsync({
       // This is the font that we are using for our tab bar
       ...Ionicons.font,
       // We include SpaceMono because we use it in HomeScreen.js. Feel free to
       // remove this if you are not using it in your app
-      "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf")
-    })
+      "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf"),
+    }),
   ]);
 }
 
@@ -403,17 +399,17 @@ function handleFinishLoading(setLoadingComplete) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   contentContainer: {
     paddingTop: "10%",
     // justifyContent: "space-around",
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
-  }
+    marginBottom: 20,
+  },
 });
