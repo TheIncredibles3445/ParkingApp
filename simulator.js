@@ -11,14 +11,14 @@ require("firebase/firestore");
 // Initialize Cloud Firestore through Firebase
 // replace with your own config
 firebase.initializeApp({
-  // apiKey: "AIzaSyBA7ElfHLwZ6tu-fbByGQi6mpJTaAh__rQ",
-  // authDomain: "messages1-c16bc.firebaseapp.com",
-  // databaseURL: "https://messages1-c16bc.firebaseio.com",
-  // projectId: "messages1-c16bc",
-  // storageBucket: "messages1-c16bc.appspot.com",
-  // messagingSenderId: "26907623108",
-  // appId: "1:26907623108:web:123dc947b016a3a6245391",
-  // measurementId: "G-LQNMLNGSN5"
+  apiKey: "AIzaSyCNs3ICBXqvnOHf9SP05LwfxZnXM2CXFrg",
+  authDomain: "parking-app-3b592.firebaseapp.com",
+  databaseURL: "https://parking-app-3b592.firebaseio.com",
+  projectId: "parking-app-3b592",
+  storageBucket: "parking-app-3b592.appspot.com",
+  messagingSenderId: "167019920679",
+  appId: "1:167019920679:web:848574c0f0a6bc3772bd02",
+  measurementId: "G-TYS24KVHHM"
 });
 const db = firebase.firestore();
 
@@ -31,11 +31,11 @@ const DELAY = 10;
 
 // an array to be filled from db
 // - change to suit your own db schema and simulation needs
-const messages = [];
+const parkings = [];
 
 const init = async () => {
   // do once only, not a listener
-  const querySnapshot = await db.collection("messages").get();
+  const querySnapshot = await db.collection("Block").get();
   querySnapshot.forEach(doc => {
     messages.push({ id: doc.id, ...doc.data() });
   });
