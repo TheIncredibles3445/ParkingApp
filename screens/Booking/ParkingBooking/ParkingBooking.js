@@ -5,7 +5,8 @@ import DatePicker from "react-native-datepicker";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../../../db.js";
-
+import * as Animatable from "react-native-animatable";
+import { Button } from "react-native-elements";
 import {
   Modal,
   Text,
@@ -14,10 +15,9 @@ import {
   View,
   Alert,
   Platform,
-  Button,
   SafeAreaView,
   StyleSheet,
-  Picker
+  Picker,
 } from "react-native";
 export default function ParkingBooking(props) {
   //============================ START DATE AND TIME ============================
@@ -33,12 +33,12 @@ export default function ParkingBooking(props) {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Friends")
-      .onSnapshot(querySnapShot => {
+      .onSnapshot((querySnapShot) => {
         let friends = [];
-        querySnapShot.forEach(doc => {
+        querySnapShot.forEach((doc) => {
           friends.push({ id: doc.id, ...doc.data() });
         });
-     
+
         //console.log("one and only", friends.id);
         setFriendsList(friends);
         console.log("my frienxxdss", friendsList);
@@ -46,10 +46,10 @@ export default function ParkingBooking(props) {
   }, []);
 
   useEffect(() => {
-    db.collection("block").onSnapshot(querySnapshot => {
+    db.collection("block").onSnapshot((querySnapshot) => {
       let blcks = [];
 
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         blcks.push({ id: doc.id, ...doc.data(), isSelected: false });
       });
       setBlocks([...blcks]);
@@ -60,9 +60,14 @@ export default function ParkingBooking(props) {
     firebase.auth().signOut();
   };
 
+  // const handleRef = (ref, index) => {
+  //   this.view = ref;
+  // };
+
   const handleSelectedBlock = (item, index) => {
+    // this.view.pulse;
     let tempBlocks = blocks;
-    tempBlocks.map(tempItem => {
+    tempBlocks.map((tempItem) => {
       if (tempItem.isSelected) {
         tempItem.isSelected = false;
       }
@@ -96,7 +101,7 @@ export default function ParkingBooking(props) {
       const data = {
         startTime: startTime,
         endTime: endTime,
-        selectedBlock: selectedBlock
+        selectedBlock: selectedBlock,
       };
 
       props.navigation.navigate("Parking", { data: data, friend: friend });
@@ -104,11 +109,11 @@ export default function ParkingBooking(props) {
   };
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{ flex: 1, alignItems: "center" }}>
-        <Text style={{ fontSize: 20 }}>Book your desired Parking spot!</Text>
+    <View style={styles.container}>
+      <View style={{ alignItems: "center" }}>
+        <Text style={{ fontSize: 20 }}>Book Your Desired Parking Spot!</Text>
       </View>
-      <View style={{ flex: 5 }}>
+      <View style={{ flex: 5, marginTop: "5%" }}>
         <View style={{ flex: 2, alignItems: "center" }}>
           <Text style={{ fontSize: 20 }}>SELECT START TIME</Text>
           <DatePicker
@@ -121,9 +126,12 @@ export default function ParkingBooking(props) {
             cancelBtnText="Cancel"
             is24Hour={true}
             customStyles={{
-              datePickerCon: { color: "black" }
+              datePickerCon: { color: "black" },
+              dateInput: {
+                borderRadius: 35,
+              },
             }}
-            onDateChange={time => setStartTime(time)}
+            onDateChange={(time) => setStartTime(time)}
           />
 
           <Text style={{ fontSize: 20 }}>SELECT END TIME</Text>
@@ -137,122 +145,137 @@ export default function ParkingBooking(props) {
             cancelBtnText="Cancel"
             is24Hour={true}
             customStyles={{
-              datePickerCon: { color: "black" }
+              datePickerCon: { color: "black" },
+              dateInput: {
+                borderRadius: 35,
+              },
             }}
-            onDateChange={time => setEndTime(time)}
+            onDateChange={(time) => setEndTime(time)}
           />
         </View>
         <View
           style={{
-            flex: 4,
             alignItems: "center",
-            justifyContent: "space-evenly"
+            flexDirection: "row",
+            justifyContent: "space-evenly",
           }}
         >
-          <Text style={{ fontSize: 20 }}>Select Block</Text>
-          {blocks.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleSelectedBlock(item, index)}
-            >
-              <View
-                style={item.isSelected ? styles.selected : styles.notSelected}
-              >
-                <Text>{item.name}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          <Text style={{ fontSize: 18 }}>Book For Friends</Text>
+
+          <Picker
+            mode="dropdown"
+            selectedValue={friend}
+            style={styles.picker}
+            onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
+          >
+            <Picker.Item label={"Select"} value={""} disabled />
+            {friendsList.map((v, index) => {
+              return <Picker.Item label={v.displayName} value={v.id} />;
+            })}
+          </Picker>
         </View>
-        <Text>Book for af friends</Text>
 
-        <Picker
-          mode="dropdown"
-          selectedValue={friend}
-          style={{ height: 50, width: 150 }}
-          onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
+        <View
+          style={{
+            flex: 4,
+            alignItems: "center",
+            justifyContent: "space-evenly",
+          }}
         >
-          <Picker.Item label={"Select"} value={""} disabled />
-          {friendsList.map((v, index) => {
-            return <Picker.Item label={v.displayName} value={v.id} />;
-          })}
-        </Picker>
+          <Text style={{ fontSize: 20, marginBottom: "5%" }}>Select Block</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            {blocks.length === 0 ? (
+              <Button title="Loading button" loading type="clear" />
+            ) : (
+              blocks.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleSelectedBlock(item, index)}
+                >
+                  <Animatable.View
+                    animation="bounceIn"
+                    // ref={(ref) => handleRef(ref, index)}
+                    style={
+                      item.isSelected ? styles.selected : styles.notSelected
+                    }
+                  >
+                    <Text style={{ textAlign: "center" }}>{item.name}</Text>
+                  </Animatable.View>
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+        </View>
+        <View style={{ marginTop: "5%", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => handleBooking()}
+            style={{
+              backgroundColor: "#005992",
+              width: "50%",
+              borderRadius: 35,
+              height: 35,
 
-        <Button title="BOOK" onPress={() => handleBooking()} />
-        {/* <Button title="Logout" onPress={() => handleLogout()} /> */}
-        {/* <Button
-          title="Navigate"
-          onPress={() =>
-            props.navigation.navigate(
-              "LinksStack",
-              {},
-              NavigationActions.navigate({ routeName: "LinksScreen" })
-            )
-          }
-        /> */}
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontWeight: "bold",
+                letterSpacing: 5,
+              }}
+            >
+              BOOK
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 }
 
 ParkingBooking.navigationOptions = {
-  title: "Parking Booking"
+  title: "Parking Booking",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#005992",
+  },
 };
 
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    "https://docs.expo.io/versions/latest/workflow/development-mode/"
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    "https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes"
-  );
-}
-
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   selected: {
     borderColor: "black",
     borderStyle: "solid",
     borderWidth: 1,
-    paddingLeft: "35%",
-    paddingRight: "35%",
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "lightgreen"
+    padding: "17%",
+
+    backgroundColor: "lightgreen",
   },
   notSelected: {
     borderColor: "black",
     borderStyle: "solid",
     borderWidth: 1,
-    paddingLeft: "35%",
-    paddingRight: "35%",
-    paddingTop: 10,
-    paddingBottom: 10
-  }
+    // padding: 30
+    padding: "17%",
+  },
+  picker: {
+    height: 50,
+    width: 150,
+    borderColor: "black",
+    borderWidth: 1,
+    borderStyle: "solid",
+  },
 });
 
 // const styles = StyleSheet.create({
