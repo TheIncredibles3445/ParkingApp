@@ -20,7 +20,7 @@ import moment from "moment";
 import { AsyncStorage } from "react-native";
 
 export default function Payment(props) {
-  const booking = props.navigation.getParam("booking", "some default value");
+  
   const bookingId = props.navigation.getParam("id", "some default value");
   const total = props.navigation.getParam("total", "some default value");
   const [cardNumber, setCardNumber] = useState();

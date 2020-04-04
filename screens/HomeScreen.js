@@ -17,11 +17,118 @@ import {
 import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
+import TimedSlideshow from 'react-native-timed-slideshow';
+import { AsyncStorage } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function HomeScreen(props) {
+
+  const [ads, setAds] = useState([])
+  const [user, setUser] = useState(null);
+  const [items, setItems] = useState([])
+  const [isVerified, setIsVerified] = useState(true);
+
+  const [timer, setTimer] = useState(10);
+  const [timeoutId, setTimeoutId] = useState(null);
+
+  const unsubscribe = props.navigation.addListener('didFocus', () => {
+    console.log('focussed');
+});
+
+
+  
+  useEffect(() => {
+    db.collection("Advertisement").where("adStatus","==","Approved").get()
+      .then(querySnapshot => {
+        let ads = [];
+        querySnapshot.forEach(doc => {
+          ads.push({ id: doc.id, ...doc.data() });
+        });
+        setAds([...ads]);
+
+      });
+    //setAll(ads)
+    console.log("ads are", ads)
+
+    let temp = []
+    for (let i = 0; i < ads.length; i++) {
+      console.log("result --->>>",new Date(ads[i].startDate).getTime() ,new Date().getTime())
+      if( new Date(ads[i].startDate).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(ads[i].endDate).getTime())
+    temp.push({ uri: ads[i].photoURL, title: ads[i].title, text: `${<Button />}` })
+    }
+    setItems(temp)
+
+   
+  },[])
+
+ 
+  // useEffect(() => {
+  //   //console.log("heeereeee");
+  //    setTimeoutId(
+  //         setTimeout(() => {
+  //           setTimer(timer + 1);
+  //         }, 1000)
+  //       )
+  //   track();
+    
+  // }, [timer]);
+  
+  const track = async()=>{
+    console.log(" in track")
+    let old = await db.collection("tracking").doc("track").get()
+   // AsyncStorage.setItem("service", "yes");
+    let check =  await AsyncStorage.getItem("service")
+    console.log(check)
+    if(  check === "yes"){
+      let newTrack = parseInt(old.data().service) -1
+    db.collection("tracking").doc("track").update({ service: newTrack})
+    AsyncStorage.setItem("service", "no");
+    }
+    
+
+  }
+
+
+  const getAds = async () => {
+
+    db.collection("Advertisement").get()
+      .then(querySnapshot => {
+        let ads = [];
+        querySnapshot.forEach(doc => {
+          ads.push({ id: doc.id, ...doc.data() });
+        });
+        setAds([...ads]);
+
+      });
+    //setAll(ads)
+    console.log("ads are", ads)
+
+    let temp = []
+    for (let i = 0; i < ads.length; i++) {
+      temp.push({ uri: ads[i].photoURL, title: ads[i].title, text: "info" })
+    }
+    setItems(temp)
+
+  }
+
+
+
+  const getUser = async () => {
+    const loggedInUser = await db
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get();
+    const data = { id: loggedInUser.id, ...loggedInUser.data() };
+    setUser(data);
+  };
+
+  const clicked = () =>{
+    console.log("clicked ---------->>>>>")
+  }
+
+
   //============================ START DATE AND TIME ============================
 
-  const [isVerified, setIsVerified] = useState(true);
 
   useEffect(() => {
     // const user = firebase.auth().currentUser;
@@ -59,10 +166,27 @@ export default function HomeScreen(props) {
     <SafeAreaView
       style={
         Platform.OS !== "ios"
-          ? { flex: 1, marginTop: 10, justifyContent: "space-evenly" }
-          : { flex: 1 }
+          ? { flex: 1, marginTop: 10, justifyContent: "space-evenly", backgroundColor: "#DCDCDC" }
+          : { flex: 1, backgroundColor: "#DCDCDC" }
       }
     >
+
+
+
+      <View style={{ height: "40%", width: "100%" }}>
+        {
+          items.length > 0 ?
+            <TimedSlideshow
+              items={items}
+              onPress={()=>clicked()}
+            />
+
+            :
+            null
+        }
+
+      </View>
+
       <ScrollView
         style={Platform.OS !== "ios" ? { flex: 1, marginTop: 10 } : { flex: 1 }}
       >
@@ -104,12 +228,26 @@ export default function HomeScreen(props) {
                 imageWrapperStyle={{ padding: 15 }}
               ></Card>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cards}
+              onPress={() => props.navigation.navigate("Advertisement")}
+            >
+              <Card
+                title="Advertise?"
+                //containerStyle={{ width: "40%" }}
+                image={require("../assets/images/advertisement.png")}
+                imageWrapperStyle={{}}
+              ></Card>
+          </TouchableOpacity>
           </View>
           {/* <View>
             <Button title="Send Email" onPress={handleSend} />
           </View> */}
         </View>
+
       </ScrollView>
+
+
     </SafeAreaView>
   );
 }
@@ -172,6 +310,16 @@ const styles = StyleSheet.create({
     paddingRight: "35%",
     paddingTop: 10,
     paddingBottom: 10
+  },
+  cards: {
+    width: "42%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderColor: "#A9A9A9",
+    borderWidth: 3,
+    marginBottom: "3%",
+    paddingBottom: 10,
+    borderRadius: 6
   }
 });
 

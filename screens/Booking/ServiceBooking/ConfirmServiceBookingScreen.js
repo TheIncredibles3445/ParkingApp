@@ -28,9 +28,16 @@ export default function ConfirmServiceBookingScreen(props) {
 
   useEffect(() => {
     console.log("-------------<<<< Confirm Booking >>>>-----------", booking);
-
+    track()
     addBookings();
   }, []);
+
+  const track = async()=>{
+    let old = await db.collection("tracking").doc("track").get()
+    let newTrack = parseInt(old.data().service) - 1
+    db.collection("tracking").doc("track").update({ service: newTrack})
+    AsyncStorage.setItem("service", false);
+  }
 
   const addBookings = async () => {
     let total = 0;
@@ -70,7 +77,9 @@ export default function ConfirmServiceBookingScreen(props) {
           parking: booking[i].parking.name,
           block: booking[i].block.name,
           rating: 0
-        });
+        }).then(function(docRef) {
+          AsyncStorage.setItem("service_booking_id", docRef.id);
+        });;
       let sch = await db
         .collection("worker")
         .doc(booking[i].worker.id)
@@ -78,6 +87,7 @@ export default function ConfirmServiceBookingScreen(props) {
       let info = sch.data();
       info.schedule.push({
         Booking: await AsyncStorage.getItem("booking_id"),
+        Service_booking: await AsyncStorage.getItem("service_booking_id"),
         dateTime: booking[i].time
       });
       db.collection("worker")
