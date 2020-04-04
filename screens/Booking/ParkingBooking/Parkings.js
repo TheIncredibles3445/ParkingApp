@@ -245,9 +245,9 @@ export default function Parking(props) {
           });
         }
 
-        db.collection("Block")
+        db.collection("block")
           .doc(data.selectedBlock.id)
-          .collection("Parking")
+          .collection("parking")
           .doc(item.id)
           .update({
             isBooked: true,
@@ -291,10 +291,16 @@ export default function Parking(props) {
               >
                 <View
                   style={
-                    item.isBooked ? styles.bookedMarker : styles.unBookedMarker
+                    item.isBooked || item.isParked
+                      ? styles.bookedMarker
+                      : styles.unBookedMarker
                   }
                 >
-                  <Text style={styles.text}>{item.name}</Text>
+                  {item.isParked ? (
+                    <Text style={styles.text}>Parked</Text>
+                  ) : (
+                    <Text style={styles.text}>{item.name}</Text>
+                  )}
                 </View>
               </Marker>
             );
