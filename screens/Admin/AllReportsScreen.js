@@ -9,7 +9,7 @@ import {
   Image,
   // Button,
   TextInput,
-  Alert
+  Alert,
 } from "react-native";
 import db from "../../db.js";
 import {
@@ -17,13 +17,14 @@ import {
   ListItem,
   Avatar,
   SearchBar,
-  Button
+  Button,
 } from "react-native-elements";
 import firebase from "firebase/app";
 import "firebase/auth";
 import * as SMS from "expo-sms";
+import * as Animatable from "react-native-animatable";
 
-export default AllReportsScreen = props => {
+export default AllReportsScreen = (props) => {
   const [reports, setReports] = useState([]);
   const [plateNumber, setPlateNumber] = useState("");
   const [users, setUsers] = useState([]);
@@ -33,9 +34,9 @@ export default AllReportsScreen = props => {
   // const [tempVehicels, setTempVehicels] = useState("");
 
   const handleReports = () => {
-    db.collection("Reports").onSnapshot(querySnapshot => {
+    db.collection("Reports").onSnapshot((querySnapshot) => {
       const report = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         //mapping
         report.push({ id: doc.id, ...doc.data() });
       });
@@ -75,29 +76,29 @@ export default AllReportsScreen = props => {
   const handleSearchUsers = async () => {
     const allVehicles = [];
     //GET ALL USERS FROM THE DATABSE
-    db.collection("users").onSnapshot(querySnapshot => {
+    db.collection("users").onSnapshot((querySnapshot) => {
       const users = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         //mapping
         users.push({ id: doc.id, ...doc.data() });
       });
 
       //LOOP THROUGH ALL THE USERS AND GET THE VEHICLE OF EACH USER
 
-      users.map(user => {
+      users.map((user) => {
         // console.log("user", user);
         db.collection("users")
           .doc(user.id)
           .collection("Vehicles")
-          .onSnapshot(querySnapshot => {
+          .onSnapshot((querySnapshot) => {
             //GETTING ALL THE VEHICLES OF EACH USER
             const numbers = [];
-            querySnapshot.forEach(doc => {
+            querySnapshot.forEach((doc) => {
               numbers.push({ id: doc.id, ...doc.data(), user: user.id });
             });
 
             //LOOP THROUGH ALL THE USER VEHICLES
-            numbers.map(number => {
+            numbers.map((number) => {
               //IF USER WITH THE PLATE NUMBER IS FOUND, SET IT TO STATE
               if (number.plateNumber === parseInt(plateNumber)) {
                 setUser({ ...user, plateNumber: parseInt(plateNumber) });
@@ -138,7 +139,7 @@ export default AllReportsScreen = props => {
     // }
   };
 
-  const handleAlert = plateNumber => {
+  const handleAlert = (plateNumber) => {
     Alert.alert(
       "Solving Issues",
       "Are you sure you want to solve this issue??",
@@ -146,12 +147,12 @@ export default AllReportsScreen = props => {
         {
           text: "No",
           onPress: () => console.log("Cancel ..."),
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Yes",
-          onPress: () => checkAvailable() && updateStatus(plateNumber)
-        }
+          onPress: () => checkAvailable() && updateStatus(plateNumber),
+        },
       ],
       { cancelabele: false }
     );
@@ -169,12 +170,10 @@ export default AllReportsScreen = props => {
     }
   };
   // update the status of th report
-  const updateStatus = pNumber => {
-    reports.map(text => {
+  const updateStatus = (pNumber) => {
+    reports.map((text) => {
       if (text.plateNumber === pNumber) {
-        db.collection("Reports")
-          .doc(text.id)
-          .update({ status: true });
+        db.collection("Reports").doc(text.id).update({ status: true });
       }
     });
 
@@ -200,31 +199,53 @@ export default AllReportsScreen = props => {
   return (
     <ScrollView>
       <SearchBar
-        // lightTheme
-        onChangeText={text => setPlateNumber(text)}
+        lightTheme
+        onChangeText={(text) => setPlateNumber(text)}
         onSubmitEditing={handleSearchUsers}
         value={plateNumber}
         // onClearText={handleSearchUsers}
         placeholder="Search Here..."
       />
+      <Animatable.View
+        animation="flash"
+        direction="alternate"
+        iterationCount="infinite"
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            marginLeft: "28%",
+            marginTop: "3%",
+            // color: "#005992"
+          }}
+        >
+          List of all Reports
+        </Text>
+      </Animatable.View>
       {user === null ? (
         reports.map((item, i) =>
           item.status === false ? (
-            <View key={i}>
-              <View style={{ flexDirection: "row" }}>
-                <Avatar
-                  containerStyle={{ marginTop: 33 }}
-                  source={{ uri: item.image }}
-                  size={50}
-                />
-                <View style={{ marginLeft: 50, marginTop: 35 }}>
-                  <Text style={{ fontSize: 20 }}>{item.description}</Text>
-                  <Text style={{ fontSize: 15 }}>
-                    Car Number: {item.plateNumber}
-                  </Text>
+            <Animatable.View animation="bounceInDown" direction="normal">
+              <View key={i}>
+                <View style={{ flexDirection: "row" }}>
+                  <Avatar
+                    containerStyle={{ marginTop: 33 }}
+                    source={{ uri: item.image }}
+                    size={50}
+                  />
+                  <View style={{ marginLeft: 50, marginTop: 35 }}>
+                    <Text style={{ fontSize: 21 }}>{item.description}</Text>
+                    <Text>
+                      Car Number:
+                      <Text style={{ fontSize: 15, color: "#005992" }}>
+                        {item.plateNumber}
+                      </Text>
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
+            </Animatable.View>
           ) : null
         )
       ) : (
@@ -234,7 +255,7 @@ export default AllReportsScreen = props => {
             style={{
               marginBottom: 20,
               fontSize: 20,
-              marginRight: 20
+              marginRight: 20,
             }}
           >
             User Details
@@ -256,7 +277,7 @@ export default AllReportsScreen = props => {
                 // height: "2%",
                 marginLeft: "2%",
                 marginRight: 20,
-                marginTop: "10%"
+                marginTop: "10%",
               }}
             >
               <Button title="GO TO REPORTS" onPress={() => setUser(null)} />
@@ -266,7 +287,7 @@ export default AllReportsScreen = props => {
                 width: "38%",
                 // height: "1%",
                 marginLeft: "2%",
-                marginTop: "10%"
+                marginTop: "10%",
               }}
             >
               <Button
@@ -313,13 +334,15 @@ export default AllReportsScreen = props => {
 };
 
 AllReportsScreen.navigationOptions = {
-  title: "All Reports"
+  title: "All Reports",
+  headerTintColor: "white",
+  headerStyle: { backgroundColor: "#005992" },
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff"
-  }
+    backgroundColor: "#fff",
+  },
 });

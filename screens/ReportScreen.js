@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Platform } from "react-native";
 import {
   TextInput,
-  // Button,
+  Button,
   ScrollView,
   StyleSheet,
   SafeAreaView,
   KeyboardAvoidingView,
   Image,
   Text,
-  View
+  View,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -19,7 +19,7 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import DatePicker from "react-native-datepicker";
 import * as Location from "expo-location";
-import { Button } from "react-native-elements";
+// import { Button } from "react-native-elements";
 
 export default function ReportScreen() {
   const [userId, setUserId] = useState("");
@@ -41,7 +41,7 @@ export default function ReportScreen() {
   const handleSubmit = async () => {
     let loc = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude
+      longitude: location.coords.longitude,
     };
 
     const response = await fetch(image);
@@ -67,7 +67,7 @@ export default function ReportScreen() {
         image: url,
         location: loc,
         plateNumber: plateNumber,
-        status: status
+        status: status,
       });
     // gives points to the user
     const userRef = await db
@@ -77,14 +77,12 @@ export default function ReportScreen() {
     const user = userRef.data();
     let userPoint = user.points + 50;
     user.points = userPoint;
-    db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update(user);
+    db.collection("users").doc(firebase.auth().currentUser.uid).update(user);
   };
 
   const _pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
     console.log("TESTING !!!", result);
 
@@ -120,7 +118,7 @@ export default function ReportScreen() {
   const _openCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true
+      allowsEditing: true,
     });
     if (!result.cancelled) {
       setImage(result.uri);
@@ -149,7 +147,7 @@ export default function ReportScreen() {
               marginBottom: 30,
               fontSize: 22,
               marginLeft: "auto",
-              marginRight: "auto"
+              marginRight: "auto",
             }}
           >
             Problems Report Form
@@ -162,7 +160,7 @@ export default function ReportScreen() {
                 marginBottom: 10,
                 fontSize: 15,
                 marginRight: 4,
-                marginTop: 8
+                marginTop: 8,
               }}
             >
               Reporter Name:
@@ -173,11 +171,13 @@ export default function ReportScreen() {
                 height: 30,
                 borderColor: "gray",
                 borderWidth: 1,
+                borderRadius: 5,
                 marginLeft: "3%",
-                marginBottom: "3%"
+                marginBottom: "3%",
+                backgroundColor: "#f5f5f5",
               }}
               value={reporterName}
-              onChangeText={first => setReporterName(first)}
+              onChangeText={(first) => setReporterName(first)}
               placeholder=" reporter name .."
             />
           </View>
@@ -188,7 +188,7 @@ export default function ReportScreen() {
                 marginBottom: 10,
                 fontSize: 15,
                 marginRight: 4,
-                marginTop: 8
+                marginTop: 8,
               }}
             >
               Description:
@@ -199,12 +199,14 @@ export default function ReportScreen() {
                 height: 50,
                 borderColor: "gray",
                 borderWidth: 1,
+                borderRadius: 5,
                 marginLeft: "9.5%",
                 textAlignVertical: "top",
-                marginBottom: "4%"
+                marginBottom: "4%",
+                backgroundColor: "#f5f5f5",
               }}
               value={description}
-              onChangeText={last => setDescription(last)}
+              onChangeText={(last) => setDescription(last)}
               placeholder=" Please describe the problem..."
             />
           </View>
@@ -215,7 +217,7 @@ export default function ReportScreen() {
                 width: "70.5%",
                 marginLeft: "3.5%",
                 marginBottom: "6%",
-                fontSize: 15
+                fontSize: 15,
               }}
               date={date}
               mode="datetime"
@@ -230,14 +232,17 @@ export default function ReportScreen() {
                   position: "absolute",
                   left: 0,
                   top: 4,
-                  marginLeft: 0
+
+                  marginLeft: 0,
                 },
                 dateInput: {
-                  marginLeft: 36
+                  marginLeft: 36,
+                  borderRadius: 5,
+                  backgroundColor: "#f5f5f5",
                 },
-                datePickerCon: { color: "black" }
+                datePickerCon: { color: "black" },
               }}
-              onDateChange={date => {
+              onDateChange={(date) => {
                 console.log(date);
                 setDate(date);
               }}
@@ -249,7 +254,7 @@ export default function ReportScreen() {
                 marginBottom: 10,
                 fontSize: 15,
                 marginLeft: "1%",
-                marginTop: 8
+                marginTop: 8,
               }}
             >
               Plate Number:
@@ -260,11 +265,13 @@ export default function ReportScreen() {
                 height: 30,
                 borderColor: "gray",
                 borderWidth: 1,
+                borderRadius: 5,
+                backgroundColor: "#f5f5f5",
                 marginLeft: "5.8%",
-                marginTop: "2%"
+                marginTop: "2%",
               }}
               value={plateNumber}
-              onChangeText={last => setPlateNumber(last)}
+              onChangeText={(last) => setPlateNumber(last)}
               placeholder="plateNumber"
             />
           </View>
@@ -275,7 +282,7 @@ export default function ReportScreen() {
                 fontSize: 15,
                 // marginRight: 7,
                 marginTop: 55,
-                marginLeft: "1.5%"
+                marginLeft: "1.5%",
               }}
             >
               Image:
@@ -298,26 +305,34 @@ export default function ReportScreen() {
                   height: "2%",
                   marginLeft: "18%",
                   marginRight: 20,
-                  marginTop: "10%"
+                  marginTop: "10%",
                 }}
               >
-                <Button title="Choose file" onPress={() => _pickImage()} />
+                <Button
+                  color="#005992"
+                  title="Choose file"
+                  onPress={() => _pickImage()}
+                />
               </View>
               <View
                 style={{
                   width: "28%",
                   height: "1%",
                   marginRight: "20%",
-                  marginTop: "10%"
+                  marginTop: "10%",
                 }}
               >
-                <Button title="Camera Roll" onPress={() => _openCamera()} />
+                <Button
+                  color="#005992"
+                  title="Camera Roll"
+                  onPress={() => _openCamera()}
+                />
               </View>
             </View>
             {/* </View> */}
           </View>
-          <View style={{ width: "30%", marginLeft: "63%", marginTop: "20%" }}>
-            <Button title="Submit" onPress={handleSubmit} />
+          <View style={{ width: "30%", marginLeft: "63%", marginTop: "20%", borderRadius:10,borderWidth:2, borderColor:"#005992" }}>
+            <Button color="#005992" title="Submit" onPress={handleSubmit} />
           </View>
           {/* <View style={{ width: 100, marginLeft: "10%" }}>
         <Button title="Logout" onPress={handleLogout} />
@@ -328,21 +343,23 @@ export default function ReportScreen() {
   );
 }
 ReportScreen.navigationOptions = {
-  title: "Reports"
+  title: "Reports",
+  headerTintColor: "white",
+  headerStyle: { backgroundColor: "#005992" },
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   input: {
     //flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
     //width: "100%"
-  }
+  },
 });

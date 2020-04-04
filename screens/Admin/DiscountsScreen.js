@@ -9,7 +9,7 @@ import {
   Image,
   Picker,
   Text,
-  View
+  View,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -27,8 +27,22 @@ export default function DiscountsScreen(props) {
   const [percentage, setPercentage] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [active, setActive] = useState(true);
 
-  const handleCreate = () => {};
+  const handleCreate = () => {
+    db.collection("discounts")
+      // .doc(firebase.auth().currentUser.uid)
+      .add({
+        // userId: firebase.auth().currentUser.uid,
+        code: code,
+        percentage: percentage,
+        code: code,
+        image: url,
+        startDate: startDate,
+        endDate: endDate,
+        active: active,
+      });
+  };
 
   return (
     <View>
@@ -41,8 +55,8 @@ export default function DiscountsScreen(props) {
           placeholder="Enter code..."
           // keyboardType="number-pad"
           labelStyle={{ color: "black" }}
-          // value={cardNumber}
-          // onChangeText={text => setCardNumber(text)}
+          value={code}
+          onChangeText={(text) => setCode(text)}
         />
       </View>
       <View style={{ marginTop: 15 }}>
@@ -52,7 +66,7 @@ export default function DiscountsScreen(props) {
 
         <Picker
           selectedValue={percentage}
-          onValueChange={percent => setPercentage(percent)}
+          onValueChange={(percent) => setPercentage(percent)}
         >
           <Picker.Item label="Select.." value="" />
           <Picker.Item label="5%" value="5%" />
@@ -61,7 +75,7 @@ export default function DiscountsScreen(props) {
           <Picker.Item label="20%" value="20%" />
         </Picker>
       </View>
-      <View style={{ marginTop: 15 }}>
+      <View style={{ marginTop: 13 }}>
         <Text style={{ marginLeft: "2%", fontWeight: "bold", fontSize: 17 }}>
           Usage
         </Text>
@@ -71,7 +85,7 @@ export default function DiscountsScreen(props) {
           // keyboardType="number-pad"
           labelStyle={{ color: "black" }}
           value={usage}
-          onChangeText={text => setUsage(text)}
+          onChangeText={(text) => setUsage(text)}
         />
       </View>
       <View style={{ marginTop: 15 }}>
@@ -84,7 +98,7 @@ export default function DiscountsScreen(props) {
             width: "80%",
             marginLeft: "3.5%",
             marginBottom: "6%",
-            fontSize: 15
+            fontSize: 15,
           }}
           date={startDate}
           mode="date"
@@ -100,14 +114,14 @@ export default function DiscountsScreen(props) {
               position: "absolute",
               left: 0,
               top: 4,
-              marginLeft: 0
+              marginLeft: 0,
             },
             dateInput: {
-              marginLeft: 36
+              marginLeft: 36,
             },
-            datePickerCon: { color: "black" }
+            datePickerCon: { color: "black" },
           }}
-          onDateChange={startDate => {
+          onDateChange={(startDate) => {
             setStartDate(startDate);
           }}
         />
@@ -122,7 +136,7 @@ export default function DiscountsScreen(props) {
             width: "80%",
             marginLeft: "3.5%",
             marginBottom: "6%",
-            fontSize: 15
+            fontSize: 15,
           }}
           date={endDate}
           mode="date"
@@ -137,20 +151,20 @@ export default function DiscountsScreen(props) {
               position: "absolute",
               left: 0,
               top: 4,
-              marginLeft: 0
+              marginLeft: 0,
             },
             dateInput: {
-              marginLeft: 36
+              marginLeft: 36,
             },
-            datePickerCon: { color: "black" }
+            datePickerCon: { color: "black" },
           }}
-          onDateChange={endDate => {
+          onDateChange={(endDate) => {
             setEndDate(endDate);
           }}
         />
       </View>
 
-      <View style={{ marginTop: "5%", alignItems: "center" }}>
+      <View style={{ marginTop: "3%", alignItems: "center" }}>
         <Button
           onPress={handleCreate}
           title="Create"
@@ -163,21 +177,21 @@ export default function DiscountsScreen(props) {
   );
 }
 DiscountsScreen.navigationOptions = {
-  title: "Discounts"
+  title: "Discounts",
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   input: {
     //flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
     //width: "100%"
-  }
+  },
 });
