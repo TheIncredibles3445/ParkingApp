@@ -1,6 +1,5 @@
 {
   "projects": {
-    "parking": "parking-app-3b592",
-    "default": "parking-app-3b592"
+    "default": "parking-assistant-d2d25"
   }
 }

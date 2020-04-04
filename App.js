@@ -66,7 +66,7 @@ export default function App(props) {
     if (userName !== "" && email !== "" && password !== "") {
       await firebase.auth().createUserWithEmailAndPassword(email, password);
       const response = await fetch(
-        `https://us-central1-parking-app-3b592.cloudfunctions.net/initUser?uid=${
+        `https://us-central1-parking-assistant-d2d25.cloudfunctions.net/initUser?uid=${
           firebase.auth().currentUser.uid
         }&email=${email}&displayName=${userName}`
       );

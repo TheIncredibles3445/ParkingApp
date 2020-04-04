@@ -28,9 +28,16 @@ export default function ConfirmServiceBookingScreen(props) {
 
   useEffect(() => {
     console.log("-------------<<<< Confirm Booking >>>>-----------", booking);
-
+    track()
     addBookings();
   }, []);
+
+  const track = async()=>{
+    let old = await db.collection("tracking").doc("track").get()
+    let newTrack = parseInt(old.data().service) - 1
+    db.collection("tracking").doc("track").update({ service: newTrack})
+    AsyncStorage.setItem("service", false);
+  }
 
   const addBookings = async () => {
     let total = 0;

@@ -16,7 +16,7 @@ import "firebase/auth";
 import db from "../../db.js";
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { weekdaysShort } from "moment";
-
+import * as Animatable from 'react-native-animatable';
 
 export default function ChangeRole(props) {
     const user = props.navigation.getParam('user', 'some default value');
@@ -98,7 +98,7 @@ export default function ChangeRole(props) {
                 </Picker>
 
                 <View style={{padding:5 , width:"50%" ,  alignItems:"center"}}>
-                    <Button  title="Update Role" onPress={()=> updateDB()} disabled={!role.current}/>
+                    <Button color="#00BFFF"  title="Update Role" onPress={()=> updateDB()} disabled={!role.current}/>
                     </View>
    
             </View>
@@ -114,10 +114,11 @@ ChangeRole.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-    head: { height: 40, backgroundColor: '#f1f8ff' },
+    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#F5F5F5' },
+    head: { height: 40, backgroundColor: '#fbfdfb' },
     text: { margin: 6 },
-    box:{backgroundColor:"#FFFAFA" , padding:5 , flexDirection:"row"},
-    user:{backgroundColor: "#F0FFF0" , padding:5 , width:"50%" ,  alignItems:"center" },
+    box:{backgroundColor:"#F5F5F5" , padding:5 , flexDirection:"row"},
+    user:{borderColor: "#D3D3D3",borderBottomWidth:3 , padding:5 , width:"50%" ,  alignItems:"center" },
     search:{backgroundColor: "#DCDCDC" , padding:5 , width:"50%" ,  alignItems:"center" }
 });
+

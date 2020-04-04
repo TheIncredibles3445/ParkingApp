@@ -16,6 +16,7 @@ import "firebase/auth";
 import db from "../../../db.js";
 import DatePicker from "react-native-datepicker";
 import moment from "moment";
+import { AsyncStorage } from "react-native";
 import { checkForUpdateAsync } from "expo/build/Updates/Updates";
 
 export default function ServiceBookingScreen(props) {
@@ -38,6 +39,9 @@ export default function ServiceBookingScreen(props) {
   const [showTime, setShowTime] = useState(false);
 
   useEffect(() => {
+
+    track()
+
     manageTimeRange();
     db.collection("service")
       .where("Status", "==", true)
@@ -56,8 +60,16 @@ export default function ServiceBookingScreen(props) {
       });
       setBlock([...block]);
     });
-    console.log("------------------------------blocks",block);
+    console.log("------------------------------blocks", block);
   }, []);
+
+  const track = async()=>{
+    let old = await db.collection("tracking").doc("track").get()
+    let newTrack = parseInt(old.data().service) + 1
+    db.collection("tracking").doc("track").update({ service: newTrack})
+    AsyncStorage.setItem("service", "yes");
+
+  }
 
   const getWorkers = () => {
     setSelectedTime();
@@ -80,9 +92,9 @@ export default function ServiceBookingScreen(props) {
   useEffect(() => {
     if (selectedBlock) {
       console.log(selectedBlock.id)
-      db.collection("Block")
+      db.collection("block")
         .doc(selectedBlock.id)
-        .collection("Parking")
+        .collection("parking")
         .onSnapshot(querySnapshot => {
           const parking = [];
           querySnapshot.forEach(doc => {
@@ -129,7 +141,11 @@ export default function ServiceBookingScreen(props) {
       `2:30 PM ${moment().format("YYYY-MM-DD")}`,
       `3:00 PM ${moment().format("YYYY-MM-DD")}`,
       `3:30 PM ${moment().format("YYYY-MM-DD")}`,
-      `4:00 PM ${moment().format("YYYY-MM-DD")}`,
+      `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
+      `7:30 PM ${moment().format("YYYY-MM-DD")}`,
+      `8:00 PM ${moment().format("YYYY-MM-DD")}`,
+      `8:30 PM ${moment().format("YYYY-MM-DD")}`,
+      `9:00 PM ${moment().format("YYYY-MM-DD")}`
    
     ];
     if (minute > 30 && parseInt(hour) !== 12) {
