@@ -67,9 +67,9 @@ export default function Parking(props) {
                 console.log("filteredParking ==>", filteredParking);
                 filteredParking.map(item => parkingIds.push(item.parkingId));
 
-                db.collection("Block")
+                db.collection("block")
                   .doc(data.selectedBlock.id)
-                  .collection("Parking")
+                  .collection("parking")
                   .onSnapshot(querySnapShot => {
                     const parkings = [];
                     querySnapShot.forEach(docum => {
@@ -87,9 +87,9 @@ export default function Parking(props) {
             });
         }
       } else {
-        db.collection("Block")
+        db.collection("block")
           .doc(data.selectedBlock.id)
-          .collection("Parking")
+          .collection("parking")
           .onSnapshot(query => {
             let parkings = [];
             query.forEach(docs => {

@@ -38,10 +38,20 @@ export default function ServiceBookingScreen(props) {
   const sService = useRef();
   const [showTime, setShowTime] = useState(false);
 
-  useEffect(() => {
 
+  const unsubscribe = props.navigation.addListener('didFocus', () => {
+    console.log('focussed');
     track()
+});
 
+const track = async()=>{
+  let old = await db.collection("tracking").doc("track").get()
+  let newTrack = parseInt(old.data().service) + 1
+  db.collection("tracking").doc("track").update({ service: newTrack})
+  AsyncStorage.setItem("service", "yes");
+
+}
+  useEffect(() => {
     manageTimeRange();
     db.collection("service")
       .where("Status", "==", true)
@@ -63,13 +73,7 @@ export default function ServiceBookingScreen(props) {
     console.log("------------------------------blocks", block);
   }, []);
 
-  const track = async()=>{
-    let old = await db.collection("tracking").doc("track").get()
-    let newTrack = parseInt(old.data().service) + 1
-    db.collection("tracking").doc("track").update({ service: newTrack})
-    AsyncStorage.setItem("service", "yes");
-
-  }
+  
 
   const getWorkers = () => {
     setSelectedTime();

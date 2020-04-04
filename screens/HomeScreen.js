@@ -33,7 +33,32 @@ export default function HomeScreen(props) {
 
   const unsubscribe = props.navigation.addListener('didFocus', () => {
     console.log('focussed');
+    track()
 });
+
+
+const track = async()=>{
+  console.log(" in track")
+  let old = await db.collection("tracking").doc("track").get()
+ // AsyncStorage.setItem("service", "yes");
+  let check =  await AsyncStorage.getItem("service")
+  console.log(check)
+  if(  check === "yes"){
+    let newTrack = parseInt(old.data().service) -1
+  db.collection("tracking").doc("track").update({ service: newTrack})
+  AsyncStorage.setItem("service", "no");
+  }
+
+  let check2 =  await AsyncStorage.getItem("parking")
+  console.log(check2)
+  if(  check2 === "yes"){
+    let newTrack = parseInt(old.data().parking) -1
+  db.collection("tracking").doc("track").update({ parking: newTrack})
+  AsyncStorage.setItem("parking", "no");
+  }
+  
+
+}
 
 
   
@@ -73,20 +98,6 @@ export default function HomeScreen(props) {
     
   // }, [timer]);
   
-  const track = async()=>{
-    console.log(" in track")
-    let old = await db.collection("tracking").doc("track").get()
-   // AsyncStorage.setItem("service", "yes");
-    let check =  await AsyncStorage.getItem("service")
-    console.log(check)
-    if(  check === "yes"){
-      let newTrack = parseInt(old.data().service) -1
-    db.collection("tracking").doc("track").update({ service: newTrack})
-    AsyncStorage.setItem("service", "no");
-    }
-    
-
-  }
 
 
   const getAds = async () => {
