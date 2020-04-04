@@ -29,6 +29,19 @@ export default function ParkingBooking(props) {
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [blocks, setBlocks] = useState([]);
 
+  const unsubscribe = props.navigation.addListener('didFocus', () => {
+    console.log('focussed');
+    track()
+});
+
+const track = async()=>{
+  let old = await db.collection("tracking").doc("track").get()
+  let newTrack = parseInt(old.data().parking) + 1
+  db.collection("tracking").doc("track").update({ parking: newTrack})
+  AsyncStorage.setItem("parking", "yes");
+
+}
+
   useEffect(() => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)

@@ -36,7 +36,7 @@ export default function ConfirmServiceBookingScreen(props) {
     let old = await db.collection("tracking").doc("track").get()
     let newTrack = parseInt(old.data().service) - 1
     db.collection("tracking").doc("track").update({ service: newTrack})
-    AsyncStorage.setItem("service", false);
+    AsyncStorage.setItem("service", "no");
   }
 
   const addBookings = async () => {
