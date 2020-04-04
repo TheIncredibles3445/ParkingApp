@@ -6,7 +6,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { Rating } from "react-native-elements";
 import moment from "moment";
-
+import * as Animatable from "react-native-animatable";
 export default function ServiceBookingDetails(props) {
   const [details, setDetails] = useState([]);
   const itemId = props.navigation.getParam("itemId", "No params");
@@ -17,19 +17,16 @@ export default function ServiceBookingDetails(props) {
     db.collection("booking")
       .doc(itemId)
       .collection("service_booking")
-      .onSnapshot(async querySnapShot => {
+      .onSnapshot(async (querySnapShot) => {
         const all = [];
         const services = [];
         const workerId = [];
-        querySnapShot.forEach(async doc => {
+        querySnapShot.forEach(async (doc) => {
           all.push({ id: doc.id, ...doc.data() });
         });
         for (let i = 0; i < all.length; i++) {
           services.push(all[i].id);
-          let users = await db
-            .collection("users")
-            .doc(all[i].worker)
-            .get();
+          let users = await db.collection("users").doc(all[i].worker).get();
 
           const w = users.data();
           workerId.push(w);
@@ -71,12 +68,8 @@ export default function ServiceBookingDetails(props) {
   const timeToRate = (date, id) => {
     //get the right current date
     const currentDate = moment().format();
-    let s = moment(currentDate)
-      .seconds(0)
-      .milliseconds(0);
-    let m = moment(s)
-      .add(3, "h")
-      .toDate();
+    let s = moment(currentDate).seconds(0).milliseconds(0);
+    let m = moment(s).add(3, "h").toDate();
 
     //split the date parameter
     const splittedDate = date.split("  ");
@@ -94,9 +87,7 @@ export default function ServiceBookingDetails(props) {
 
     let oldDate = new Date(formattedDate);
     let cd = new Date(s);
-    let endDate = moment(oldDate)
-      .add(30, "m")
-      .toDate();
+    let endDate = moment(oldDate).add(30, "m").toDate();
 
     //console.log("tests => ", endDate > cd, "current", m, "end:", endDate);
     if (m >= endDate) {
@@ -106,7 +97,7 @@ export default function ServiceBookingDetails(props) {
     }
   };
 
-  const convertTime = time => {
+  const convertTime = (time) => {
     const splitTime = time.split(" ");
     if (splitTime[1] === "pm") {
       const split = splitTime[0].split(":");
@@ -168,25 +159,30 @@ export default function ServiceBookingDetails(props) {
 
   return (
     <View>
-      <Text
+      <Animatable.Text
+        animation="lightSpeedIn"
+        iterationCount={3}
+        direction="alternate"
         style={{
           marginLeft: "auto",
           marginRight: "auto",
           fontSize: 20,
-          marginBottom: 20
+          marginBottom: 20,
         }}
       >
+        {" "}
         Service Booking Details
-      </Text>
+      </Animatable.Text>
+
       <ScrollView>
-        {details.map((item,index) => {
+        {details.map((item, index) => {
           return (
             <View key={item.id} style={{ marginBottom: 50 }}>
               <Text
                 style={{
                   marginLeft: "auto",
                   marginRight: "auto",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
                 }}
               >
                 Time: {item.time} -
@@ -195,16 +191,17 @@ export default function ServiceBookingDetails(props) {
                 style={{
                   marginLeft: "auto",
                   marginRight: "auto",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
                 }}
               >
                 Service: {item.service}
               </Text>
+              {console.log("time", item.time)}
               <Text
                 style={{
                   marginLeft: "auto",
                   marginRight: "auto",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
                 }}
               >
                 worker:{workers[index].email}
@@ -215,7 +212,7 @@ export default function ServiceBookingDetails(props) {
                   type="star"
                   startingValue={item.rating}
                   imageSize={40}
-                  onFinishRating={rating => ratingCompleted(rating, item.id)}
+                  onFinishRating={(rating) => ratingCompleted(rating, item.id)}
                   style={{ paddingVertical: 10 }}
                   readonly={item.rating > 0 ? true : false}
                 />
@@ -225,7 +222,7 @@ export default function ServiceBookingDetails(props) {
                     style={{
                       marginLeft: "auto",
                       marginRight: "auto",
-                      marginTop: 12
+                      marginTop: 12,
                     }}
                   >
                     ** Please wait till the end of the service time to rate! **
@@ -236,7 +233,9 @@ export default function ServiceBookingDetails(props) {
                     type="star"
                     startingValue={item.rating}
                     imageSize={40}
-                    onFinishRating={rating => ratingCompleted(rating, item.id)}
+                    onFinishRating={(rating) =>
+                      ratingCompleted(rating, item.id)
+                    }
                     style={{ paddingVertical: 10 }}
                   />
                 </View>
@@ -253,12 +252,12 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     fontSize: 15,
-    opacity: 0.7
+    opacity: 0.7,
   },
   text2: {
     fontWeight: "bold",
     fontSize: 15,
     opacity: 0.7,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
