@@ -15,6 +15,7 @@ import {
 import "firebase/auth";
 import db from "../../db.js";
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import * as Animatable from 'react-native-animatable';
 
 
 export default function UserAccounts(props) {
@@ -108,32 +109,35 @@ export default function UserAccounts(props) {
                 placeholder="email@example.com"
                 value={email}
             />
-                <Picker
-                        selectedValue={role}
-                        style={styles.search}
-                        onValueChange={itemValue => updateRole(itemValue)
-                        }>
-                        <Picker.Item label="ROLE" value="" />
-                        <Picker.Item label="Admin" value="Admin" />
-                        <Picker.Item label="User" value="user" />
-                        <Picker.Item label="Worker" value="worker" />
-                        <Picker.Item label="Advertiser" value="Advertiser" />
-                       
-                </Picker>
+               
                     {/* <View>
            <Button title="search" onPress={()=>filter()}/> 
            </View> */}
+            <Picker
+                        selectedValue={role}
+                        itemStyle={{height: 60}}
+                        style={styles.search}
+                        onValueChange={itemValue => updateRole(itemValue)
+                        }>
+                        <Picker.Item  style={{ height: "1%"}}  label="ROLE" value="" />
+                        <Picker.Item style={{ height: "5%"}} label="Admin" value="Admin" />
+                        <Picker.Item style={{ height: "5%"}} label="User" value="user" />
+                        <Picker.Item style={{ height: "5%"}} label="Worker" value="worker" />
+                        <Picker.Item style={{ height: "5%"}} label="Advertiser" value="Advertiser" />
+                       
+                </Picker>
                    
             </View>
            
-            
+           
             {
                 filteredUsers.length > 0 ?
-                    filteredUsers.map(u =>
+                    filteredUsers.map((u, index) =>
+                        <Animatable.View animation="fadeInRight"  delay={ index+150}>
                         <TouchableOpacity style={styles.box} onPress={ () => props.navigation.navigate("ChangeRole" , {user: u})}>
 
                             <View style={styles.user}>
-                    <Text style={{fontSize:20}}>{u.displayName}</Text>
+                            <Text  style={{fontSize:20}}>{u.displayName}</Text>
                     <Text>{u.email}</Text>
                             </View>
                             <View style={styles.user}>
@@ -141,11 +145,12 @@ export default function UserAccounts(props) {
                             </View>
 
                         </TouchableOpacity>
+                        </Animatable.View>
                     )
 
                     :
                     <Text>No Users Found</Text>
-            }
+            } 
 
           
         </View>
@@ -157,11 +162,13 @@ UserAccounts.navigationOptions = {
     title: 'User Accounts',
 };
 
+
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-    head: { height: 40, backgroundColor: '#f1f8ff' },
+    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fbfdfb' },
+    head: { height: 40, backgroundColor: '#fbfdfb' },
     text: { margin: 6 },
-    box:{backgroundColor:"#FFFAFA" , padding:5 , flexDirection:"row"},
-    user:{backgroundColor: "#F0FFF0" , padding:5 , width:"50%" ,  alignItems:"center" },
-    search:{backgroundColor: "#DCDCDC" , padding:5 , width:"50%" ,  alignItems:"center" }
+    box:{backgroundColor:"#fbfdfb" , padding:5 , flexDirection:"row"},
+    user:{borderColor: "#D3D3D3",borderBottomWidth:3 , padding:5 , width:"50%" ,  alignItems:"center" },
+    search:{backgroundColor: "#DCDCDC" , padding:5 , width:"50%", height:"100%" , margin:3 },
+    //search2:{ padding:5 , width:"50%", height:"10%"  }
 });

@@ -105,6 +105,7 @@ export default function AdminAdvertisement(props) {
       }
 
 
+
     </View>
   );
 }

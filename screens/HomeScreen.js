@@ -18,6 +18,9 @@ import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
 import TimedSlideshow from 'react-native-timed-slideshow';
+import { AsyncStorage } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
+
 export default function HomeScreen(props) {
 
   const [ads, setAds] = useState([])
@@ -25,6 +28,15 @@ export default function HomeScreen(props) {
   const [items, setItems] = useState([])
   const [isVerified, setIsVerified] = useState(true);
 
+  const [timer, setTimer] = useState(10);
+  const [timeoutId, setTimeoutId] = useState(null);
+
+  const unsubscribe = props.navigation.addListener('didFocus', () => {
+    console.log('focussed');
+});
+
+
+  
   useEffect(() => {
     db.collection("Advertisement").where("adStatus","==","Approved").get()
       .then(querySnapshot => {
@@ -45,7 +57,36 @@ export default function HomeScreen(props) {
     temp.push({ uri: ads[i].photoURL, title: ads[i].title, text: `${<Button />}` })
     }
     setItems(temp)
+
+   
   },[])
+
+ 
+  // useEffect(() => {
+  //   //console.log("heeereeee");
+  //    setTimeoutId(
+  //         setTimeout(() => {
+  //           setTimer(timer + 1);
+  //         }, 1000)
+  //       )
+  //   track();
+    
+  // }, [timer]);
+  
+  const track = async()=>{
+    console.log(" in track")
+    let old = await db.collection("tracking").doc("track").get()
+   // AsyncStorage.setItem("service", "yes");
+    let check =  await AsyncStorage.getItem("service")
+    console.log(check)
+    if(  check === "yes"){
+      let newTrack = parseInt(old.data().service) -1
+    db.collection("tracking").doc("track").update({ service: newTrack})
+    AsyncStorage.setItem("service", "no");
+    }
+    
+
+  }
 
 
   const getAds = async () => {
