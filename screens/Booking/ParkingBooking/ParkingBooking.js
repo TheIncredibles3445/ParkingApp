@@ -19,6 +19,9 @@ import {
   StyleSheet,
   Picker
 } from "react-native";
+import { AsyncStorage } from "react-native";
+import FlashMessage from "react-native-flash-message";
+import { showMessage, hideMessage } from "react-native-flash-message";
 export default function ParkingBooking(props) {
   //============================ START DATE AND TIME ============================
 
@@ -39,7 +42,12 @@ const track = async()=>{
   let newTrack = parseInt(old.data().parking) + 1
   db.collection("tracking").doc("track").update({ parking: newTrack})
   AsyncStorage.setItem("parking", "yes");
-
+  
+  showMessage({
+    message: "My message title",
+    description: newTrack + " Users Are Trying To Book a Parking Right Now !!",
+    type: "success"
+  })
 }
 
   useEffect(() => {
@@ -203,6 +211,7 @@ const track = async()=>{
           }
         /> */}
       </View>
+      <FlashMessage position="bottom" animationDuration={700} duration={4000} style={{marginBottom:100}} />
     </View>
   );
 }

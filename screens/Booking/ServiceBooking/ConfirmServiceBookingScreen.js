@@ -18,6 +18,7 @@ import db from "../../../db.js";
 import DatePicker from "react-native-datepicker";
 import moment from "moment";
 import { AsyncStorage } from "react-native";
+import * as Animatable from 'react-native-animatable';
 
 export default function ConfirmServiceBookingScreen(props) {
   const booking = props.navigation.getParam("booking", "some default value");
@@ -117,19 +118,47 @@ export default function ConfirmServiceBookingScreen(props) {
   };
 
   return (
-    <View>
-      <Text> Confirm Booking</Text>
-      <Button
-        title="Pay Now"
-        onPress={() =>
-          props.navigation.navigate("Payment", {
-            booking: booking,
-            total: bookingTotal2.current,
-            id: bookingId.current
-          })
-        }
-      />
-      <Button title="Pay Later" onPress={() => payLater()} />
+    <View stule={{ alignItems:"center", marginRight: "auto",
+    marginLeft: "auto"}}>
+      <Text style={{
+            height: 50,
+            //width: 200,
+            fontSize: 25,
+            //backgroundColor: "#F0FFFF",
+            marginRight: "auto",
+            marginLeft: "auto",
+            color:"#5F9EA0"
+          }}> PICK YOUR PAYMENT METHOD</Text>
+      
+
+      <Animatable.View animation="bounce"  iterationCount={3}>
+      <TouchableOpacity 
+      style={{backgroundColor:"#5F9EA0",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5 , marginBottom:50,marginRight: "auto",
+      marginLeft: "auto"}}
+       onPress={() => payLater()}>
+        <Text style={{fontSize:20,color:"white"}}>PAY LATER</Text>
+        </TouchableOpacity>
+        </Animatable.View>
+
+        <Animatable.View animation="bounce"  iterationCount={3}>
+        <TouchableOpacity 
+      style={{backgroundColor:"#5F9EA0",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5,marginRight: "auto",
+      marginLeft: "auto"}}
+      onPress={() =>
+        props.navigation.navigate("Payment", {
+          booking: booking,
+          total: bookingTotal2.current,
+          id: bookingId.current
+        })
+      }>
+        <Text style={{fontSize:20,color:"white"}}>PAY NOW</Text>
+        </TouchableOpacity>
+        </Animatable.View>
     </View>
   );
 }
+
+ConfirmServiceBookingScreen.navigationOptions = {
+  title: "Confirm"
+};
+{/**<Animatable.View animation="bounce"  iterationCount={3}> */}

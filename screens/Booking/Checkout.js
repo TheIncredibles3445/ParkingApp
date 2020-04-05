@@ -21,7 +21,15 @@ export default function Checkout(props) {
     getParkingBookings();
     getTotalAmount();
     getServiceBookings();
+    track()
   }, []);
+
+  const track = async()=>{
+    let old = await db.collection("tracking").doc("track").get()
+    let newTrack = parseInt(old.data().parking) - 1
+    db.collection("tracking").doc("track").update({ parking: newTrack})
+    AsyncStorage.setItem("parking", "no");
+  }
 
   const getTotalAmount = () => {
     db.collection("booking")
