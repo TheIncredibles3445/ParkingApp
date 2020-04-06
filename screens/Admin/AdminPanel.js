@@ -33,13 +33,18 @@ export default function AdminPanel(props) {
           onPress={() => props.navigation.navigate("AllReport")}
         />
         <Text style={{ marginBottom: 10 }}></Text>
+
         <Button title="Advertisements" onPress={() => props.navigation.navigate("Adv")} />
+
+        <Text style={{ marginBottom: 10 }}></Text>
+
+        <Button title="Statistics" onPress={() => props.navigation.navigate("Statistics")} />
+        <Text style={{ marginBottom: 10 }}></Text>
         <Button
           title="Discounts"
           onPress={() => props.navigation.navigate("Discounts")}
         />
-        <Text style={{ marginBottom: 10 }}></Text>
-        <Button title="others.." onPress={() => console.log("go to others")} />
+        
       </View>
     </ScrollView>
   );

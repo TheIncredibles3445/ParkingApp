@@ -32,6 +32,7 @@ import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
 import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
 import AdvertisementList from "../screens/Admin/AdvertisementsList"
 import PartialPayment from "../screens/PartialPayment"
+import Statistics from "../screens/Admin/Statistics"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -115,7 +116,10 @@ const AdminStack = createStackNavigator({
   },
   ChangeRole: {
     screen: ChangeRole
-  }
+  },
+  Statistics: {
+    screen: Statistics
+    }
 
 });
 //the simulator wont work >>. i have to shut down the pc it always happen
