@@ -85,6 +85,39 @@ const handleSend = async (uid) => {
   });
 };
 
+const convertTime = (time) => {
+  const splitTime = time.split(" ");
+  console.log(splitTime);
+  if (splitTime[1] === "pm") {
+    const split = splitTime[0].split(":");
+    if (split[0] === "12") {
+      return new Date(moment().format("YYYY-MM-DDT" + `12:${split[1]}:00`));
+    } else if (split[0] === "01") {
+      return new Date(moment().format("YYYY-MM-DDT" + `13:${split[1]}:00`));
+    } else if (split[0] === "02") {
+      return new Date(moment().format("YYYY-MM-DDT" + `14:${split[1]}:00`));
+    } else if (split[0] === "03") {
+      return new Date(moment().format("YYYY-MM-DDT" + `15:${split[1]}:00`));
+    } else if (split[0] === "04") {
+      return new Date(moment().format("YYYY-MM-DDT" + `16:${split[1]}:00`));
+    } else if (split[0] === "05") {
+      return new Date(moment().format("YYYY-MM-DDT" + `17:${split[1]}:00`));
+    } else if (split[0] === "06") {
+      return new Date(moment().format("YYYY-MM-DDT" + `18:${split[1]}:00`));
+    } else if (split[0] === "07") {
+      return new Date(moment().format("YYYY-MM-DDT" + `19:${split[1]}:00`));
+    } else if (split[0] === "08") {
+      return new Date(moment().format("YYYY-MM-DDT" + `20:${split[1]}:00`));
+    } else if (split[0] === "09") {
+      return new Date(moment().format("YYYY-MM-DDT" + `21:${split[1]}:00`));
+    } else if (split[0] === "10") {
+      return new Date(moment().format("YYYY-MM-DDT" + `22:${split[1]}:00`));
+    }
+  } else {
+    return new Date(moment().format("YYYY-MM-DDT" + `${splitTime[0]}:00`));
+  }
+};
+
 const simulate = async () => {
   // get necessary data from db for simulation to start
   await init();
@@ -101,11 +134,10 @@ const simulate = async () => {
     let choice = "";
 
     let parkingSpot = parkings[i];
-    // console.log("parking before changing line 67 => ", parkingSpot);
     console.log("rnd  ", rnd);
     // - use percentages to decide what to do
     // - change to suit your own needs
-    if (rnd < 0.6666) {
+    if (rnd < 0.55) {
       parkingSpot.isParked = true;
     } else {
       parkingSpot.isBooked = false;
@@ -117,13 +149,16 @@ const simulate = async () => {
             item.blockId === parkingSpot.blockId &&
             item.date === moment().format("YYYY-MM-DD")
           ) {
-            await handleSend(item.userId);
+            const time = convertTime(moment().format("hh:mm a"));
+            const startTime = convertTime(item.startTime);
+            const endTime = convertTime(item.endTime);
+            if (time >= startTime && time <= endTime) {
+              await handleSend(item.userId);
+            }
           }
         });
       }
     }
-    // console.log("parking before changing line 75 => ", parkingSpot);
-    // console.log("Parking Object in the array => ", parkings[i]);
 
     // update the db
     const { id, ...parking } = parkings[i];
