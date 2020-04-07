@@ -178,7 +178,7 @@ export default function Parking(props) {
         endTime: data.endTime,
       });
 
-    props.navigation.navigate("WaitingList");
+    props.navigation.navigate("Home");
   };
 
   const handleBooked = (item) => {
