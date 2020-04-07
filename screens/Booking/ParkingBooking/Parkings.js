@@ -165,6 +165,41 @@ export default function Parking(props) {
     );
   };
 
+  const handleWaitingList = async (item) => {
+    await db
+      .collection("block")
+      .doc(data.selectedBlock.id)
+      .collection("waitingList")
+      .add({
+        blockId: data.selectedBlock.id,
+        userId: firebase.auth().currentUser.uid,
+        date: moment().format("YYYY-MM-DD"),
+        startTime: data.startTime,
+        endTime: data.endTime,
+      });
+
+    props.navigation.navigate("WaitingList");
+  };
+
+  const handleBooked = (item) => {
+    Alert.alert(
+      "Booked Spot",
+      "Do You Want To Be Added in the Waiting List ?",
+      [
+        {
+          text: "Yes",
+          onPress: () => handleWaitingList(item),
+        },
+        {
+          text: "No",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const handleRedirect = () => {
     Alert.alert(
       "Warning",
@@ -188,77 +223,79 @@ export default function Parking(props) {
     console.log("item", item);
     const date = moment().format("YYYY-MM-DD");
 
-    if (cars.length !== 0) {
-      if (!item.isBooked) {
-        if (friend != null) {
-          db.collection("booking")
-            .add({
-              date: date,
-              total_price: item.price,
-              type: "Parking",
-              userId: friend,
-            })
-            .then((docRef) => {
-              db.collection("booking")
-                .doc(docRef.id)
-                .collection("parking_booking")
-                .add({
-                  startTime: data.startTime,
-                  endTime: data.endTime,
-                  parkingId: item.id,
-                  rating: 0,
-                });
+    if (!item.isParked) {
+      if (cars.length !== 0) {
+        if (!item.isBooked) {
+          if (friend != null) {
+            db.collection("booking")
+              .add({
+                date: date,
+                total_price: item.price,
+                type: "Parking",
+                userId: friend,
+              })
+              .then((docRef) => {
+                db.collection("booking")
+                  .doc(docRef.id)
+                  .collection("parking_booking")
+                  .add({
+                    startTime: data.startTime,
+                    endTime: data.endTime,
+                    parkingId: item.id,
+                    rating: 0,
+                  });
+              });
+            let user = await db.collection("users").doc(friend).get();
+            let dbpendingAmount = parseInt(
+              user.data().pendingAmount + parseInt(item.price)
+            );
+            db.collection("users")
+              .doc(friend)
+              .update({ pendingAmount: dbpendingAmount });
+            props.navigation.navigate("HomeScreen");
+          } else {
+            db.collection("booking")
+              .add({
+                date: date,
+                total_price: item.price,
+                type: "Parking",
+                userId: firebase.auth().currentUser.uid,
+              })
+              .then((docRef) => {
+                db.collection("booking")
+                  .doc(docRef.id)
+                  .collection("parking_booking")
+                  .add({
+                    startTime: data.startTime,
+                    endTime: data.endTime,
+                    parkingId: item.id,
+                    rating: 0,
+                  });
+              });
+            props.navigation.navigate("Checkout", {
+              blockId: data.selectedBlock.id,
+              parkingId: item.id,
             });
-          let user = await db.collection("users").doc(friend).get();
-          let dbpendingAmount = parseInt(
-            user.data().pendingAmount + parseInt(item.price)
-          );
-          db.collection("users")
-            .doc(friend)
-            .update({ pendingAmount: dbpendingAmount });
-          props.navigation.navigate("HomeScreen");
+          }
+
+          db.collection("block")
+            .doc(data.selectedBlock.id)
+            .collection("parking")
+            .doc(item.id)
+            .update({
+              isBooked: true,
+              location: item.location,
+              price: item.price,
+              type: item.type,
+            });
         } else {
-          db.collection("booking")
-            .add({
-              date: date,
-              total_price: item.price,
-              type: "Parking",
-              userId: firebase.auth().currentUser.uid,
-            })
-            .then((docRef) => {
-              db.collection("booking")
-                .doc(docRef.id)
-                .collection("parking_booking")
-                .add({
-                  startTime: data.startTime,
-                  endTime: data.endTime,
-                  parkingId: item.id,
-                  rating: 0,
-                });
-            });
-          props.navigation.navigate("Checkout", {
-            blockId: data.selectedBlock.id,
-            parkingId: item.id,
-          });
+          handleBooked(item);
         }
-
-        db.collection("block")
-          .doc(data.selectedBlock.id)
-          .collection("parking")
-          .doc(item.id)
-          .update({
-            isBooked: true,
-            location: item.location,
-            price: item.price,
-            type: item.type,
-          });
-
-        // }
       } else {
-        alert("Booked");
+        handleRedirect();
       }
     } else {
-      handleRedirect();
+      alert("Car Parked");
     }
   };
 
