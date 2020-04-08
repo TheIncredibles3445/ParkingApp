@@ -201,6 +201,7 @@ const track = async()=>{
       <ScrollView
         style={Platform.OS !== "ios" ? { flex: 1, marginTop: 10 } : { flex: 1 }}
       >
+        <TouchableOpacity  onPress={() => props.navigation.navigate("FindParking")}><Text>Find a Parking</Text></TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 30 }}>Welcome</Text>
         </View>

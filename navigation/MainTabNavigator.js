@@ -50,6 +50,9 @@ import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
+import FindParking from "../screens/FindParkings"
+
+
 const config = Platform.select({
   web: { headerMode: "screen" },
   default: {}
@@ -66,7 +69,8 @@ const HomeStack = createStackNavigator(
     ConfirmBooking: ConfirmServiceBookingScreen,
     Payment: Payment,
     ReportScreen: ReportScreen,
-    Direction: Direction
+    Direction: Direction,
+    FindParking: FindParking
   },
   config
 );
