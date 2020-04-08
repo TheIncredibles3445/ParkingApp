@@ -6,12 +6,15 @@ import * as Animatable from "react-native-animatable";
 
 export default function AdminPanel(props) {
   return (
+    //Here I used react native components such as, ScorllView for renders all the components at once,
+    // Buttons, and also I used the View and Text
+    // I used also Animation on the Text and on the buttons
+    // I used flash animation for the text and it runs when u open the admin panel page and also I made the iterationCount as "infinite" to keep the text runs as flash animation infintly.
+    // I used flipInY animation for the buttons and it runs only once to let the admin choose where he wants to go easily.
+    // I used react navigation also here in this page, so for example for Services Manegement button, it will navigate the admin to the Services Screen
+    // Also, in All Reports button it will navigate the admin to AllReportsScreen that will show him all the reports that the users did.
+
     <ScrollView style={styles.container}>
-      {/**
-       * Go ahead and delete ExpoLinksView and replace it with your content;
-       * we just wanted to provide you with some helpful links.
-       */}
-      {/* <Divider style={{ marginTop: 20 }} /> */}
       <Animatable.View
         animation="flash"
         direction="alternate"
@@ -82,7 +85,7 @@ export default function AdminPanel(props) {
         </Animatable.View>
         <Text style={{ marginBottom: 10 }}></Text>
         <Animatable.View
-          animation="flipInY"
+          animation="lightSpeedIn"
           direction="alternate"
           iterationCount={1}
         >

@@ -183,17 +183,6 @@ export default AllReportsScreen = (props) => {
     // if found, the change the status of that report using the report id.
 
     //cool ? yes
-
-    // const update = await db
-    //   .collection("Reports")
-    //   .doc(firebase.auth().currentUser.uid)
-    //   .get();
-    // const report = update.data();
-    // let reportStatus = status == true;
-    // report.status = reportStatus;
-    // db.collection("Reports")
-    //   .doc(firebase.auth().currentUser.uid)
-    //   .update(report);
   };
 
   return (
@@ -213,7 +202,7 @@ export default AllReportsScreen = (props) => {
       >
         <Text
           style={{
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: "bold",
             marginLeft: "28%",
             marginTop: "3%",
@@ -262,7 +251,7 @@ export default AllReportsScreen = (props) => {
           </Text>
 
           <Text style={{ fontSize: 15, marginRight: 50 }}>
-            User Name: {user.name}
+            User Name: {user.displayName}
           </Text>
           <Text style={{ fontSize: 15 }}> User Email: {user.email}</Text>
           <Text style={{ fontSize: 15 }}> Phone Number: {user.phone}</Text>

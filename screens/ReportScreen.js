@@ -19,9 +19,12 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import DatePicker from "react-native-datepicker";
 import * as Location from "expo-location";
-// import { Button } from "react-native-elements";
 
 export default function ReportScreen() {
+  // here im using react hooks as useState which used to store the data
+  // and down I used useEffect to get the variables
+  // for example, in plateNumber element the state can be accessed with the first element which is plateNumber and can be set with the second element which is setPlateNumber.
+
   const [userId, setUserId] = useState("");
   const [reporterName, setReporterName] = useState("");
   const [description, setDescription] = useState("");
@@ -134,6 +137,8 @@ export default function ReportScreen() {
       setLocation(locations);
     }
   };
+  // and here I used react hooks as useEffect to get the variables
+  // this useEffect takes two parameters, handleLocation() function and an array, and it returns nothing. The handleLocation function it takes will be executed after every render cycle.
   useEffect(() => {
     handleLocation();
   }, []);
@@ -165,6 +170,8 @@ export default function ReportScreen() {
             >
               Reporter Name:
             </Text>
+            {/* I used here TextInput from react native elements that will allow the user here to fill his/her name easily and then store it in database by 
+            setting the ReporterName in onChangeText. also, the placeholder will display a text in the input field.  */}
             <TextInput
               style={{
                 width: "60.5%",
@@ -331,7 +338,16 @@ export default function ReportScreen() {
             </View>
             {/* </View> */}
           </View>
-          <View style={{ width: "30%", marginLeft: "63%", marginTop: "20%", borderRadius:10,borderWidth:2, borderColor:"#005992" }}>
+          <View
+            style={{
+              width: "30%",
+              marginLeft: "63%",
+              marginTop: "20%",
+              borderRadius: 10,
+              borderWidth: 2,
+              borderColor: "#005992",
+            }}
+          >
             <Button color="#005992" title="Submit" onPress={handleSubmit} />
           </View>
           {/* <View style={{ width: 100, marginLeft: "10%" }}>
@@ -342,6 +358,8 @@ export default function ReportScreen() {
     </SafeAreaView>
   );
 }
+// on this navigationOptions I added a title called Reports which will be dispalaying as header title
+// headerStyle this will change the background image
 ReportScreen.navigationOptions = {
   title: "Reports",
   headerTintColor: "white",

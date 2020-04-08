@@ -13,6 +13,8 @@ import ReportScreen from "../screens/ReportScreen";
 import AllReportsScreen from "../screens/Admin/AllReportsScreen";
 import DiscountsScreen from "../screens/Admin/DiscountsScreen";
 import AdminScreen from "../screens/Admin/AdminScreen";
+// for the points
+import RewardScreen from "../screens/Profile/RewardScreen";
 
 //Amal's Imports
 import AdminPanel from "../screens/Admin/AdminPanel";
@@ -40,7 +42,7 @@ import AddCard from "../screens/Profile/AddCard";
 import Direction from "../screens/Booking/Direction";
 const config = Platform.select({
   web: { headerMode: "screen" },
-  default: {}
+  default: {},
 });
 
 const HomeStack = createStackNavigator(
@@ -54,7 +56,7 @@ const HomeStack = createStackNavigator(
     ConfirmBooking: ConfirmServiceBookingScreen,
     Payment: Payment,
     ReportScreen: ReportScreen,
-    Direction: Direction
+    Direction: Direction,
   },
   config
 );
@@ -66,33 +68,33 @@ HomeStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? `md-home` : "md-home"}
     />
-  )
+  ),
 };
 
 HomeStack.path = "";
 
 const AdminStack = createStackNavigator({
   Main: {
-    screen: AdminPanel
+    screen: AdminPanel,
   },
   Services: {
-    screen: ServicesScreen
+    screen: ServicesScreen,
   },
   WorkersManagement: {
-    screen: WorkersManagementScreen
+    screen: WorkersManagementScreen,
   },
   ServiceDetails: {
-    screen: ServiceDetailsScreen
+    screen: ServiceDetailsScreen,
   },
   UserAccounts: {
-    screen: UserAccountsScreen
+    screen: UserAccountsScreen,
   },
   AllReport: {
-    screen: AllReportsScreen
+    screen: AllReportsScreen,
   },
   Discounts: {
-    screen: DiscountsScreen
-  }
+    screen: DiscountsScreen,
+  },
 });
 
 AdminStack.navigationOptions = {
@@ -102,7 +104,7 @@ AdminStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
     />
-  )
+  ),
 };
 AdminStack.path = "";
 
@@ -134,7 +136,7 @@ AdminStack.path = "";
 //
 const TestStack = createStackNavigator(
   {
-    Test: Direction
+    Test: Direction,
   },
   config
 );
@@ -146,7 +148,7 @@ TestStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
     />
-  )
+  ),
 };
 
 TestStack.path = "";
@@ -159,7 +161,8 @@ const SettingsStack = createStackNavigator(
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
     AddCard: AddCard,
-    Friends: LinksScreen
+    Friends: LinksScreen,
+    Reward: RewardScreen,
   },
   config
 );
@@ -171,7 +174,7 @@ SettingsStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-options" : "md-options"}
     />
-  )
+  ),
 };
 
 SettingsStack.path = "";
@@ -181,7 +184,7 @@ const tabNavigator = createBottomTabNavigator({
   // LinksStack,
   // TestStack,
   SettingsStack,
-  AdminStack
+  AdminStack,
   // ServiceBookingStack
 });
 
