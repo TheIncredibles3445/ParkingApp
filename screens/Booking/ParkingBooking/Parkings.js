@@ -232,6 +232,7 @@ export default function Parking(props) {
                 date: date,
                 total_price: item.price,
                 type: "Parking",
+                blockId: data.selectedBlock.id,
                 userId: friend,
               })
               .then((docRef) => {
@@ -259,6 +260,7 @@ export default function Parking(props) {
                 date: date,
                 total_price: item.price,
                 type: "Parking",
+                blockId: data.selectedBlock.id,
                 userId: firebase.auth().currentUser.uid,
               })
               .then((docRef) => {

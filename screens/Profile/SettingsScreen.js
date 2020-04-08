@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Button, SafeAreaView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Button,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
@@ -9,74 +15,71 @@ import { Avatar, ListItem, Icon, Text } from "react-native-elements";
 import "firebase/auth";
 import db from "../../db.js";
 
-
-
 export default function SettingsScreen(props) {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
-  // const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayName] = useState(
+    firebase.auth().currentUser.displayName
+  );
   // const [uri, setUri] = useState("");
-  const [photoURL, setPhotoURL] = useState("");
-  const loggedInUser = useRef()
-  const [update , setUpate] = useState(false)
-  const[ ads , setAds] = useState([])
+  const [photoURL, setPhotoURL] = useState(
+    firebase.auth().currentUser.photoURL
+  );
+  const loggedInUser = useRef();
+  const [update, setUpate] = useState(false);
+  const [ads, setAds] = useState([]);
 
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
     setHasCameraRollPermission(status === "granted");
   };
 
-  useEffect(()=>{
-
-  },[ update])
+  useEffect(() => {}, [update]);
 
   useEffect(() => {
     console.log(firebase.auth().currentUser.uid);
     handleSet();
-    getUser()
+    getUser();
     askPermission();
 
-    db.collection("Advertisement").where("uid", "==", firebase.auth().currentUser.uid).onSnapshot(querySnapshot => {
-      let ads = [];
+    db.collection("Advertisement")
+      .where("uid", "==", firebase.auth().currentUser.uid)
+      .onSnapshot((querySnapshot) => {
+        let ads = [];
 
-      querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           ads.push({ id: doc.id, ...doc.data(), isSelected: false });
+        });
+
+        setAds([...ads]);
       });
-     
-      setAds([...ads]);
-    });
-
-
   }, []);
 
   const getUser = async () => {
-    let loggeduser = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
-    loggedInUser.current = loggeduser.data()
-    console.log("the user ---->", loggedInUser.current.role) 
-    setUpate(!update) 
-  }
+    let loggeduser = await db
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get();
+    loggedInUser.current = loggeduser.data();
+    console.log("the user ---->", loggedInUser.current.role);
+    setUpate(!update);
+  };
 
   const handleSet = () => {
     const user = firebase.auth().currentUser;
-    // setDisplayName(user.displayName);
+    setDisplayName(user.displayName);
     setPhotoURL(user.photoURL);
     // setPhone(user.phoneNumber);
   };
 
-  
   const handleLogout = () => {
     firebase.auth().signOut();
-
   };
 
+  useEffect(() => {}, [loggedInUser.current]);
 
+  useEffect(() => {}, [photoURL]);
 
-  useEffect(() => {
-    
-  }, [loggedInUser.current ]);
-
-  useEffect(() => { }, [photoURL]);
-
-  const handleSave = async uri => {
+  const handleSave = async (uri) => {
     const response = await fetch(uri);
     const blob = await response.blob();
     const putResult = await firebase
@@ -92,11 +95,10 @@ export default function SettingsScreen(props) {
     const updateUser = firebase.functions().httpsCallable("updatePhoto");
     const response2 = await updateUser({
       uid: firebase.auth().currentUser.uid,
-      photoURL: url
+      photoURL: url,
     });
     setPhotoURL(url);
   };
-
 
   const handlePickImage = async () => {
     // show camera roll, allow user to select
@@ -104,7 +106,7 @@ export default function SettingsScreen(props) {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1
+      quality: 1,
     });
 
     if (!result.cancelled) {
@@ -114,25 +116,47 @@ export default function SettingsScreen(props) {
     }
   };
 
-  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "My BOOKINGS", "Pay"];
-  const files = ["Profile", "Payment", "Vehicle", "Friends", "AllBookings","PartialPayment"];
+  const list = [
+    "MY PROFILE",
+    "PAYMENT",
+    "VEHICLES",
+    "FRIENDS",
+    "MY BOOKINGS",
+    "PAY",
+  ];
+  const files = [
+    "Profile",
+    "Payment",
+    "Vehicle",
+    "Friends",
+    "AllBookings",
+    "PartialPayment",
+  ];
   return (
     <View style={styles.container}>
-      <View style={{ flex: 2, alignItems: "center" }}>
+      <View
+        style={{ flex: 2, alignItems: "center", backgroundColor: "#005992" }}
+      >
         <Avatar
           containerStyle={{ marginTop: 10 }}
           rounded
           size={100}
           source={{
-            uri: photoURL
+            uri: photoURL,
           }}
           overlayContainerStyle={{ backgroundColor: "white" }}
           showEditButton
           onEditPress={handlePickImage}
-        // editButton={<Icon type="feather" name="edit-2" color="red" />}
+          // editButton={<Icon type="feather" name="edit-2" color="red" />}
         />
-        <Text>You are logged in as</Text>
-        <Text>{firebase.auth().currentUser.email}</Text>
+        <Text style={{ color: "white", fontWeight: "bold", fontSize: 15 }}>
+          You are logged in as
+        </Text>
+        <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
+          {firebase.auth().currentUser.displayName !== null
+            ? firebase.auth().currentUser.displayName
+            : firebase.auth().currentUser.email}
+        </Text>
       </View>
       <View style={{ flex: 4 }}>
         {list.map((item, index) => (
@@ -143,115 +167,129 @@ export default function SettingsScreen(props) {
             rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
             onPress={() =>
               props.navigation.navigate(files[index], {
-                user: firebase.auth().currentUser
+                user: firebase.auth().currentUser,
               })
             }
           />
         ))}
 
-        
-        {
-
-          loggedInUser.current && loggedInUser.current.role === "worker" ?
-            <View style={{ flex: 4 }}>
-
-              <ListItem
-                title="Schedule"
-                bottomDivider
-                rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
-                onPress={() =>
-                  props.navigation.navigate("Schedule", {
-                    user: loggedInUser.current
-                  })
-                }
-              />
-            </View>
-            : 
-            null
-        }
-
-        {
-          ads.length > 0 ?
+        {loggedInUser.current && loggedInUser.current.role === "worker" ? (
           <View style={{ flex: 4 }}>
+            <ListItem
+              title="Schedule"
+              bottomDivider
+              rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
+              onPress={() =>
+                props.navigation.navigate("Schedule", {
+                  user: loggedInUser.current,
+                })
+              }
+            />
+          </View>
+        ) : null}
 
-              <ListItem
-                title="My Advertisements"
-                bottomDivider
-                rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
-                onPress={() =>
-                  props.navigation.navigate("MyAdvertisement", {
-                    myAds: ads
-                  })
-                }
-              />
-            </View>
-          :
-
-          null
-        }
-
+        {ads.length > 0 ? (
+          <View style={{ flex: 4 }}>
+            <ListItem
+              title="My Advertisements"
+              bottomDivider
+              rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
+              onPress={() =>
+                props.navigation.navigate("MyAdvertisement", {
+                  myAds: ads,
+                })
+              }
+            />
+          </View>
+        ) : null}
       </View>
 
-
-
-
-
-      <Button title="Log Out" onPress={handleLogout} />
+      <TouchableOpacity
+        onPress={() => handleLogout()}
+        style={
+          Platform.OS === "android"
+            ? {
+                backgroundColor: "#005992",
+                height: 30,
+                justifyContent: "center",
+              }
+            : {
+                backgroundColor: "#005992",
+                height: 25,
+                justifyContent: "center",
+              }
+        }
+      >
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontWeight: "bold",
+            letterSpacing: 5,
+          }}
+        >
+          LOGOUT
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 SettingsScreen.navigationOptions = {
-  title: "MY ACCOUNT"
+  title: "MY ACCOUNT",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#005992",
+  },
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: "center",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: "rgba(96,100,109, 0.8)",
   },
   codeHighlightContainer: {
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 24,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   tabBarInfoContainer: {
     position: "absolute",
@@ -263,33 +301,33 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: "center",
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
-  }
+    color: "#2e78b7",
+  },
 });

@@ -23,15 +23,15 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
-import ChangeRole from "../screens/Admin/ChangeRole"
-import WorkerSchedule from "../screens/Profile/WorkerSchedule"
-import ScheduleDetails from "../screens/Profile/ScheuduleDetails"
-import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails"
-import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
-import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
-import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
-import AdvertisementList from "../screens/Admin/AdvertisementsList"
-import PartialPayment from "../screens/PartialPayment"
+import ChangeRole from "../screens/Admin/ChangeRole";
+import WorkerSchedule from "../screens/Profile/WorkerSchedule";
+import ScheduleDetails from "../screens/Profile/ScheuduleDetails";
+import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails";
+import MyAdvertisement from "../screens/Adverisement/MyAdvertisements";
+import AdminAdvertisements from "../screens/Admin/AdminAdvertisements";
+import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails";
+import AdvertisementList from "../screens/Admin/AdvertisementsList";
+import PartialPayment from "../screens/PartialPayment";
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
@@ -49,10 +49,10 @@ import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
-import WaitingList from "../screens/Booking/ParkingBooking/WaitingList"
+import WaitingList from "../screens/Booking/ParkingBooking/WaitingList";
 const config = Platform.select({
   web: { headerMode: "screen" },
-  default: {}
+  default: {},
 });
 
 const HomeStack = createStackNavigator(
@@ -67,7 +67,7 @@ const HomeStack = createStackNavigator(
     Payment: Payment,
     ReportScreen: ReportScreen,
     Direction: Direction,
-    WaitingList: WaitingList
+    WaitingList: WaitingList,
   },
   config
 );
@@ -79,46 +79,45 @@ HomeStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? `md-home` : "md-home"}
     />
-  )
+  ),
 };
 
 HomeStack.path = "";
 
 const AdminStack = createStackNavigator({
   Main: {
-    screen: AdminPanel
+    screen: AdminPanel,
   },
   Services: {
-    screen: ServicesScreen
+    screen: ServicesScreen,
   },
   WorkersManagement: {
-    screen: WorkersManagementScreen
+    screen: WorkersManagementScreen,
   },
   ServiceDetails: {
-    screen: ServiceDetailsScreen
+    screen: ServiceDetailsScreen,
   },
   UserAccounts: {
-    screen: UserAccountsScreen
+    screen: UserAccountsScreen,
   },
   AllReport: {
-    screen: AllReportsScreen
+    screen: AllReportsScreen,
   },
   Adv: {
-    screen: AdminAdvertisements
+    screen: AdminAdvertisements,
   },
   AdminAdvDetails: {
-    screen: AdminAdvDetails
+    screen: AdminAdvDetails,
   },
-  AdvertisementList:{
-    screen: AdvertisementList
+  AdvertisementList: {
+    screen: AdvertisementList,
   },
   Discounts: {
-    screen: DiscountsScreen
+    screen: DiscountsScreen,
   },
   ChangeRole: {
-    screen: ChangeRole
-  }
-
+    screen: ChangeRole,
+  },
 });
 //the simulator wont work >>. i have to shut down the pc it always happen
 AdminStack.navigationOptions = {
@@ -128,7 +127,7 @@ AdminStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
     />
-  )
+  ),
 };
 AdminStack.path = "";
 
@@ -158,23 +157,22 @@ AdminStack.path = "";
 // ServiceBookingStack.path = "";
 
 //
-const TestStack = createStackNavigator(
-  {
-    Test: Direction
-  },
-  config
-);
+// const TestStack = createStackNavigator(
+//   {
+//     Test: Test,
+//   },
+//   config
+// );
 
-TestStack.navigationOptions = {
-  tabBarLabel: "Test",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-    />
-  )
-};
-
+// TestStack.navigationOptions = {
+//   tabBarLabel: "Test",
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
+//     />
+//   ),
+// };
 
 const SettingsStack = createStackNavigator(
   {
@@ -192,7 +190,7 @@ const SettingsStack = createStackNavigator(
     PartialPayment: PartialPayment,
     AllBookings: AllBookings,
     ParkingBookingsDetails: ParkingBookingsDetails,
-    ServiceBookingDetails: ServiceBookingDetails
+    ServiceBookingDetails: ServiceBookingDetails,
   },
   config
 );
@@ -204,7 +202,7 @@ SettingsStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-options" : "md-options"}
     />
-  )
+  ),
 };
 
 SettingsStack.path = "";
@@ -212,7 +210,7 @@ SettingsStack.path = "";
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   SettingsStack,
-  AdminStack
+  AdminStack,
 });
 
 tabNavigator.path = "";
