@@ -49,7 +49,6 @@ import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
-import WaitingList from "../screens/Booking/ParkingBooking/WaitingList";
 const config = Platform.select({
   web: { headerMode: "screen" },
   default: {},
@@ -67,7 +66,6 @@ const HomeStack = createStackNavigator(
     Payment: Payment,
     ReportScreen: ReportScreen,
     Direction: Direction,
-    WaitingList: WaitingList,
   },
   config
 );
