@@ -23,7 +23,7 @@ export default function Direction(props) {
     getDirections();
   }, []);
 
-  // useEffect(() => {}, [userLocation]);
+
 
   const getDirections = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);

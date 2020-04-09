@@ -13,7 +13,7 @@ import {
 import { NavigationActions } from "react-navigation";
 import moment from "moment";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
-import db from "../db";
+import db from "../../db";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
@@ -26,7 +26,11 @@ export default function FindParkings(props) {
   const [buildings, setBuildings] = useState([]);
   const [block, setBlock] = useState([]);
   const [update, setUpdate] = useState(false);
+  const [update2, setUpdate2] = useState(false);
+  const [update3, setUpdate3] = useState(false);
+  const [show , setShow] = useState("buildings")
   const nearby = useRef()
+  const free = useRef()
   //const [buildings , setBuildings] = useState([])
   useEffect(() => {
     getBuildings()
@@ -52,21 +56,23 @@ export default function FindParkings(props) {
 
   }
 
-  const getBlocks = () =>{
-
-  }
-
   useEffect(() => {
     setUpdate(!update)
     console.log(" all locations", buildings)
     console.log("the blocks", block)
   }, [buildings,block])
 
-  useEffect(() => {
-    setUpdate(!update)
+  // useEffect(() => {
+  //   setUpdate(!update)
   
-    console.log("all free parking spots", parkingSpots)
+  //   console.log("all free parking spots", parkingSpots)
+  // }, [parkingSpots])
+
+  useEffect(() => {
+    setUpdate2(!update2)
+    
   }, [parkingSpots])
+ 
 
   const selectBuilding = async (building) => {
      console.log("select building")
@@ -75,12 +81,50 @@ export default function FindParkings(props) {
      for( let i=0 ; i < block.length ; i++){
       let temp = block[i].nearby.filter( b => b == building.location)
       if(temp.length > 0){
+        console.log("here")
         finalBlocks.push(block[i])
       }
      }
      nearby.current = finalBlocks
+     
      console.log(" all nearby == ", nearby.current)
-     //get parkings of blocks
+     getParkigns()
+  }
+  
+  const getParkigns = async() =>{
+    if(nearby.current.length > 0){
+      for(let i=0 ; i < nearby.current.length ; i++){
+        db.collection("block").doc(nearby.current[i].id).collection("parking").onSnapshot(querySnapshot => {
+          let parkingSpots = [];
+          querySnapshot.forEach(doc => {
+            parkingSpots.push({ id: doc.id, ...doc.data() , block:nearby.current[i].id});
+          });
+          free.current = parkingSpots     
+          //.filter( p => p.isParked == false)    
+        }); 
+        console.log("---------------------- i=",free.current)
+       }
+    }  
+    setShow("blocks")
+  }
+
+  const filterParkings = (block) =>{
+    console.log("free current", free.current , block.id)
+    let temp = free.current
+    temp = temp.filter( p => p.block === block.id && p.type == "free" && p.isParked == false)
+    //&& p.type == "free" && isParked == false
+    console.log(" the filter parking", temp)
+    free.current = temp
+    console.log(" the filter parking.current", free.current)
+    setShow("parking")
+    //setUpdate3(!update3)
+  }
+
+  const showDirection = (b) =>{
+   // console.log("1",b.blockId ,"2", b.id)
+    props.navigation.navigate("Direction", {
+      blockId: b.block,
+      parkingId: b.id})
   }
 
   return (
@@ -97,7 +141,7 @@ export default function FindParkings(props) {
         style={styles.map}
       >
         {
-          buildings ?
+          buildings && show == "buildings"?
             buildings.map((b, index) =>
               <Marker
                 key={index}
@@ -113,14 +157,62 @@ export default function FindParkings(props) {
 
                 </View></Marker>
             )
+            : show == "blocks" ?
+                nearby.current.map((b, index) =>
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude: b.location.latitude,
+                    longitude: b.location.longitude
+                  }}
+                  onPress={() => filterParkings(b)}
+                ><View
+                  style={styles.unBookedMarker} >
+  
+                    <Text style={styles.text}>{b.name}</Text>
+  
+                  </View>
+                  </Marker>
+                )
+
+            : show == "parking"?
+            free.current.map((b, index) =>
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: b.location.latitude,
+                longitude: b.location.longitude
+              }}
+              onPress={ () => showDirection(b)}
+            ><View
+              style={styles.unBookedMarker} >
+
+                <Text style={styles.text}>{b.name}</Text>
+
+              </View>
+              </Marker>
+            )
+
             :
 
             null
 
         }
+        
 
 
       </MapView>
+
+      { free.current && free.current.length > 0 && show == "parking"? 
+        <TouchableOpacity onPress={ () =>
+        props.navigation.navigate("Direction", {
+          blockId: blockId,
+          parkingId: parkingId
+        })}>
+          
+        <Text>Show Directaion</Text>
+        </TouchableOpacity>
+      :null}
     </View>
   )
 }
@@ -133,7 +225,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 300,
-    flex: 1
+    flex: 1,
+    marginTop:"10%"
 
   },
   bookedMarker: {

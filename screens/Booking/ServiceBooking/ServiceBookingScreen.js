@@ -85,7 +85,6 @@ const track = async()=>{
 
   const getWorkers = () => {
     setSelectedTime();
-    //setAvailableTimings([])
 
     if (selectedService) {
       let w = [];

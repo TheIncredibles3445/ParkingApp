@@ -27,7 +27,6 @@ export default function ChangeRole(props) {
     const email = useRef()
     const  role= useRef()
 
-
     useEffect(() => {
        
     }, [show]);

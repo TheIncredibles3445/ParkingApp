@@ -33,7 +33,7 @@ import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
 import AdvertisementList from "../screens/Admin/AdvertisementsList"
 import PartialPayment from "../screens/PartialPayment"
 import Statistics from "../screens/Admin/Statistics"
-
+import FindParking from "../screens/Booking/FindParkings"
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/Profile/LinksScreen";
@@ -50,7 +50,7 @@ import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
-import FindParking from "../screens/FindParkings"
+
 
 
 const config = Platform.select({
