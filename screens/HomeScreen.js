@@ -211,7 +211,7 @@ export default function HomeScreen(props) {
                 style={styles.icons}
                 source={require('../assets/images/advertise2.png')}
               />
-              <Text style={styles.labels}>Advertise With us</Text>
+              <Text style={styles.labels}>Advertise With Us</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

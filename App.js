@@ -443,7 +443,7 @@ function handleFinishLoading(setLoadingComplete) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0FFFF"
+    backgroundColor: '#F5FCFF'
   },
   contentContainer: {
     paddingTop: "10%",
