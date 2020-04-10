@@ -545,11 +545,10 @@ const LinksScreen = (props) => {
                                     marginLeft: "5%",
                                     marginTop: 10,
                                   }}
-                                >
-                                </View>
+                                ></View>
                                 <View
                                   style={{
-                                    marginLeft: "47%",
+                                    marginLeft: "59%",
                                     marginRight: 8,
                                     width: 120,
                                     backgroundColor: "#B0C4DE",
