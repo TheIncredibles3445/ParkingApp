@@ -3,6 +3,7 @@ import {
   StyleSheet,
   View,
   Button,
+  Image,
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
@@ -159,7 +160,7 @@ export default function ProfileScreen(props) {
         </Text>
       </View>
       <View style={{ flex: 4 }}>
-        {list.map((item, index) => (
+        {/* {list.map((item, index) => (
           <ListItem
             key={index}
             title={item}
@@ -171,7 +172,7 @@ export default function ProfileScreen(props) {
               })
             }
           />
-        ))}
+        ))} */}
 
         {loggedInUser.current && loggedInUser.current.role === "worker" ? (
           <View style={{ flex: 4 }}>
@@ -241,13 +242,23 @@ ProfileScreen.navigationOptions = {
   headerStyle: {
     backgroundColor: "#005992",
   },
-  drawerLabel: "Main",
+  drawerLabel: "Profile",
+  drawerIcon: ({ tintColor }) => (
+    <Image
+      source={require("../../assets/images/profile.png")}
+      style={[styles.icon, { tintColor: tintColor }]}
+    />
+  ),
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#E7EAEB",
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
   developmentModeText: {
     marginBottom: 20,

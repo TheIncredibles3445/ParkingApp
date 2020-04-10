@@ -4,7 +4,8 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Image,
 } from "react-native";
 import { Card } from "react-native-shadow-cards";
 
@@ -20,9 +21,9 @@ export default function Vehicle(props) {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Vehicles")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         let vehicle = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           vehicle.push({ id: doc.id, ...doc.data() });
         });
         setUserVehicles(vehicle);
@@ -57,7 +58,7 @@ export default function Vehicle(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Car Make: <Text>{item.make}</Text>
@@ -66,7 +67,7 @@ export default function Vehicle(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Car Model: <Text>{item.model}</Text>
@@ -76,7 +77,7 @@ export default function Vehicle(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Car Type: <Text>{item.type}</Text>
@@ -85,7 +86,7 @@ export default function Vehicle(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Plate Number: <Text>{item.number}</Text>
@@ -113,16 +114,26 @@ export default function Vehicle(props) {
 }
 
 Vehicle.navigationOptions = {
-  title: "My Vehicles"
+  //title: "My Vehicles"
+  drawerIcon: ({ tintColor }) => (
+    <Image
+      source={require("../../assets/images/profile.png")}
+      style={[styles.icon, { tintColor: tintColor }]}
+    />
+  ),
 };
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    flex: 1
+    flex: 1,
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
   backTextWhite: {
-    color: "#FFF"
+    color: "#FFF",
   },
   rowFront: {
     alignItems: "center",
@@ -130,7 +141,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "black",
     borderBottomWidth: 1,
     justifyContent: "center",
-    height: 50
+    height: 50,
   },
   rowBack: {
     alignItems: "center",
@@ -138,7 +149,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   backRightBtn: {
     alignItems: "center",
@@ -146,10 +157,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "absolute",
     top: 0,
-    width: 75
+    width: 75,
   },
   backRightBtnRight: {
     backgroundColor: "red",
-    right: 0
-  }
+    right: 0,
+  },
 });

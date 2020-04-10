@@ -1,33 +1,41 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  StyleSheet,
-  View,
-  Button,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/storage";
-import "firebase/functions";
-import * as ImagePicker from "expo-image-picker";
-import { Avatar, ListItem, Icon, Text } from "react-native-elements";
-import "firebase/auth";
-import db from "../../db.js";
+import React from "react";
+import { StyleSheet } from "react-native";
+
 import { createDrawerNavigator } from "react-navigation-drawer";
 import { createAppContainer } from "react-navigation";
-
+import { createStackNavigator } from "react-navigation-stack";
+import PaymentCard from "./Payment";
+import AddVehicle from "./AddVehicle";
 import ProfileScreen from "./ProfileScreen.js";
 import Vehicle from "./Vehicle";
+import AddCard from "./AddCard";
+import LinksScreen from "./LinksScreen";
+import PartialPayment from "../../screens/PartialPayment";
+
+const VehicleStack = createStackNavigator(
+  {
+    Vehicle: Vehicle,
+    AddVehicle: AddVehicle,
+  },
+  {
+    headerMode: "none",
+  }
+);
+
+const CardStack = createStackNavigator({
+  Payment: PaymentCard,
+  AddCard: AddCard,
+});
 
 export default function SettingsScreen(props) {
   const MyDrawerNavigator = createDrawerNavigator({
-    Home: {
-      screen: ProfileScreen,
-    },
-    Vehicle: {
-      screen: Vehicle,
-    },
+    Home: ProfileScreen,
+    Vehicle: VehicleStack,
+    Friends: LinksScreen,
+    Cards: CardStack,
+    PartialPayment: PartialPayment,
+
+    // AddVehicle: AddVehicle,
   });
 
   const MyApp = createAppContainer(MyDrawerNavigator);
@@ -41,7 +49,6 @@ SettingsScreen.navigationOptions = {
   headerStyle: {
     backgroundColor: "#005992",
   },
-  
 };
 
 const styles = StyleSheet.create({
