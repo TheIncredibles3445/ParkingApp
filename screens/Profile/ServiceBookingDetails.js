@@ -7,11 +7,16 @@ import "firebase/auth";
 import { Rating } from "react-native-elements";
 import moment from "moment";
 import * as Animatable from "react-native-animatable";
+import { Card } from "react-native-shadow-cards";
+
 export default function ServiceBookingDetails(props) {
   const [details, setDetails] = useState([]);
+
+  //itemId is a value that will store the param ("itemId") that have been passed from the other navigation (all booking navigation)
   const itemId = props.navigation.getParam("itemId", "No params");
   const [workers, setWorkers] = useState([]);
   const [servitemid, setServItemId] = useState([]);
+  const [serviceName, setServiceName] = useState([]);
 
   const BookingsDetailsDB = async () => {
     db.collection("booking")
@@ -21,50 +26,33 @@ export default function ServiceBookingDetails(props) {
         const all = [];
         const services = [];
         const workerId = [];
+        const serviceName = [];
         querySnapShot.forEach(async (doc) => {
           all.push({ id: doc.id, ...doc.data() });
         });
         for (let i = 0; i < all.length; i++) {
           services.push(all[i].id);
+          //setServiceId(all[i].service_id);
           let users = await db.collection("users").doc(all[i].worker).get();
-
+          let name = await db
+            .collection("service")
+            .doc(all[i].service_id)
+            .get();
           const w = users.data();
+          const n = name.data();
           workerId.push(w);
-          console.log("ww ", workerId);
-          // console.log("worker id" , all[i].worker)
+          serviceName.push(n);
+          // console.log("ww ", workerId);
+          // console.log("serviceId", serviceId);
+          console.log("gtgr", name.data());
         }
-        // for (let a = 0; a < workerId.length; a++) {
-        //   setWorkers(workerId[a].email);
-        //   console.log("wordker id-=---", workerId[a].email);
-        // }
         setWorkers([...workerId]);
         setServItemId(services);
+        setServiceName([...serviceName]);
         setDetails([...all]);
+        //console.log("gtgr", all[i].service_id)
       });
   };
-
-  // const getWorkerName = async () => {
-  //   db.collection("users").onSnapshot(querySnapShot => {
-  //     const all = [];
-  //     querySnapShot.forEach(doc => {
-  //       all.push({ id: doc.id, ...doc.data() });
-  //     });
-  //     const workers = [];
-  //     for (let i = 0; i < all.length; i++) {
-  //       // console.log("mnnnn-", all[i].id);
-  //       for (let w = 0; w < workerId.length; w++) {
-  //         //console.log("mnnnn-", workerId[m]);
-  //         if (workerId[w] === all[i].id) {
-  //           workers.push(all[i].id);
-  //           console.log("w-", workers);
-  //         }
-  //       }
-  //     }
-
-  //     setWorkerName([...workers]);
-  //     // console.log("workerss", w);
-  //   });
-  // };
   const timeToRate = (date, id) => {
     //get the right current date
     const currentDate = moment().format();
@@ -99,7 +87,7 @@ export default function ServiceBookingDetails(props) {
 
   const convertTime = (time) => {
     const splitTime = time.split(" ");
-    if (splitTime[1] === "pm") {
+    if (splitTime[1] === "PM") {
       const split = splitTime[0].split(":");
       if (split[0] === "12") {
         return `12:${split[1]}:00`;
@@ -126,7 +114,7 @@ export default function ServiceBookingDetails(props) {
       } else if (split[0] === "11") {
         return `23:${split[1]}:00`;
       }
-    } else if (splitTime[1] === "am") {
+    } else if (splitTime[1] === "AM") {
       const split = splitTime[0].split(":");
       if (split[0] === "12") {
         return `12:${split[1]}:00`;
@@ -158,75 +146,79 @@ export default function ServiceBookingDetails(props) {
   }, []);
 
   return (
-    <View>
-      <Animatable.Text
-        animation="lightSpeedIn"
-        iterationCount={3}
-        direction="alternate"
-        style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          fontSize: 20,
-          marginBottom: 20,
-        }}
-      >
-        {" "}
-        Service Booking Details
-      </Animatable.Text>
-
-      <ScrollView>
+    <View style={{ backgroundColor: "#F0F8FF", flex: 1 }}>
+      <ScrollView style={{ marginTop: 24 }}>
         {details.map((item, index) => {
           return (
-            <View key={item.id} style={{ marginBottom: 50 }}>
-              <Text
+            <View key={item.id} style={{ marginBottom: 10 }}>
+              <Card
                 style={{
-                  marginLeft: "auto",
+                  width: "95%",
+                  margin: 4,
                   marginRight: "auto",
-                  fontWeight: "bold",
+                  marginLeft: "auto",
                 }}
               >
-                Time: {item.time} -
-              </Text>
-              <Text
-                style={{
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  fontWeight: "bold",
-                }}
-              >
-                Service: {item.service}
-              </Text>
-              {console.log("time", item.time)}
-              <Text
-                style={{
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  fontWeight: "bold",
-                }}
-              >
-                worker:{workers[index].email}
-              </Text>
-              {timeToRate(item.time, item.id) ? (
-                <Rating
-                  showRating
-                  type="star"
-                  startingValue={item.rating}
-                  imageSize={40}
-                  onFinishRating={(rating) => ratingCompleted(rating, item.id)}
-                  style={{ paddingVertical: 10 }}
-                  readonly={item.rating > 0 ? true : false}
-                />
-              ) : (
-                <View>
-                  <Text
-                    style={{
-                      marginLeft: "auto",
-                      marginRight: "auto",
-                      marginTop: 12,
-                    }}
+                <Text
+                  style={{
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontWeight: "bold",
+                    marginTop: 10,
+                  }}
+                >
+                  Block: {item.block}
+                </Text>
+                <Text
+                  style={{
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Service: {serviceName[index].Name}
+                </Text>
+
+                <Text
+                  style={{
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Time: {item.time}
+                </Text>
+
+                {console.log("time", item.time)}
+                <Text
+                  style={{
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Worker:{workers[index].email}
+                </Text>
+
+                {timeToRate(item.time, item.id) ? (
+                  <Animatable.View
+                    animation="bounceIn"
+                    easing="ease-out"
+                    iterationCount={2}
                   >
-                    ** Please wait till the end of the service time to rate! **
-                  </Text>
+                    <Rating
+                      showRating
+                      type="star"
+                      startingValue={item.rating}
+                      imageSize={40}
+                      onFinishRating={(rating) =>
+                        ratingCompleted(rating, item.id)
+                      }
+                      style={{ paddingVertical: 10 }}
+                      readonly={item.rating > 0 ? true : false}
+                    />
+                  </Animatable.View>
+                ) : (
                   <Rating
                     readonly
                     showRating
@@ -238,8 +230,8 @@ export default function ServiceBookingDetails(props) {
                     }
                     style={{ paddingVertical: 10 }}
                   />
-                </View>
-              )}
+                )}
+              </Card>
             </View>
           );
         })}
@@ -247,7 +239,13 @@ export default function ServiceBookingDetails(props) {
     </View>
   );
 }
-
+ServiceBookingDetails.navigationOptions = {
+  title: "Service Booking Details",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#5a91bf",
+  },
+};
 const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",

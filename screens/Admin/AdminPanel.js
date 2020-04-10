@@ -15,7 +15,7 @@ export default function AdminPanel(props) {
           marginRight: "auto",
           marginLeft: "auto",
           justifyContent: "space-evenly",
-          marginBottom: 10
+          marginBottom: 10,
         }}
       >
         <Button
@@ -38,20 +38,23 @@ export default function AdminPanel(props) {
           onPress={() => props.navigation.navigate("Discounts")}
         />
         <Text style={{ marginBottom: 10 }}></Text>
-        <Button title="others.." onPress={() => console.log("go to others")} />
+        <Button
+          title="Workers Rating"
+          onPress={() => props.navigation.navigate("WorkersRating")}
+        />
       </View>
     </ScrollView>
   );
 }
 
 AdminPanel.navigationOptions = {
-  title: "Admin Panel"
+  title: "Admin Panel",
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff"
-  }
+    backgroundColor: "#fff",
+  },
 });

@@ -7,6 +7,7 @@ import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
 import AdvertisementScreen from "../screens/Advetrisements";
 import FriendScreen from "../screens/Profile/FriendsScreen";
+import WorkersRating from "../screens/Admin/WorkersRating"
 
 //Lamees's imports
 import ReportScreen from "../screens/ReportScreen";
@@ -42,9 +43,10 @@ import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
+
 const config = Platform.select({
   web: { headerMode: "screen" },
-  default: {}
+  default: {},
 });
 
 const HomeStack = createStackNavigator(
@@ -58,7 +60,7 @@ const HomeStack = createStackNavigator(
     ConfirmBooking: ConfirmServiceBookingScreen,
     Payment: Payment,
     ReportScreen: ReportScreen,
-    Direction: Direction
+    Direction: Direction,
   },
   config
 );
@@ -70,35 +72,38 @@ HomeStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? `md-home` : "md-home"}
     />
-  )
+  ),
 };
 
 HomeStack.path = "";
 
 const AdminStack = createStackNavigator({
   Main: {
-    screen: AdminPanel
+    screen: AdminPanel,
   },
   Services: {
-    screen: ServicesScreen
+    screen: ServicesScreen,
   },
   WorkersManagement: {
-    screen: WorkersManagementScreen
+    screen: WorkersManagementScreen,
   },
   ServiceDetails: {
-    screen: ServiceDetailsScreen
+    screen: ServiceDetailsScreen,
   },
   UserAccounts: {
-    screen: UserAccountsScreen
+    screen: UserAccountsScreen,
   },
   AllReport: {
-    screen: AllReportsScreen
+    screen: AllReportsScreen,
   },
   Discounts: {
-    screen: DiscountsScreen
+    screen: DiscountsScreen,
   },
   ChangeRole: {
-    screen: ChangeRole
+    screen: ChangeRole,
+  },
+  WorkersRating:{
+    screen: WorkersRating,
   }
 });
 //the simulator wont work >>. i have to shut down the pc it always happen
@@ -109,7 +114,7 @@ AdminStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
     />
-  )
+  ),
 };
 AdminStack.path = "";
 
@@ -141,7 +146,7 @@ AdminStack.path = "";
 //
 const TestStack = createStackNavigator(
   {
-    Test: Direction
+    Test: Direction,
   },
   config
 );
@@ -153,7 +158,7 @@ TestStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
     />
-  )
+  ),
 };
 
 TestStack.path = "";
@@ -169,7 +174,7 @@ const SettingsStack = createStackNavigator(
     Friends: LinksScreen,
     AllBookings: AllBookings,
     ParkingBookingsDetails: ParkingBookingsDetails,
-    ServiceBookingDetails: ServiceBookingDetails
+    ServiceBookingDetails: ServiceBookingDetails,
   },
   config
 );
@@ -181,7 +186,7 @@ SettingsStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-options" : "md-options"}
     />
-  )
+  ),
 };
 
 SettingsStack.path = "";
@@ -191,7 +196,7 @@ const tabNavigator = createBottomTabNavigator({
   // LinksStack,
   // TestStack,
   SettingsStack,
-  AdminStack
+  AdminStack,
   // ServiceBookingStack
 });
 

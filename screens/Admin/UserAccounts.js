@@ -99,6 +99,7 @@ export default function UserAccounts(props) {
 
     return (
         <View style={styles.container}>
+            <ScrollView>
             <Text style={{ fontSize: 20, marginLeft: "auto", marginRight: "auto" }}>Users</Text>
             <View style={styles.box}>
             
@@ -147,7 +148,7 @@ export default function UserAccounts(props) {
                     <Text>No Users Found</Text>
             }
 
-          
+</ScrollView>
         </View>
     )
 

@@ -11,7 +11,7 @@ import {
   TouchableHighlight,
   Modal,
   Image,
-  FlatList
+  FlatList,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -22,7 +22,7 @@ import DatePicker from "react-native-datepicker";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { Divider } from "react-native-elements";
 
-export default FriendsScreen = props => {
+export default FriendsScreen = (props) => {
   const [adStatus, setAdStatus] = useState("");
   const [feedback, setFeedback] = useState("");
   const [offerNumber, setOfferNumber] = useState(0);
@@ -43,13 +43,13 @@ export default FriendsScreen = props => {
   const [modalVisible3, setmodalVisible3] = useState(false);
   const [flag, setFlag] = useState(false);
 
-  const ssetModalVisible = visible => {
+  const ssetModalVisible = (visible) => {
     setmodalVisible(visible);
   };
-  const ssetModalVisible2 = visible => {
+  const ssetModalVisible2 = (visible) => {
     setmodalVisible2(visible);
   };
-  const ssetModalVisible3 = visible => {
+  const ssetModalVisible3 = (visible) => {
     setmodalVisible3(visible);
   };
 
@@ -114,7 +114,7 @@ export default FriendsScreen = props => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1
+      quality: 1,
     });
 
     if (!result.cancelled) {
@@ -127,9 +127,9 @@ export default FriendsScreen = props => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Advertisment")
-      .onSnapshot(querySnapShot => {
+      .onSnapshot((querySnapShot) => {
         let ads = [];
-        querySnapShot.forEach(doc => {
+        querySnapShot.forEach((doc) => {
           ads.push(doc.id, doc.data());
         });
         console.log("prev ads", ads);
@@ -174,7 +174,7 @@ export default FriendsScreen = props => {
         offeredAmount,
         feedback,
         offerNumber,
-        adStatus
+        adStatus,
       });
 
     await db
@@ -196,7 +196,7 @@ export default FriendsScreen = props => {
             marginBottom: 30,
             marginTop: "6%",
             marginLeft: "auto",
-            marginRight: "auto"
+            marginRight: "auto",
           }}
         >
           <Image
@@ -205,7 +205,7 @@ export default FriendsScreen = props => {
               marginLeft: "auto",
               marginRight: "auto",
               height: 100,
-              width: 100
+              width: 100,
             }}
             source={require(`../../assets/images/feedback.png`)}
           />
@@ -219,7 +219,7 @@ export default FriendsScreen = props => {
             width: "46%",
             marginBottom: 30,
             marginLeft: "auto",
-            marginRight: "auto"
+            marginRight: "auto",
           }}
         >
           <Image
@@ -228,7 +228,7 @@ export default FriendsScreen = props => {
               marginLeft: "auto",
               marginRight: "auto",
               height: 100,
-              width: 200
+              width: 200,
             }}
             source={require(`../../assets/images/advertise.png`)}
           />
@@ -245,7 +245,7 @@ export default FriendsScreen = props => {
               marginLeft: "auto",
               marginRight: "auto",
               height: 100,
-              width: 170
+              width: 170,
             }}
             source={require(`../../assets/images/previousAds.jpg`)}
           />
@@ -273,7 +273,7 @@ export default FriendsScreen = props => {
                 style={{
                   marginLeft: "auto",
                   marginRight: "auto",
-                  fontSize: 25
+                  fontSize: 25,
                 }}
               >
                 <Ionicons name="ios-exit" size={50} />
@@ -296,7 +296,7 @@ export default FriendsScreen = props => {
                 marginBottom: 10,
                 fontSize: 20,
                 marginLeft: "auto",
-                marginRight: "auto"
+                marginRight: "auto",
               }}
             >
               Advertisment Form
@@ -307,7 +307,7 @@ export default FriendsScreen = props => {
                   marginBottom: 10,
                   fontSize: 15,
                   marginRight: 4,
-                  marginTop: 8
+                  marginTop: 8,
                 }}
               >
                 Name
@@ -319,9 +319,9 @@ export default FriendsScreen = props => {
                   borderColor: "gray",
                   borderWidth: 1,
                   marginLeft: "10%",
-                  marginBottom: "3%"
+                  marginBottom: "3%",
                 }}
-                onChangeText={text => setDisplayName(text)}
+                onChangeText={(text) => setDisplayName(text)}
                 placeholder="Advertiser name"
                 //  value={displayName}
               />
@@ -333,7 +333,7 @@ export default FriendsScreen = props => {
                   marginBottom: 10,
                   fontSize: 15,
                   marginRight: 4,
-                  marginTop: 8
+                  marginTop: 8,
                 }}
               >
                 Description
@@ -349,9 +349,9 @@ export default FriendsScreen = props => {
                     borderWidth: 1,
                     marginLeft: "1%",
                     textAlignVertical: "top",
-                    marginBottom: "4%"
+                    marginBottom: "4%",
                   }}
-                  onChangeText={text => setDescription(text)}
+                  onChangeText={(text) => setDescription(text)}
                   placeholder="Description"
                   //value={description}
                 />
@@ -364,7 +364,7 @@ export default FriendsScreen = props => {
                   marginBottom: 10,
                   fontSize: 15,
                   marginRight: 4,
-                  marginTop: 8
+                  marginTop: 8,
                 }}
               >
                 Link
@@ -376,9 +376,9 @@ export default FriendsScreen = props => {
                   borderColor: "gray",
                   borderWidth: 1,
                   marginLeft: "13%",
-                  marginBottom: "3%"
+                  marginBottom: "3%",
                 }}
-                onChangeText={text => setLink(text)}
+                onChangeText={(text) => setLink(text)}
                 placeholder="Link"
                 //value={link}
               />
@@ -390,7 +390,7 @@ export default FriendsScreen = props => {
                   marginBottom: 10,
                   fontSize: 15,
                   marginRight: 4,
-                  marginTop: 8
+                  marginTop: 8,
                 }}
               >
                 Image
@@ -402,9 +402,9 @@ export default FriendsScreen = props => {
                   borderColor: "gray",
                   borderWidth: 1,
                   marginLeft: "9.4%",
-                  marginBottom: "2%"
+                  marginBottom: "2%",
                 }}
-                onChangeText={text => setPhotoURL(text)}
+                onChangeText={(text) => setPhotoURL(text)}
                 placeholder="Image"
                 //value={link}
               />
@@ -421,7 +421,7 @@ export default FriendsScreen = props => {
                   marginBottom: 10,
                   fontSize: 15,
                   marginRight: 4,
-                  marginTop: 8
+                  marginTop: 8,
                 }}
               >
                 Start Date
@@ -441,13 +441,13 @@ export default FriendsScreen = props => {
                     position: "absolute",
                     left: 0,
                     top: 4,
-                    marginLeft: 0
+                    marginLeft: 0,
                   },
                   dateInput: {
-                    marginLeft: 36
-                  }
+                    marginLeft: 36,
+                  },
                 }}
-                onDateChange={startDate => setStartDate(startDate)}
+                onDateChange={(startDate) => setStartDate(startDate)}
               />
             </View>
 
@@ -457,7 +457,7 @@ export default FriendsScreen = props => {
                   marginBottom: 10,
                   fontSize: 15,
                   marginRight: 4,
-                  marginTop: 8
+                  marginTop: 8,
                 }}
               >
                 End Date
@@ -477,13 +477,13 @@ export default FriendsScreen = props => {
                     position: "absolute",
                     left: 0,
                     top: 4,
-                    marginLeft: 0
+                    marginLeft: 0,
                   },
                   dateInput: {
-                    marginLeft: 36
-                  }
+                    marginLeft: 36,
+                  },
                 }}
-                onDateChange={endDate => setEndDate(endDate)}
+                onDateChange={(endDate) => setEndDate(endDate)}
               />
             </View>
 
@@ -493,7 +493,7 @@ export default FriendsScreen = props => {
                   marginBottom: 10,
                   fontSize: 15,
                   marginRight: 4,
-                  marginTop: 8
+                  marginTop: 8,
                 }}
               >
                 Offered Amount
@@ -506,9 +506,9 @@ export default FriendsScreen = props => {
                   borderColor: "gray",
                   borderWidth: 1,
                   marginLeft: "1%",
-                  marginBottom: "2%"
+                  marginBottom: "2%",
                 }}
-                onChangeText={text => setOfferedAmount(text)}
+                onChangeText={(text) => setOfferedAmount(text)}
                 placeholder="Offered Amount"
                 // value={offeredAmount}
                 keyboardType={"numeric"}
@@ -540,7 +540,7 @@ export default FriendsScreen = props => {
                 style={{
                   marginLeft: "auto",
                   marginRight: "auto",
-                  fontSize: 25
+                  fontSize: 25,
                 }}
               >
                 <Ionicons name="ios-exit" size={50} />
@@ -563,7 +563,7 @@ export default FriendsScreen = props => {
               marginRight: "auto",
               fontSize: 20,
               marginBottom: 12,
-              marginTop: 12
+              marginTop: 12,
             }}
           >
             Previous Advertisments
@@ -594,7 +594,7 @@ export default FriendsScreen = props => {
                     style={{
                       marginTop: 20,
                       backgroundColor: "lightgray",
-                      height: 1
+                      height: 1,
                     }}
                   />
                 </View>
@@ -613,7 +613,7 @@ export default FriendsScreen = props => {
               style={{
                 marginLeft: "auto",
                 marginRight: "auto",
-                fontSize: 25
+                fontSize: 25,
               }}
             >
               <Ionicons name="ios-exit" size={50} />
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   num: {
     borderColor: "black",
@@ -637,13 +637,13 @@ const styles = StyleSheet.create({
     marginLeft: "60%",
     width: 100,
     height: 35,
-    backgroundColor: "lightblue"
+    backgroundColor: "lightblue",
   },
   num2: {
     borderColor: "black",
     borderWidth: 1.1,
     width: 100,
     height: 35,
-    backgroundColor: "gray"
-  }
+    backgroundColor: "gray",
+  },
 });

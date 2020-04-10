@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   SafeAreaView,
-  AsyncStorage
+  AsyncStorage,
 } from "react-native";
 import { NavigationActions } from "react-navigation";
 import moment from "moment";
@@ -35,21 +35,21 @@ export default function Parking(props) {
     bookingsRef
       .where("date", "==", moment().format("YYYY-MM-DD"))
       .where("type", "==", "Parking")
-      .onSnapshot(querySnapShot => {
+      .onSnapshot((querySnapShot) => {
         let p = [];
         let filteredParking = [];
         for (let booking of querySnapShot.docs) {
           bookingsRef
             .doc(booking.id)
             .collection("parking_booking")
-            .onSnapshot(async querySnap => {
+            .onSnapshot(async (querySnap) => {
               for (let parkingBooking of querySnap.docs) {
                 p.push({ id: parkingBooking.id, ...parkingBooking.data() });
               }
               if (p.length === querySnapShot.docs.length) {
                 const myStartTime = convertTime(data.startTime);
                 const myEndTime = convertTime(data.endTime);
-                filteredParking = p.filter(item => {
+                filteredParking = p.filter((item) => {
                   const bookedStart = convertTime(item.startTime);
                   const bookedEnd = convertTime(item.endTime);
                   if (
@@ -64,14 +64,14 @@ export default function Parking(props) {
 
                 const parkingIds = [];
                 console.log("filteredParking ==>", filteredParking);
-                filteredParking.map(item => parkingIds.push(item.parkingId));
+                filteredParking.map((item) => parkingIds.push(item.parkingId));
 
-                db.collection("Block")
+                db.collection("block")
                   .doc(data.selectedBlock.id)
-                  .collection("Parking")
-                  .onSnapshot(querySnapShot => {
+                  .collection("parking")
+                  .onSnapshot((querySnapShot) => {
                     const parkings = [];
-                    querySnapShot.forEach(docum => {
+                    querySnapShot.forEach((docum) => {
                       let park = docum.data();
                       if (parkingIds.includes(docum.id)) {
                         park.isBooked = true;
@@ -92,16 +92,16 @@ export default function Parking(props) {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Vehicles")
-      .onSnapshot(querySnap => {
+      .onSnapshot((querySnap) => {
         let vehicles = [];
-        querySnap.forEach(doc => {
+        querySnap.forEach((doc) => {
           vehicles.push({ id: doc.id, ...doc.data() });
         });
         setCars([...vehicles]);
       });
   }, []);
 
-  const convertTime = time => {
+  const convertTime = (time) => {
     const splitTime = time.split(" ");
     if (splitTime[1] === "pm") {
       if (splitTime[0] === "12:00") {
@@ -134,7 +134,7 @@ export default function Parking(props) {
     }
   };
 
-  const handleModal = item => {
+  const handleModal = (item) => {
     Alert.alert(
       "Confirm Booking",
       "Are you sure you want to book this parking spot?",
@@ -142,9 +142,9 @@ export default function Parking(props) {
         {
           text: "Cancel",
           onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
+          style: "cancel",
         },
-        { text: "Confirm", onPress: () => handleBooking(item) }
+        { text: "Confirm", onPress: () => handleBooking(item) },
       ],
       { cancelable: false }
     );
@@ -162,17 +162,18 @@ export default function Parking(props) {
               "SettingsStack",
               {},
               NavigationActions.navigate({ routeName: "AddVehicle" })
-            )
-        }
+            ),
+        },
       ],
       { cancelable: false }
     );
   };
 
-  const handleBooking = async item => {
+  const handleBooking = async (item) => {
     console.log("item", item);
-    const date = `${new Date().getFullYear()}-0${new Date().getMonth() +
-      1}-${new Date().getDate()}`;
+    const date = `${new Date().getFullYear()}-0${
+      new Date().getMonth() + 1
+    }-${new Date().getDate()}`;
 
     if (cars.length !== 0) {
       if (!item.isBooked) {
@@ -182,9 +183,9 @@ export default function Parking(props) {
               date: date,
               total_price: item.price,
               type: "Parking",
-              userId: friend
+              userId: friend,
             })
-            .then(docRef => {
+            .then((docRef) => {
               db.collection("booking")
                 .doc(docRef.id)
                 .collection("parking_booking")
@@ -192,13 +193,10 @@ export default function Parking(props) {
                   startTime: data.startTime,
                   endTime: data.endTime,
                   parkingId: item.id,
-                  rating: 0
+                  rating: 0,
                 });
             });
-          let user = await db
-            .collection("users")
-            .doc(friend)
-            .get();
+          let user = await db.collection("users").doc(friend).get();
           let dbpendingAmount = parseInt(
             user.data().pendingAmount + parseInt(item.price)
           );
@@ -212,9 +210,9 @@ export default function Parking(props) {
               date: date,
               total_price: item.price,
               type: "Parking",
-              userId: firebase.auth().currentUser.uid
+              userId: firebase.auth().currentUser.uid,
             })
-            .then(docRef => {
+            .then((docRef) => {
               db.collection("booking")
                 .doc(docRef.id)
                 .collection("parking_booking")
@@ -222,21 +220,21 @@ export default function Parking(props) {
                   startTime: data.startTime,
                   endTime: data.endTime,
                   parkingId: item.id,
-                  rating: 0
+                  rating: 0,
                 });
             });
           props.navigation.navigate("Checkout");
         }
 
-        db.collection("Block")
+        db.collection("block")
           .doc(data.selectedBlock.id)
-          .collection("Parking")
+          .collection("parking")
           .doc(item.id)
           .update({
             isBooked: true,
             location: item.location,
             price: item.price,
-            type: item.type
+            type: item.type,
           });
 
         // }
@@ -259,7 +257,7 @@ export default function Parking(props) {
           latitude: data.selectedBlock.location.latitude,
           longitude: data.selectedBlock.location.longitude,
           latitudeDelta: 0.001,
-          longitudeDelta: 0.001
+          longitudeDelta: 0.001,
         }}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
@@ -288,7 +286,7 @@ export default function Parking(props) {
 }
 
 Parking.navigationOptions = {
-  title: "Reserve Parking Spot"
+  title: "Reserve Parking Spot",
 };
 
 const styles = StyleSheet.create({
@@ -297,19 +295,19 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
   },
   bookedMarker: {
     backgroundColor: "red",
     padding: 5,
-    borderRadius: 5
+    borderRadius: 5,
   },
   unBookedMarker: {
     backgroundColor: "green",
     padding: 5,
-    borderRadius: 5
+    borderRadius: 5,
   },
   text: {
-    color: "white"
-  }
+    color: "white",
+  },
 });

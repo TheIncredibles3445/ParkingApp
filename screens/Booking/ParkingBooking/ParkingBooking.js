@@ -46,7 +46,7 @@ export default function ParkingBooking(props) {
   }, []);
 
   useEffect(() => {
-    db.collection("Block").onSnapshot(querySnapshot => {
+    db.collection("block").onSnapshot(querySnapshot => {
       let blcks = [];
 
       querySnapshot.forEach(doc => {
@@ -163,12 +163,11 @@ export default function ParkingBooking(props) {
             </TouchableOpacity>
           ))}
         </View>
-        <Text>Book for af friends</Text>
+        <Text>Book for a friend</Text>
 
         <Picker
           mode="dropdown"
           selectedValue={friend}
-          style={{ height: 50, width: 150 }}
           onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
         >
           <Picker.Item label={"Select"} value={""} disabled />
