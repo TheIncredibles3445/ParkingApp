@@ -112,7 +112,7 @@ const AdminStack = createStackNavigator({
   AdminAdvDetails: {
     screen: AdminAdvDetails
   },
-  AdvertisementList:{
+  AdvertisementList: {
     screen: AdvertisementList
   },
   Discounts: {
@@ -123,7 +123,7 @@ const AdminStack = createStackNavigator({
   },
   Statistics: {
     screen: Statistics
-    }
+  }
 
 });
 //the simulator wont work >>. i have to shut down the pc it always happen
@@ -219,7 +219,14 @@ const tabNavigator = createBottomTabNavigator({
   HomeStack,
   SettingsStack,
   AdminStack
-});
+},
+  {tabBarOptions: {
+    style: {
+      backgroundColor: "#246175"
+    }
+  }
+}
+  ,);
 
 tabNavigator.path = "";
 

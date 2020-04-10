@@ -91,6 +91,8 @@ export default function Checkout(props) {
             });
         }
       });
+
+     
   };
 
   const getServiceBookings = async () => {
@@ -158,13 +160,15 @@ export default function Checkout(props) {
   };
 
   const handlePayLate = async () => {
-    await db
-      .collection("users")
+    let user = await db
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .get();
+
+    let newPoints = 20 + parseInt(user.data().points)
+    db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .update({
-        points: 20,
-        pendingAmount: total
-      });
+      .update({ points: newPoints});
 
     handleNavigationAlert();
   };

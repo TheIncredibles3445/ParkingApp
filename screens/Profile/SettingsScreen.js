@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Button, SafeAreaView } from "react-native";
+import { StyleSheet, View, Button, SafeAreaView , ScrollView} from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
@@ -117,7 +117,7 @@ export default function SettingsScreen(props) {
   const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "My BOOKINGS", "Pay"];
   const files = ["Profile", "Payment", "Vehicle", "Friends", "AllBookings","PartialPayment"];
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>
         <Avatar
           containerStyle={{ marginTop: 10 }}
@@ -197,7 +197,7 @@ export default function SettingsScreen(props) {
 
 
       <Button title="Log Out" onPress={handleLogout} />
-    </View>
+    </ScrollView>
   );
 }
 

@@ -28,6 +28,7 @@ export default function ConfirmServiceBookingScreen(props) {
   const bookingTotal2 = useRef();
 
   useEffect(() => {
+    
     console.log("-------------<<<< Confirm Booking >>>>-----------", booking);
     track()
     addBookings();
@@ -100,17 +101,13 @@ export default function ConfirmServiceBookingScreen(props) {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .get();
-    if (user.data().pendingAmount) {
-      bookingTotal.current =
-        parseInt(bookingTotal.current) + parseInt(user.data().pendingAmount);
+    
+      bookingTotal.current = parseInt(bookingTotal.current) + parseInt(user.data().pendingAmount);
+      let newPoints = 20 + parseInt(user.data().points)
       db.collection("users")
         .doc(firebase.auth().currentUser.uid)
-        .update({ pendingAmount: bookingTotal.current });
-    } else {
-      db.collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .update({ pendingAmount: bookingTotal.current });
-    }
+        .update({ pendingAmount: bookingTotal.current , points: newPoints});
+   
   };
 
   const payLater = async () => {

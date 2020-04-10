@@ -20,6 +20,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import TimedSlideshow from 'react-native-timed-slideshow';
 import { AsyncStorage } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
+import { Image } from "react-native";
+import { hasStartedLocationUpdatesAsync } from "expo-location";
 
 export default function HomeScreen(props) {
 
@@ -27,47 +29,47 @@ export default function HomeScreen(props) {
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([])
   const [isVerified, setIsVerified] = useState(true);
-
+  const [update, setUpdate] = useState(true)
   const [timer, setTimer] = useState(10);
   const [timeoutId, setTimeoutId] = useState(null);
 
   const unsubscribe = props.navigation.addListener('didFocus', () => {
     console.log('focussed');
     track()
-});
+  });
 
+  const track = async () => {
+    console.log(" in track")
+    let old = await db.collection("tracking").doc("track").get()
+    // AsyncStorage.setItem("service", "yes");
+    let check = await AsyncStorage.getItem("service")
+    console.log(check)
+    if (check === "yes") {
+      let newTrack = parseInt(old.data().service) - 1
+      db.collection("tracking").doc("track").update({ service: newTrack })
+      AsyncStorage.setItem("service", "no");
+    }
 
-const track = async()=>{
-  console.log(" in track")
-  let old = await db.collection("tracking").doc("track").get()
- // AsyncStorage.setItem("service", "yes");
-  let check =  await AsyncStorage.getItem("service")
-  console.log(check)
-  if(  check === "yes"){
-    let newTrack = parseInt(old.data().service) -1
-  db.collection("tracking").doc("track").update({ service: newTrack})
-  AsyncStorage.setItem("service", "no");
+    let check2 = await AsyncStorage.getItem("parking")
+    console.log(check2)
+    if (check2 === "yes") {
+      let newTrack = parseInt(old.data().parking) - 1
+      db.collection("tracking").doc("track").update({ parking: newTrack })
+      AsyncStorage.setItem("parking", "no");
+    }
+    
+
   }
 
-  let check2 =  await AsyncStorage.getItem("parking")
-  console.log(check2)
-  if(  check2 === "yes"){
-    let newTrack = parseInt(old.data().parking) -1
-  db.collection("tracking").doc("track").update({ parking: newTrack})
-  AsyncStorage.setItem("parking", "no");
-  }
-  
-
-}
 
 
-  
   useEffect(() => {
-    db.collection("Advertisement").where("adStatus","==","Approved").get()
+    db.collection("Advertisement").where("adStatus", "==", "Approved").get()
       .then(querySnapshot => {
         let ads = [];
         querySnapshot.forEach(doc => {
           ads.push({ id: doc.id, ...doc.data() });
+          console.log("---------------------",ads)
         });
         setAds([...ads]);
 
@@ -75,52 +77,23 @@ const track = async()=>{
     //setAll(ads)
     console.log("ads are", ads)
 
-    let temp = []
-    for (let i = 0; i < ads.length; i++) {
-      console.log("result --->>>",new Date(ads[i].startDate).getTime() ,new Date().getTime())
-      if( new Date(ads[i].startDate).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(ads[i].endDate).getTime())
-    temp.push({ uri: ads[i].photoURL, title: ads[i].title, text: `${<Button />}` })
-    }
-    setItems(temp)
 
-   
+
   },[])
 
- 
-  // useEffect(() => {
-  //   //console.log("heeereeee");
-  //    setTimeoutId(
-  //         setTimeout(() => {
-  //           setTimer(timer + 1);
-  //         }, 1000)
-  //       )
-  //   track();
+  useEffect(() => {
     
-  // }, [timer]);
-  
-
-
-  const getAds = async () => {
-
-    db.collection("Advertisement").get()
-      .then(querySnapshot => {
-        let ads = [];
-        querySnapshot.forEach(doc => {
-          ads.push({ id: doc.id, ...doc.data() });
-        });
-        setAds([...ads]);
-
-      });
-    //setAll(ads)
-    console.log("ads are", ads)
-
     let temp = []
     for (let i = 0; i < ads.length; i++) {
-      temp.push({ uri: ads[i].photoURL, title: ads[i].title, text: "info" })
+      console.log("result --->>>", new Date(ads[i].startDate).getTime(), new Date().getTime())
+      if (new Date(ads[i].startDate).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(ads[i].endDate).getTime())
+        temp.push({ uri: ads[i].photoURL, title: ads[i].title, text: ads[i].description })
     }
     setItems(temp)
-
-  }
+    console.log("items are", items)
+    getUser()
+  }, [ads])
+  
 
 
 
@@ -129,135 +102,121 @@ const track = async()=>{
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .get();
-    const data = { id: loggedInUser.id, ...loggedInUser.data() };
-    setUser(data);
+    //const data = { id: loggedInUser.id, ...loggedInUser.data() };
+    setUser(loggedInUser.data());
   };
 
-  const clicked = () =>{
-    console.log("clicked ---------->>>>>")
-  }
-
-
-  //============================ START DATE AND TIME ============================
-
-
-  useEffect(() => {
-    // const user = firebase.auth().currentUser;
-    // if (!user.emailVerified) {
-    //   user
-    //     .sendEmailVerification()
-    //     .then(function() {
-    //       alert("Verify your email!");
-    //     })
-    //     .catch(function(error) {
-    //       console.log("Error", error);
-    //     });
-    // }
-    // console.log(user);
-    // setIsVerified(user.emailVerified);
-  }, []);
-
-  // const getUser = async () => {
-  //   const loggedInUser = await db
-  //     .collection("users")
-  //     .doc(firebase.auth().currentUser.uid)
-  //     .get();
-  //   const data = { id: loggedInUser.id, ...loggedInUser.data() };
-  //   setUser(data);
-  // };
-
-  // const handleSend = async () => {
-  //   const response = await fetch(
-  //     "https://us-central1-parking-app-3b592.cloudfunctions.net/sendEmail"
-  //   );
-  //   console.log(response);
-  // };
 
   return (
     <SafeAreaView
       style={
         Platform.OS !== "ios"
-          ? { flex: 1, marginTop: 10, justifyContent: "space-evenly", backgroundColor: "#DCDCDC" }
-          : { flex: 1, backgroundColor: "#DCDCDC" }
+          ? { flex: 1, marginTop: 10, justifyContent: "space-evenly", backgroundColor: "#F0F8FF" }
+          : { flex: 1, backgroundColor: "#F0F8FF" }
       }
     >
 
-
-
-      <View style={{ height: "40%", width: "100%" }}>
+      <View style={{ fontFamily: "sans-serif-medium", height: "40%", width: "90%", marginBottom: "2%", marginLeft: "auto", marginRight: "auto" }}>
         {
           items.length > 0 ?
             <TimedSlideshow
               items={items}
-              onPress={()=>clicked()}
             />
-
             :
             null
         }
 
       </View>
+      <Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#30819c", marginBottom: "2%" }}>CNA-Q Parking Assistant</Text>
 
-      <ScrollView
-        style={Platform.OS !== "ios" ? { flex: 1, marginTop: 10 } : { flex: 1 }}
-      >
-        <TouchableOpacity  onPress={() => props.navigation.navigate("FindParking")}><Text>Find a Parking</Text></TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 30 }}>Welcome</Text>
-        </View>
-        <View style={{ flex: 5 }}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+      <View
+        style={{ marginLeft: "auto", marginRight: "auto", flexDirection: "row", width: "85%", height: "8%" }}>
+
+        <TouchableOpacity style={styles.btns}>
+          <Text
+            style={{ marginLeft: "auto", marginRight: "auto", color: "#F0F8FF", fontSize: 15 }}
+      >My Points {user ? user.points : null}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns}>
+          <Text
+            style={{ marginLeft: "auto", marginRight: "auto", color: "white", fontSize: 15 }}
+          >Get Discounts</Text>
+        </TouchableOpacity>
+
+      </View>
+
+
+      <View style={{ marginLeft: "auto", marginRight: "auto", borderColor: "#B0C4DE", borderTopWidth: 2, borderBottomWidth: 2, height: "38%" }}>
+        <ScrollView horizontal={true} contentContainerStyle={styles.childScrollViewStyle}>
+
+          <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
-              style={{ width: "50%" }}
+              style={styles.options}
               disabled={!isVerified}
               onPress={() => props.navigation.navigate("ParkingBooking")}
             >
-              <Card
-                title="Parking Booking"
-                image={require("../assets/images/parking.png")}
-                imageWrapperStyle={{ padding: 15 }}
-              ></Card>
+              
+              <Image
+                    //style={{ width: 100, height: 100  }}
+                    style={styles.icons}
+                    source={require('../assets/images/parkings.png')}
+                />
+                <Text style={styles.labels}>Book a Parking</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.options} onPress={() => props.navigation.navigate("FindParking")}>
+
+              <Image
+                //style={{ width: 100, height: 100  }}
+                style={styles.icons}
+                source={require('../assets/images/free.png')}
+              />
+              <Text style={styles.labels}>Find Free Parkings</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               disabled={!isVerified}
-              style={{ width: "50%" }}
+              style={styles.options}
               onPress={() => props.navigation.navigate("ServiceBooking")}
             >
-              <Card
-                title="Service Booking"
-                image={require("../assets/images/services.png")}
-                imageWrapperStyle={{ padding: 15 }}
-              ></Card>
+
+              <Image
+                //style={{ width: 100, height: 100  }}
+                style={styles.icons}
+                source={require('../assets/images/service.png')}
+              />
+              <Text style={styles.labels}>Book Services</Text>
             </TouchableOpacity>
             <TouchableOpacity
               disabled={!isVerified}
-              style={{ width: "50%" }}
+              style={styles.options}
               onPress={() => props.navigation.navigate("ReportScreen")}
             >
-              <Card
-                title="Report"
-                image={require("../assets/images/report.png")}
-                imageWrapperStyle={{ padding: 15 }}
-              ></Card>
+
+              <Image
+                //style={{ width: 100, height: 100  }}
+                style={styles.icons}
+                source={require('../assets/images/reports.jpg')}
+              />
+              <Text style={styles.labels}>Report a Problem</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.cards}
+              style={styles.options}
               onPress={() => props.navigation.navigate("Advertisement")}
             >
-              <Card
-                title="Advertise?"
-                //containerStyle={{ width: "40%" }}
-                image={require("../assets/images/advertisement.png")}
-                imageWrapperStyle={{}}
-              ></Card>
-          </TouchableOpacity>
-          </View>
-          {/* <View>
-            <Button title="Send Email" onPress={handleSend} />
-          </View> */}
-        </View>
 
-      </ScrollView>
+              <Image
+                //style={{ width: 100, height: 100  }}
+                style={styles.icons}
+                source={require('../assets/images/advertise2.png')}
+              />
+              <Text style={styles.labels}>Advertise With us</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+
 
 
     </SafeAreaView>
@@ -323,103 +282,62 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10
   },
-  cards: {
-    width: "42%",
+  options: {
+    width: "19%",
+    marginLeft: "1%",
+    // marginRight: "auto",
+    borderColor: "#B0C4DE",
+    borderWidth: 2,
+    marginTop: "1.5%",
+    marginBottom: "1.5%",
+    paddingBottom: 10,
+    borderRadius: 6,
+  },
+  sliderContent: {
+    marginTop: 50,
+    paddingVertical: 20,
+    backgroundColor: '#F5FCFF',
+    //width:1000
+  },
+  parentScrollViewStyle: {
+    height: 300,
+    borderWidth: 2,
+    height: 150,
+    borderColor: 'red',
+    marginTop: "2%"
+  },
+  childScrollViewStyle: {
+    //borderBottomWidth: 1,
+    //borderColor: '#D3D3D3',
+    width: 1000,
+    margin: 2,
+    //height:100
+  },
+  icons: {
+    width: 150,
+    height: 150,
     marginLeft: "auto",
     marginRight: "auto",
-    borderColor: "#A9A9A9",
-    borderWidth: 3,
-    marginBottom: "3%",
-    paddingBottom: 10,
-    borderRadius: 6
+    borderRadius: 10,
+    marginTop: "5%"
+
+  },
+  labels: {
+    fontSize: 21,
+    color: "#30819c",
+    marginLeft: "auto",
+    marginRight: "auto",
+    //fontWeight:10
+
+  },
+  btns: {
+    backgroundColor: "#B0C4DE",
+    width: "45%",
+    height: "70%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 5
   }
+
 });
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff"
-//   },
-//   developmentModeText: {
-//     marginBottom: 20,
-//     color: "rgba(0,0,0,0.4)",
-//     fontSize: 14,
-//     lineHeight: 19,
-//     textAlign: "center"
-//   },
-//   contentContainer: {
-//     paddingTop: 30
-//   },
-//   welcomeContainer: {
-//     alignItems: "center",
-//     marginTop: 10,
-//     marginBottom: 20
-//   },
-//   welcomeImage: {
-//     width: 100,
-//     height: 80,
-//     resizeMode: "contain",
-//     marginTop: 3,
-//     marginLeft: -10
-//   },
-//   getStartedContainer: {
-//     alignItems: "center",
-//     marginHorizontal: 50
-//   },
-//   homeScreenFilename: {
-//     marginVertical: 7
-//   },
-//   codeHighlightText: {
-//     color: "rgba(96,100,109, 0.8)"
-//   },
-//   codeHighlightContainer: {
-//     backgroundColor: "rgba(0,0,0,0.05)",
-//     borderRadius: 3,
-//     paddingHorizontal: 4
-//   },
-//   getStartedText: {
-//     fontSize: 24,
-//     color: "rgba(96,100,109, 1)",
-//     lineHeight: 24,
-//     textAlign: "center"
-//   },
-//   tabBarInfoContainer: {
-//     position: "absolute",
-//     bottom: 0,
-//     left: 0,
-//     right: 0,
-//     ...Platform.select({
-//       ios: {
-//         shadowColor: "black",
-//         shadowOffset: { width: 0, height: -3 },
-//         shadowOpacity: 0.1,
-//         shadowRadius: 3
-//       },
-//       android: {
-//         elevation: 20
-//       }
-//     }),
-//     alignItems: "center",
-//     backgroundColor: "#fbfbfb",
-//     paddingVertical: 20
-//   },
-//   tabBarInfoText: {
-//     fontSize: 17,
-//     color: "rgba(96,100,109, 1)",
-//     textAlign: "center"
-//   },
-//   navigationFilename: {
-//     marginTop: 5
-//   },
-//   helpContainer: {
-//     marginTop: 15,
-//     alignItems: "center"
-//   },
-//   helpLink: {
-//     paddingVertical: 15
-//   },
-//   helpLinkText: {
-//     fontSize: 14,
-//     color: "#2e78b7"
-//   }
-// });

@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,Alert
 } from "react-native";
 
 import "firebase/auth";
@@ -52,6 +52,7 @@ const track = async()=>{
   db.collection("tracking").doc("track").update({ service: newTrack})
   AsyncStorage.setItem("service", "yes");
 
+  
   showMessage({
     message: "My message title",
     description: newTrack + " Users Are Trying To Book a Service Right Now !!",
@@ -127,6 +128,53 @@ const track = async()=>{
   }, [selectedService]);
 
   const manageTimeRange = () => {
+    let now = moment().format("h:mm A")
+    let first = moment("7:00 AM").format("h:mm A")
+    let second = moment("2:30 AM").format("h:mm A")
+    console.log("timesssssssssssssssssssssssssssssssssss", now)
+    if( parseInt(now.split(":")[0]) >= 3 && parseInt(now.split(":")[0]) <= 11 && now.split(":")[1].split(" ")[1] == "PM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    else if(parseInt(now.split(":")[0]) >= 1 && parseInt(now.split(":")[0]) < 7 && now.split(":")[1].split(" ")[1] == "AM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      ); 
+    }
+    else if(parseInt(now.split(":")[0]) == 12 && now.split(":")[1].split(" ")[1] == "AM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+   
     let startTime = "";
     let hour = moment()
       .format("LTS")

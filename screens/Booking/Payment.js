@@ -83,7 +83,7 @@ export default function Payment(props) {
     let data = update.data();
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .update({ pendingAmount: data.pendingAmount - total, points: 30 });
+      .update({ pendingAmount: data.pendingAmount - total });
 
     if (!useSavedCard) {
       Alert.alert(
@@ -101,26 +101,32 @@ export default function Payment(props) {
   };
 
   const handleNavigationAlert = () => {
-    Alert.alert(
-      "Navigation",
-      "Do You Want The Direction For Your Latest Booking?",
-      [
-        {
-          text: "No",
-          onPress: () => props.navigation.navigate("Home"),
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: () =>
-            props.navigation.navigate("Direction", {
-              blockId: blockId,
-              parkingId: parkingId
-            })
-        }
-      ],
-      { cancelable: false }
-    );
+    if(parkingId != "No params" && blockId != "No params"){
+      Alert.alert(
+        "Navigation",
+        "Do You Want The Direction For Your Latest Booking?",
+        [
+          {
+            text: "No",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          },
+          {
+            text: "Yes",
+            onPress: () =>
+              props.navigation.navigate("Direction", {
+                blockId: blockId,
+                parkingId: parkingId
+              })
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    else{
+      props.navigation.navigate("Home")
+    }
+    
   };
 
   const saveCreditCard = () => {
