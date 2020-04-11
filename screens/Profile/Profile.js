@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Keyboard,
   Platform,
 } from "react-native";
@@ -49,6 +50,7 @@ export default function Profile(props) {
     await db.collection("users").doc(firebase.auth().currentUser.uid).update({
       firstName: firstName,
       lastName: lastName,
+      displayName: displayName,
       phoneNumer: phoneNumber,
     });
 
@@ -103,6 +105,7 @@ export default function Profile(props) {
           >
             <Input
               label="Display Name / Username"
+              placeholder="Display Name / Username"
               onChangeText={(text) => setDisplayName(text)}
               value={displayName}
             />
@@ -158,12 +161,25 @@ export default function Profile(props) {
             />
           </View>
           <View style={{ marginTop: 20, alignItems: "center" }}>
-            <Button
-              onPress={handleSave}
-              title="SAVE"
-              buttonStyle={{ paddingEnd: 50, paddingStart: 50 }}
-              titleStyle={{ alignItems: "center" }}
-            />
+            <TouchableOpacity
+              onPress={() => handleLogout()}
+              style={{
+                backgroundColor: "#005992",
+                height: 50,
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  letterSpacing: 5,
+                }}
+              >
+                LOGOUT
+              </Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>

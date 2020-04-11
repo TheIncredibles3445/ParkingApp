@@ -108,6 +108,19 @@ export default function HomeScreen(props) {
 
   // }, [timer]);
 
+  // const track = async () => {
+  //   console.log(" in track");
+  //   let old = await db.collection("tracking").doc("track").get();
+  //   // AsyncStorage.setItem("service", "yes");
+  //   let check = await AsyncStorage.getItem("service");
+  //   console.log(check);
+  //   if (check === "yes") {
+  //     let newTrack = parseInt(old.data().service) - 1;
+  //     db.collection("tracking").doc("track").update({ service: newTrack });
+  //     AsyncStorage.setItem("service", "no");
+  //   }
+  // };
+
   const getAds = async () => {
     db.collection("Advertisement")
       .get()
@@ -247,45 +260,9 @@ export default function HomeScreen(props) {
               ></Card>
             </TouchableOpacity>
           </View>
-
-          <View style={{ flex: 5 }}>
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              <TouchableOpacity
-                style={{ width: "100%" }}
-                disabled={!isVerified}
-                onPress={() => props.navigation.navigate("ParkingBooking")}
-              >
-                <Card
-                  title="Parking Booking"
-                  image={require("../assets/images/p.gif")}
-                  // imageWrapperStyle={{ padding: 10 }}
-                  imageStyle={{ width: 100, height: 200 }}
-                ></Card>
-              </TouchableOpacity>
-              <TouchableOpacity
-                disabled={!isVerified}
-                style={{ width: "50%" }}
-                onPress={() => props.navigation.navigate("ServiceBooking")}
-              >
-                <Card
-                  title="Service Booking"
-                  image={require("../assets/images/car-wash.png")}
-                  imageWrapperStyle={{ padding: 10 }}
-                ></Card>
-              </TouchableOpacity>
-              <TouchableOpacity
-                disabled={!isVerified}
-                style={{ width: "50%" }}
-                onPress={() => props.navigation.navigate("ReportScreen")}
-              >
-                <Card
-                  title="Report"
-                  image={require("../assets/images/report-icon.png")}
-                  imageWrapperStyle={{ padding: 15 }}
-                ></Card>
-              </TouchableOpacity>
-            </View>
-          </View>
+          {/* <View>
+            <Button title="Send Email" onPress={handleSend} />
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -293,7 +270,13 @@ export default function HomeScreen(props) {
 }
 
 HomeScreen.navigationOptions = {
-  header: null,
+  title: "Home",
+  drawerIcon: ({ tintColor }) => (
+    <Image
+      source={require("../assets/images/home.png")}
+      style={[styles.icon, { tintColor: tintColor }]}
+    />
+  ),
 };
 
 function DevelopmentModeNotice() {
@@ -341,6 +324,10 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: "lightgreen",
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
   notSelected: {
     borderColor: "black",
