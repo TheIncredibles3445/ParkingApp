@@ -50,7 +50,7 @@ export default function Payment(props) {
   const getDiscount = async () => {
     let user = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
 
-    
+
     if (user.data().discount && user.data().discount !== "") {
       const disc = await db.collection("discounts").doc(user.data().discount).get()
       setDiscount(disc.data())
@@ -65,13 +65,13 @@ export default function Payment(props) {
 
   useEffect(() => {
     console.log("the discount", discount)
-    if(discount){
+    if (discount) {
       let percentage = parseInt(discount.percentage) / 100
-    let p = total * percentage
-    let newTotal = total - p
-    setNewAmount(newTotal)
+      let p = total * percentage
+      let newTotal = total - p
+      setNewAmount(newTotal)
     }
-    
+
   }, [discount])
 
 
@@ -209,7 +209,7 @@ export default function Payment(props) {
   };
 
   return (
-    <View>
+    <View style={{backgroundColor: "#F0F8FF", height:"100%", paddingTop: 10 }}>
 
 
       {userCards ? (
@@ -223,7 +223,7 @@ export default function Payment(props) {
             marginBottom: 4,
             marginTop: 4,
             marginRight: "auto",
-            marginLeft: "auto"
+            marginLeft: "auto",
           }}
           onValueChange={itemValue => setSelectedCard(itemValue)}
         >
@@ -234,82 +234,109 @@ export default function Payment(props) {
         </Picker>
       ) : null}
 
-      {
+{
         discount ?
-          <View>
-            <Text>Applying {discount.code} </Text>
-            <Text>For {discount.percentage}% Discount</Text>
-            <Text>Before: {total}</Text>
-            <Text>After: {newAmount.toFixed(2)}</Text>
+
+          <View style={{marginBottom:10 , paddingLeft: 20 ,borderWidth: 1 , borderColor:"#284057" ,  marginTop:5,marginLeft:"auto", marginRight:"auto", width:"60%", paddingTop: 5, paddingBottom: 10,backgroundColor:"white"}}>
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "#284057" }}>Applying {discount.code} </Text>
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "#284057" }}>For {discount.percentage}% Discount</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "red" }}>Before: {total} QR</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "#90EE90" }}>After: {newAmount.toFixed(2)} QR</Text>
           </View>
           :
-          <Text>Amount: {total}</Text>
+          <Text 
+          style={{paddingTop: 20 ,paddingBottom: 20 ,paddingLeft: 20 ,
+             fontWeight: "bold", fontSize: 20, color: "#284057",marginBottom: 30,
+             borderBottomWidth: 2, borderColor:"#284057" }}>Amount: {total.toFixed(2)} QR</Text>
       }
+      
+          
+      
+      <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+        <Text style={styles.label}>First Name</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={text => setFirstName(text)}
+          // placeholder="Cars Support"
+          value={firstName}
+        />
+      </View>
 
-      <Text>First Name</Text>
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setFirstName(text)}
-        // placeholder="Cars Support"
-        value={firstName}
-      />
-      <Text>Last Name</Text>
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setLastName(text)}
-        // placeholder="Cars Support"
-        value={lastName}
-      />
 
-      <Text>Card Number</Text>
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        keyboardType="numeric"
-        onChangeText={text => setCardNumber(text)}
-        //placeholder="Cars Support"
-        value={cardNumber}
-      />
-      <Text>Provider</Text>
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setProvider(text)}
-        value={provider}
-      />
-      <Text>Expiry Date</Text>
-      <DatePicker
-        style={{ width: 200 }}
-        date={expiry}
-        mode="date"
-        placeholder="select date"
-        format="YYYY-MM"
-        minDate={moment()
-          .add(1, "M")
-          .format("YYYY-MM")}
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: "absolute",
-            left: 0,
-            top: 4,
-            marginLeft: 0
-          },
-          dateInput: {
-            marginLeft: 36
-          }
-        }}
-        onDateChange={date => setExpiryDate(date)}
-      />
-      <Text>Security Code</Text>
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setSecurityCode(text)}
-        keyboardType="numeric"
-        placeholder="0000"
-        value={securityCode}
-      />
+      <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+        <Text style={styles.label}>Last Name</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={text => setLastName(text)}
+          // placeholder="Cars Support"
+          value={lastName}
+        />
+      </View>
 
-      <Button
+      <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+        <Text style={styles.label}>Card Number</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          onChangeText={text => setCardNumber(text)}
+          //placeholder="Cars Support"
+          value={cardNumber}
+        />
+      </View>
+
+      <View style={{ flexDirection: "row" ,marginBottom: 8,paddingLeft: 15}}>
+        <Text style={styles.label}>Provider</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={text => setProvider(text)}
+          value={provider}
+        />
+      </View>
+
+      <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+        <Text style={styles.label}>Expiry Date</Text>
+        <DatePicker
+          style={styles.input}
+          date={expiry}
+          mode="date"
+          placeholder="select date"
+          format="YYYY-MM"
+          minDate={moment()
+            .add(1, "M")
+            .format("YYYY-MM")}
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: "absolute",
+              left: 0,
+              top: 4,
+              marginLeft: 0
+            },
+            dateInput: {
+              marginLeft: 36
+            }
+          }}
+          onDateChange={date => setExpiryDate(date)}
+        />
+      </View>
+
+      <View style={{ flexDirection: "row" ,marginBottom: 8,paddingLeft: 15}}>
+
+        <Text style={styles.label}>Security Code</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={text => setSecurityCode(text)}
+          keyboardType="numeric"
+          placeholder="0000"
+          value={securityCode}
+        />
+      </View>
+
+
+<View style={{width:"30%", marginLeft:"auto", marginRight:"auto"}}>
+
+<Button
         title="Pay"
         onPress={() => pay()}
         disabled={
@@ -323,6 +350,23 @@ export default function Payment(props) {
             : true
         }
       />
+
+</View>
+
+
     </View>
   );
 }
+
+Payment.navigationOptions = {
+  title: "Payment",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTitleStyle: {
+    color: "white"
+  }
+};
+//
+const styles = StyleSheet.create({
+  input: { height: 40, borderColor:"#284057", borderWidth: 1, width: "60%" ,backgroundColor:"white", paddingLeft: 7},
+  label: { fontSize: 15, color: "#284057", width: "30%",fontWeight:"bold" }
+}) //backgroundColor:"white" fontWieght:"bold" , paddingLeft: 5

@@ -115,6 +115,13 @@ export default function App(props) {
 
   const buttonOpacity = new Value(1);
 
+
+  
+  // const unsubscribe = props.navigation.addListener('didFocus', () => {
+  //   console.log('focussed');
+  //   getUser()
+  // });  
+
   const onStateChange = event([
     {
       nativeEvent: ({ state }) =>
@@ -137,7 +144,7 @@ export default function App(props) {
           ),
         ]),
     },
-  ]);
+  ]); 
 
   const buttonY = interpolate(buttonOpacity, {
     inputRange: [0, 1],
@@ -396,9 +403,9 @@ export default function App(props) {
                   keyboardType="numeric"
                   style={styles.input}
                 />
-
+ 
               </View>
-            </View>
+            </View> 
 
              <Animated.View
               style={{ flexDirection: "row", justifyContent: "space-evenly" }}
@@ -407,7 +414,7 @@ export default function App(props) {
                 <Animated.View style={styles.button}>
                   <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                     SIGN IN
-                  </Text>
+                  </Text> 
                 </Animated.View>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleRegister}>
@@ -422,8 +429,8 @@ export default function App(props) {
         </View>
       </KeyboardAvoidingView>
     );
-  } else {
-    return (
+  } else { 
+    return ( 
       
       <SafeAreaView style={styles.container}>
         
@@ -433,7 +440,7 @@ export default function App(props) {
         : loggedInUser && loggedInUser.role == "admin" ?
         
         <AdminAppNavigator />
-        : null
+        : <Button color="#f0f8ff"  title="" onPress={getUser()}/>
       }
        
       </SafeAreaView>

@@ -333,7 +333,7 @@ export default function ServiceBookingScreen(props) {
   }
 
   return (
-    <View style={{ width: "80%", marginLeft: "auto", marginRight: "auto" }}>
+    <ScrollView style={{ width: "100%", backgroundColor:'#F0F8FF', height:"100%" }}>
 
       <Animatable.View animation="fadeInRight" delay={2}>
         {services.length !== 0 ? (
@@ -432,12 +432,12 @@ export default function ServiceBookingScreen(props) {
       <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
 
         {selectedParking && selectedService && selectedBlock ? (
-          <TouchableOpacity style={{ backgroundColor: "#5F9EA0", padding: 5, margin: 7, width: "50%", height: 40, alignItems: "center", borderRadius: 5 }} onPress={() => getWorkers()}>
-            <Text style={{ fontSize: 20, color: "white" }}>Search</Text>
+          <TouchableOpacity style={{ backgroundColor: "#b7c9e1", padding: 5, margin: 7, width: "30%", height: 40, alignItems: "center", borderRadius: 5 }} onPress={() => getWorkers()}>
+            <Text style={{ fontSize: 20, color: "white" , fontWeight:"bold"}}>Search</Text>
           </TouchableOpacity>
         ) : null}
-        {selectedTime ? <TouchableOpacity style={{ backgroundColor: "#5F9EA0", padding: 5, margin: 7, width: "50%", height: 40, alignItems: "center", borderRadius: 5 }} onPress={() => book()}>
-          <Text style={{ fontSize: 20, color: "white" }}>Book</Text>
+        {selectedTime ? <TouchableOpacity style={{ backgroundColor: "#b7c9e1", padding: 5, margin: 7, width: "30%", height: 40, alignItems: "center", borderRadius: 5 }} onPress={() => book()}>
+          <Text style={{ fontSize: 20, color: "white", fontWeight:"bold" }}>Book</Text>
         </TouchableOpacity> : null}
 
       </View>
@@ -457,8 +457,8 @@ export default function ServiceBookingScreen(props) {
             fontSize: 30,
             //backgroundColor: "#F0FFFF",
             //marginRight: "auto",
-            //marginLeft: "auto"
-            color: "#5F9EA0"
+            marginLeft: "20%",
+            color: "#284057"
           }}
         >
           {" "}
@@ -466,36 +466,39 @@ export default function ServiceBookingScreen(props) {
         </Text>
       ) : null}
       <Animatable.View animation="fadeInRight" delay={2}>
-        <ScrollView style={{ height: "auto" }}>
+        
           {userBookings.length !== 0
             ? userBookings.map((b, index) => (
               <View style={{
-                width: "100%", backgroundColor: "#DCDCDC", marginRight: "auto", marginLeft: "auto", flexDirection: "row", justifyContent: "space-evenly",
-                borderBottomWidth: 2, marginBottom: "3%", borderColor: "#696969", borderBottomWidth: 3, padding: 7
+                width: "70%", backgroundColor: "#DCDCDC", marginRight: "auto", marginLeft: "auto", flexDirection: "row", justifyContent: "space-evenly",
+                borderBottomWidth: 2, marginBottom: "3%", borderColor: "#696969", borderBottomWidth: 3, padding: 7,marginLeft: "20%",
               }}>
-                <View style={{ width: "50%" }}>
-                  <Text style={{ fontSize: 20, color: "#696969" }}>{b.service.Name} </Text>
+                <View style={{ }}>
+                  <Text style={{ fontSize: 18, color: "#696969" }}>{b.service.Name} </Text>
                   <Text style={{ fontSize: 15, color: "#696969" }}>{b.time} </Text>
                 </View>
                 <View style={{ width: 100, float: "left" }}>
 
-                  <TouchableOpacity style={{ backgroundColor: "#A9A9A9", padding: 5, width: "50%", marginLeft: "auto", alignItems: "center", borderRadius: 5 }} onPress={() => deleteBooking(index)}>
-                    <Text style={{ fontSize: 30, color: "#696969" }}>X</Text>
+                  <TouchableOpacity style={{ backgroundColor: "#A9A9A9", padding: 5, width: "30%", marginLeft: "auto", alignItems: "center", borderRadius: 5 }} onPress={() => deleteBooking(index)}>
+                    <Text style={{ fontSize: 15, color: "#696969" }}>X</Text>
                   </TouchableOpacity>
                   {/**<> */}
                 </View>
               </View>
             ))
             : null}
-        </ScrollView>
+       
       </Animatable.View>
       {userBookings.length !== 0 ? (
-        <TouchableOpacity style={{ backgroundColor: "#5F9EA0", padding: 5, width: "50%", height: 50, alignItems: "center", borderRadius: 5 }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
+        <TouchableOpacity style={{ backgroundColor: "#5a91bf", padding: 5, width: "40%", height: 50, alignItems: "center",marginBottom: "5%",marginLeft: "20%",  }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
       ) : null}
       <FlashMessage position="bottom" animationDuration={300} duration={3000} />
-    </View>
+    </ScrollView>
   );
 }
 ServiceBookingScreen.navigationOptions = {
-  title: "Service Booking"
+  title: "Service Booking",
+  headerStyle:{ backgroundColor:"#5a91bf" },
+  headerTitleStyle:{
+      color: "white"}
 };

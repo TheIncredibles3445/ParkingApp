@@ -131,7 +131,7 @@ export default function HomeScreen(props) {
       <View
         style={{ marginLeft: "auto", marginRight: "auto", flexDirection: "row", width: "85%", height: "8%" }}>
 
-        <TouchableOpacity style={styles.btns}>
+        <TouchableOpacity style={styles.btns} onPress={()=> Alert.alert(`Earn Points And Get Discount!`,` \n 20 points for: \n Service or parking booking. \n Reporting issues.`)}>
           <Text
             style={{ marginLeft: "auto", marginRight: "auto", color: "#F0F8FF", fontSize: 15 }}
       >My Points {user ? user.points : null}</Text>
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     fontWeight:"bold",
-    //fontFamily: "Cochin"
+    //fontFamily: "Cochin" 
 
   },
   btns: {

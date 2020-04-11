@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,Icon
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -117,29 +117,32 @@ export default function ConfirmServiceBookingScreen(props) {
   return (
     <View stule={{ alignItems:"center", marginRight: "auto",
     marginLeft: "auto"}}>
+      <View style={{}}></View>
       <Text style={{
             height: 50,
             //width: 200,
             fontSize: 25,
             //backgroundColor: "#F0FFFF",
             marginRight: "auto",
+            marginTop: "15%",
             marginLeft: "auto",
-            color:"#5F9EA0"
+            color: "#284057"
           }}> PICK YOUR PAYMENT METHOD</Text>
       
 
-      <Animatable.View animation="bounce"  iterationCount={3}>
+      <Animatable.View animation="fadeInRight" delay={2}>
       <TouchableOpacity 
-      style={{backgroundColor:"#5F9EA0",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5 , marginBottom:50,marginRight: "auto",
+      style={{backgroundColor: "#b7c9e1",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5 , marginBottom:50,marginRight: "auto",
       marginLeft: "auto"}}
        onPress={() => payLater()}>
-        <Text style={{fontSize:20,color:"white"}}>PAY LATER</Text>
+        <Text style={{fontSize:20, fontWeight:"bold",color:"white"}}>PAY LATER</Text>
         </TouchableOpacity>
         </Animatable.View>
 
-        <Animatable.View animation="bounce"  iterationCount={3}>
+        <Animatable.View animation="fadeInRight" delay={2}>
         <TouchableOpacity 
-      style={{backgroundColor:"#5F9EA0",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5,marginRight: "auto",
+        icon={<Icon type="material" name="payment" size={25} color="white" />}
+      style={{backgroundColor: "#b7c9e1",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5,marginRight: "auto",
       marginLeft: "auto"}}
       onPress={() =>
         props.navigation.navigate("Payment", {
@@ -148,7 +151,7 @@ export default function ConfirmServiceBookingScreen(props) {
           id: bookingId.current
         })
       }>
-        <Text style={{fontSize:20,color:"white"}}>PAY NOW</Text>
+        <Text style={{fontSize:20, fontWeight:"bold",color:"white"}}>PAY NOW</Text>
         </TouchableOpacity>
         </Animatable.View>
     </View>
@@ -156,6 +159,10 @@ export default function ConfirmServiceBookingScreen(props) {
 }
 
 ConfirmServiceBookingScreen.navigationOptions = {
-  title: "Confirm"
+  title: "Confirm",
+  headerStyle:{ backgroundColor:"#5a91bf" },
+  headerTitleStyle:{
+      color: "white"}
 };
+
 {/**<Animatable.View animation="bounce"  iterationCount={3}> */}

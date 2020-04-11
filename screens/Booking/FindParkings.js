@@ -104,7 +104,7 @@ export default function FindParkings(props) {
         });
         console.log("---------------------- i=", free.current)
       }
-    }
+    } 
     changeShow("block",1)
   }
 

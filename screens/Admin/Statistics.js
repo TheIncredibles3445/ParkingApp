@@ -185,19 +185,21 @@ export default function Statistics(props) {
 }
 Statistics.navigationOptions = {
     title: 'Statistics',
-};
-
+    headerStyle:{ backgroundColor:"#5a91bf" },
+    headerTitleStyle:{
+        color: "white"}
+  };
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 3, paddingTop: 30, backgroundColor: '#F5F5F5' },
+    container: { flex: 1, padding: 3, paddingTop: 30, backgroundColor: '#F0F8FF' },
     head: { height: 40, backgroundColor: '#fbfdfb' },
     text: { margin: 6 },
-    box: { backgroundColor: "#F5F5F5", padding: 5, flexDirection: "row", width: "50%" },
+    box: { backgroundColor: "#F0F8FF", padding: 5, flexDirection: "row", width: "50%" ,marginRight:"auto" ,marginLeft:"auto"},
     box2: { backgroundColor: "#F5F5F5", padding: 5, flexDirection: "row", width: "50%" },
-    user: { borderColor: "#D3D3D3", borderBottomWidth: 3, padding: 5, width: "50%", alignItems: "center" },
-    search: { backgroundColor: "#DCDCDC", padding: 5, width: "70%", alignItems: "center" },
-    search2: { borderColor: "#DCDCDC", padding: 5, width: "15%", alignItems: "center", borderWidth: 3 },
-    search3: { backgroundColor: "#DCDCDC", padding: 5, width: "60%", alignItems: "center" },
-    search4: { borderColor: "#DCDCDC", padding: 5, width: "40%", alignItems: "center", borderWidth: 3 },
+    user: { borderColor: "#6f93c3", borderBottomWidth: 3, padding: 5, width: "50%", alignItems: "center" },
+    search: { backgroundColor: "#b7c9e1", padding: 5, width: "70%", alignItems: "center" },
+    search2: { borderColor: "#6f93c3", padding: 5, width: "15%", alignItems: "center", borderWidth: 3 },
+    search3: { backgroundColor: "#b7c9e1", padding: 5, width: "60%", alignItems: "center" },
+    search4: { borderColor: "#6f93c3", padding: 5, width: "40%", alignItems: "center", borderWidth: 3 },
     income:{ 
         flexDirection: "row", 
         justifyContent: "flex-start" ,
@@ -205,8 +207,8 @@ const styles = StyleSheet.create({
           marginBottom:10,
           marginTop:10,
           width:"80%" ,
-            borderBottomColor:"#808080",
-            borderBottomWidth:3 }
+            borderBottomColor:"#6f93c3",
+            borderBottomWidth:3 ,marginRight:"auto" ,marginLeft:"auto"}
 
 
 });

@@ -153,18 +153,23 @@ export default function ParcialPayment(props) {
     };
 
     return (
-        <View>
+        <View style={{backgroundColor: "#F0F8FF", height:"100%", paddingTop: 10 }}>
+            {
+                user && user.pendingAmount == 0  && user.advPendingAmount == 0 ? 
+                <Text style={{ paddingBottom: 10 , paddingLeft: 50 , fontWeight: "bold", fontSize: 20, color: "#284057" }}>No Payments Required</Text>
+            :
             <ScrollView>
-                <Text>Payment</Text>
-                <Text>Bookings: {user ? user.pendingAmount : null}</Text>
-                <Text>Advertisements:  {user ? user.advPendingAmount : null}</Text>
-
-                {userCards ? (
+                {/** */}
+                { user && user.pendingAmount > 0 ? <Text style={{ paddingBottom: 10 , paddingLeft: 50 , fontWeight: "bold", fontSize: 20, color: "#284057" }}>Bookings: {user ? user.pendingAmount : null} QR</Text> : null}
+                { user && user.advPendingAmount > 0 ? <Text style={{paddingBottom: 10 , paddingLeft: 50 , fontWeight: "bold", fontSize: 20, color: "#284057" }}>Advertisements:  {user ? user.advPendingAmount : null}QR</Text>: null}
+                
+ <View style={{flexDirection:"row" , marginBottom:10}}>
+ {userCards. length > 0 ? (
                     <Picker
                         selectedValue={selectedCard}
                         style={{
                             height: 50,
-                            width: 200,
+                            width: 150,
                             fontSize: 20,
                             backgroundColor: "#DCDCDC",
                             marginBottom: 4,
@@ -185,7 +190,7 @@ export default function ParcialPayment(props) {
                     selectedValue={selectedPayment}
                     style={{
                         height: 50,
-                        width: 200,
+                        width: 150,
                         fontSize: 20,
                         backgroundColor: "#DCDCDC",
                         marginBottom: 4,
@@ -202,102 +207,144 @@ export default function ParcialPayment(props) {
 
                 </Picker>
 
+
+ </View>
+                
+
                 {
                     selectedPayment ?
-                        <View>
-                            <Text>First Name</Text>
-                            <TextInput
-                                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                onChangeText={text => setFirstName(text)}
-                                // placeholder="Cars Support"
-                                value={firstName}
-                            />
-                            <Text>Last Name</Text>
-                            <TextInput
-                                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                onChangeText={text => setLastName(text)}
-                                // placeholder="Cars Support"
-                                value={lastName}
-                            />
-                            <Text>Amount</Text>
-                            <TextInput
-                                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                keyboardType="numeric"
-                                onChangeText={text => setAmount(text)}
-                                //placeholder="Cars Support"
-                                value={amount}
-                            />
+                         <View>
+                       
+      <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+      <Text style={styles.label}>First Name</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={text => setFirstName(text)}
+        // placeholder="Cars Support"
+        value={firstName}
+      />
+    </View>
 
-                            <Text>Card Number</Text>
-                            <TextInput
-                                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                keyboardType="numeric"
-                                onChangeText={text => setCardNumber(text)}
-                                //placeholder="Cars Support"
-                                value={cardNumber}
-                            />
-                            <Text>Provider</Text>
-                            <TextInput
-                                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                onChangeText={text => setProvider(text)}
-                                value={provider}
-                            />
-                            <Text>Expiry Date</Text>
-                            <DatePicker
-                                style={{ width: 200 }}
-                                date={expiry}
-                                mode="date"
-                                placeholder="select date"
-                                format="YYYY-MM"
-                                minDate={moment()
-                                    .add(1, "M")
-                                    .format("YYYY-MM")}
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                customStyles={{
-                                    dateIcon: {
-                                        position: "absolute",
-                                        left: 0,
-                                        top: 4,
-                                        marginLeft: 0
-                                    },
-                                    dateInput: {
-                                        marginLeft: 36
-                                    }
-                                }}
-                                onDateChange={date => setExpiryDate(date)}
-                            />
-                            <Text>Security Code</Text>
-                            <TextInput
-                                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                onChangeText={text => setSecurityCode(text)}
-                                keyboardType="numeric"
-                                placeholder="0000"
-                                value={securityCode}
-                            />
 
-                            <Button
-                                title="Pay"
-                                onPress={() => pay()}
-                                disabled={
-                                    firstName &&
-                                        provider &&
-                                        lastName &&
-                                        cardNumber &&
-                                        expiry &&
-                                        securityCode &&
-                                        amount
-                                        ? false
-                                        : true
-                                }
-                            />
-                        </View>
+    <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+      <Text style={styles.label}>Last Name</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={text => setLastName(text)}
+        // placeholder="Cars Support"
+        value={lastName}
+      />
+    </View>
+
+    <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+      <Text style={styles.label}>Card Number</Text>
+      <TextInput
+        style={styles.input}
+        keyboardType="numeric"
+        onChangeText={text => setCardNumber(text)}
+        //placeholder="Cars Support"
+        value={cardNumber}
+      />
+    </View>
+   <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+    <Text style={styles.label}>Amount</Text>
+        <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            onChangeText={text => setAmount(text)}
+            //placeholder="Cars Support"
+            value={amount}
+        />
+</View>
+    <View style={{ flexDirection: "row" ,marginBottom: 8,paddingLeft: 15}}>
+      <Text style={styles.label}>Provider</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={text => setProvider(text)}
+        value={provider}
+      />
+    </View>
+
+    <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
+      <Text style={styles.label}>Expiry Date</Text>
+      <DatePicker
+        style={styles.input}
+        date={expiry}
+        mode="date"
+        placeholder="select date"
+        format="YYYY-MM"
+        minDate={moment()
+          .add(1, "M")
+          .format("YYYY-MM")}
+        confirmBtnText="Confirm"
+        cancelBtnText="Cancel"
+        customStyles={{
+          dateIcon: {
+            position: "absolute",
+            left: 0,
+            top: 4,
+            marginLeft: 0
+          },
+          dateInput: {
+            marginLeft: 36
+          }
+        }}
+        onDateChange={date => setExpiryDate(date)}
+      />
+    </View>
+
+    <View style={{ flexDirection: "row" ,marginBottom: 8,paddingLeft: 15}}>
+
+      <Text style={styles.label}>Security Code</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={text => setSecurityCode(text)}
+        keyboardType="numeric"
+        placeholder="0000"
+        value={securityCode}
+      />
+    </View>
+
+
+<View style={{width:"30%", marginLeft:"auto", marginRight:"auto"}}>
+
+<Button
+      title="Pay"
+      onPress={() => pay()}
+      disabled={
+        firstName &&
+          provider &&
+          lastName &&
+          cardNumber &&
+          expiry &&
+          securityCode
+          ? false
+          : true
+      }
+    />
+
+</View>
+</View>
                         :
                         null
 
                 }
 
             </ScrollView>
+            }
+            
         </View>
     );
 }
+ParcialPayment.navigationOptions = {
+    title: "Payment",
+    headerStyle: { backgroundColor: "#5a91bf" },
+    headerTitleStyle: {
+      color: "white"
+    }
+  };
+  //
+  const styles = StyleSheet.create({
+    input: { height: 40, borderColor:"#284057", borderWidth: 1, width: "60%" ,backgroundColor:"white", paddingLeft: 7},
+    label: { fontSize: 15, color: "#284057", width: "30%",fontWeight:"bold" }
+  }) //backgroundColor:"white" fontWieght:"bold" , paddingLeft: 5
