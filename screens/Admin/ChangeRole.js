@@ -27,7 +27,6 @@ export default function ChangeRole(props) {
     const email = useRef()
     const  role= useRef()
 
-
     useEffect(() => {
        
     }, [show]);
@@ -117,8 +116,9 @@ const styles = StyleSheet.create({
     container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#F5F5F5' },
     head: { height: 40, backgroundColor: '#fbfdfb' },
     text: { margin: 6 },
-    box:{backgroundColor:"#F5F5F5" , padding:5 , flexDirection:"row"},
     user:{borderColor: "#D3D3D3",borderBottomWidth:3 , padding:5 , width:"50%" ,  alignItems:"center" },
+
+    box:{backgroundColor:"#F5F5F5" , padding:5 , flexDirection:"row"},
     search:{backgroundColor: "#DCDCDC" , padding:5 , width:"50%" ,  alignItems:"center" }
 });
 

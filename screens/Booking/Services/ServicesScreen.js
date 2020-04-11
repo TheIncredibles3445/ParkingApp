@@ -13,6 +13,8 @@ import {
 
 import "firebase/auth";
 import db from "../../../db.js";
+import FlashMessage from "react-native-flash-message";
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 export default function ServicesScreen(props) {
   const [services, setServices] = useState([]);
@@ -50,7 +52,12 @@ export default function ServicesScreen(props) {
       setShow("All");
     } else {
       if (!name || !description || !price) {
-        setError("Please Fill All The Requirements !");
+        //setError("Please Fill All The Requirements !");
+        showMessage({
+          message: "Warning",
+          description: "Please Fill All The Requirements",
+          type: "danger"
+        })
       } else {
         db.collection("service").add({
           Name: name,
@@ -65,12 +72,10 @@ export default function ServicesScreen(props) {
 
   return (
     <View>
-      <Text style={{ fontSize: 20, marginLeft: "auto", marginRight: "auto" }}>
-        Service Management
-      </Text>
+
 
       {show == "All" ? (
-        <View style={{ marginLeft: "auto", marginRight: "auto" }}>
+        <View style={{ marginTop: "5%", marginLeft: "5%" }}>
           {services.map((s, index) => (
             <TouchableOpacity
               key={index}
@@ -81,10 +86,10 @@ export default function ServicesScreen(props) {
             >
               <Text
                 style={{
-                  width: 250,
+                  width: "60%",
                   fontSize: 20,
                   borderBottomColor: "#DCDCDC",
-                  borderBottomWidth: 1,
+                  borderBottomWidth: 4,
                   marginBottom: 10
                 }}
               >
@@ -93,45 +98,69 @@ export default function ServicesScreen(props) {
               </Text>
             </TouchableOpacity>
           ))}
-          <Button title="Add Service" onPress={() => setShow("Add")} />
+          <TouchableOpacity style={styles.btn} onPress={() => setShow("Add")}>
+            <Text style={{ fontSize: 20, color: "white" }}>Add Service</Text>
+          </TouchableOpacity>
+
         </View>
       ) : show == "Add" ? (
-        <View style={{ width: "80%", marginLeft: "auto", marginRight: "auto" }}>
-          <Text>Name</Text>
+        <View style={{ width: "80%", marginLeft: "auto", marginRight: "auto" ,marginTop:"5%"}}>
+<Text style={{ fontSize:30 , marginBottom:"5%", marginLeft: "auto", marginRight: "auto", color:"#708090"}}>Add New Service</Text>
+          <View style={styles.box}>
+            <Text style={styles.label}>Name</Text>
 
+            <TextInput
+              style={styles.input}
+              onChangeText={setName}
+              placeholder="Cars Support"
+              value={name}
+            />
+
+          </View>
+
+          <View style={styles.box}>
+          <Text style={styles.label}>Price</Text>
           <TextInput
-            style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-            onChangeText={setName}
-            placeholder="Cars Support"
-            value={name}
-          />
-          <Text>Price</Text>
-          <TextInput
-            style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+            style={styles.input}
             keyboardType="numeric"
             onChangeText={setPrice}
             placeholder="000"
             value={price}
             maxLength={4}
           />
-          <Text>Description</Text>
+          </View>
+
+          <View style={styles.box}>
+          <Text style={styles.label}>Description</Text>
           <TextInput
-            style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+            style={styles.input}
             onChangeText={setDescription}
             placeholder="..."
             value={description}
           />
-          <Text>{error ? error : null}</Text>
-          <View style={{ marginLeft: "auto", marginRight: "auto", width: 250 }}>
-            <Button title="Save" onPress={() => save("Insert")} />
-            <Text style={{ marginBottom: 10 }}></Text>
-            <Button title="Cancel" onPress={() => setShow("All")} />
+          </View>
+
+          
+          <Text style={{fontSize:  15 ,coloe:"#FF6347" , margin:"5%"}}>{error ? error : null}</Text>
+          <View style={{ flexDirection:"row", justifyContent:"space-evenly" }}>
+           
+            <TouchableOpacity style={styles.btn} onPress={() => save("Insert")} ><Text style={{ fontSize: 20, color: "white" }}>Save</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.btn} onPress={() => setShow("All")} ><Text style={{ fontSize: 20, color: "white" }}>Cancel</Text></TouchableOpacity>
           </View>
         </View>
       ) : null}
+       <FlashMessage position="bottom" animationDuration={300} duration={50000} />
     </View>
   );
 }
 ServicesScreen.navigationOptions = {
-  title: "Services"
+  title: "Services Management"
 };
+
+
+const styles = StyleSheet.create({
+  btn: { backgroundColor: "#00BFFF", width: "40%", alignItems: "center", height: 40, padding: 2, borderRadius: 4 },
+  input: { height: 40, borderColor: "#DCDCDC", borderWidth: 3,width:"70%", borderRadius: 4 },
+  label:{ fontSize:15 , width :"20%" , marginRight:"5%"},
+  box:{flexDirection: "row" ,width:"100%" , margin:5}
+})

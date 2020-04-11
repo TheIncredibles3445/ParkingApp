@@ -11,7 +11,7 @@ import {
   TouchableHighlight,
   Modal,
   Image,
-  FlatList
+  FlatList, Alert
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -24,7 +24,7 @@ import { Divider } from "react-native-elements";
 import moment from "moment";
 import * as Progress from 'react-native-progress';
 
-export default FriendsScreen = props => {
+export default function AdvertismentRequest(props) {
 
   const [feedback, setFeedback] = useState("");
   const [offerNumber, setOfferNumber] = useState(1);
@@ -71,33 +71,12 @@ export default FriendsScreen = props => {
   const handleSubmit = async () => {
     setDisableAll(true)
     setSubmitBtn(true)
-    if (uri !== "") {
-      const response = await fetch(uri);
-      console.log("fetch result", JSON.stringify(response));
-
-      const blob = await response.blob();
-      const putResult = await firebase
-        .storage()
-        .ref()
-        .child(firebase.auth().currentUser.uid)
-        .put(blob);
-
-      const url = await firebase
-        .storage()
-        .ref()
-        .child(firebase.auth().currentUser.uid)
-        .getDownloadURL();
-      console.log("download url", url);
-
-      setPhotoURL(url);
-    }
-
-
+    
       let offerid = 0
       let adv = await db.collection("Advertisement").add({
         uid: firebase.auth().currentUser.uid,
         title : displayName,
-        photoURL: uri,
+        photoURL: "",
         description,
         link,
         startDate,
@@ -117,8 +96,31 @@ export default FriendsScreen = props => {
         offeredAmount,
       feedback: "" })
 
-    alert(`Dear ${displayName} ,
-    Your form has been send to the admin`);
+      let URL = ""
+    if (uri !== "") {
+      const response = await fetch(uri);
+      console.log("fetch result", JSON.stringify(response));
+
+      const blob = await response.blob();
+      const putResult = await firebase
+        .storage()
+        .ref()
+        .child(`/ads/${firebase.auth().currentUser.uid}${offerid}`)
+        .put(blob);
+
+      const url = await firebase
+        .storage()
+        .ref()
+        .child(`/ads/${firebase.auth().currentUser.uid}${offerid}`)
+        .getDownloadURL();
+      console.log("download url", url);
+
+      setPhotoURL(url);
+      URL = url
+    }
+    db.collection("Advertisement").doc(offerid).update({ photoURL : URL})
+
+    Alert.alert(`Your Request Has Been Send To The Admin`);
 
     props.navigation.navigate("Home")
    
@@ -134,38 +136,17 @@ export default FriendsScreen = props => {
   },[startDate , endDate, description , link , uri , link , displayName , offeredAmount])
 
   return (
-    <View>
+    <View style={{ paddingTop:20}}>
     
-            <Text
-              style={{
-                marginBottom: 10,
-                fontSize: 20,
-                marginLeft: "auto",
-                marginRight: "auto"
-              }}
-            >
-              Advertisment Form
-            </Text>
-            <View style={{ flexDirection: "row" }}>
+           
+            <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
               <Text
-                style={{
-                  marginBottom: 10,
-                  fontSize: 15,
-                  marginRight: 4,
-                  marginTop: 8
-                }}
+                style={styles.label}
               >
                 Title
               </Text>
               <TextInput
-                style={{
-                  width: "70%",
-                  height: 40,
-                  borderColor: "gray",
-                  borderWidth: 1,
-                  marginLeft: "10%",
-                  marginBottom: "3%"
-                }}
+                style={styles.input}
                 onChangeText={text => setDisplayName(text)}
                 placeholder="Advertiser name"
                 editable={disableAll}
@@ -174,14 +155,9 @@ export default FriendsScreen = props => {
               />
             </View>
 
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
               <Text
-                style={{
-                  marginBottom: 10,
-                  fontSize: 15,
-                  marginRight: 4,
-                  marginTop: 8
-                }}
+                style={styles.label}
               >
                 Description
               </Text>
@@ -191,13 +167,9 @@ export default FriendsScreen = props => {
                   multiline={true}
                   numberOfLines={30}
                   style={{
-                    width: "90%",
+                    //width: "100%",
                     height: 130,
-                    borderColor: "gray",
-                    borderWidth: 1,
-                    marginLeft: "1%",
-                    textAlignVertical: "top",
-                    marginBottom: "4%"
+                    borderColor:"#284057", borderWidth: 1, width: "85%" ,backgroundColor:"white", paddingLeft: 7
                   }}
                   onChangeText={text => setDescription(text)}
                   placeholder="Description"
@@ -207,26 +179,14 @@ export default FriendsScreen = props => {
               </ScrollView>
             </View>
 
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
               <Text
-                style={{
-                  marginBottom: 10,
-                  fontSize: 15,
-                  marginRight: 4,
-                  marginTop: 8
-                }}
+                style={styles.label}
               >
                 Link
               </Text>
               <TextInput
-                style={{
-                  width: "70%",
-                  height: 40,
-                  borderColor: "gray",
-                  borderWidth: 1,
-                  marginLeft: "13%",
-                  marginBottom: "3%"
-                }}
+                style={styles.input}
                 onChangeText={text => setLink(text)}
                 placeholder="Link"
                 editable={disableAll}
@@ -236,25 +196,19 @@ export default FriendsScreen = props => {
 
            
             <View
-              style={{ width: "73%", marginLeft: "20%", marginBottom: "2%" }}
+              style={{ width: "30%", marginLeft: "35%", marginBottom: "2%" }}
             >
               <Button title="Pick Image" onPress={handlePickImage} />
             </View>
 
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
               <Text
-                style={{
-                  marginBottom: 10,
-                  fontSize: 15,
-                  marginRight: 4,
-                  marginTop: 8
-                }}
+                style={styles.label}
               >
                 Start Date
               </Text>
               <DatePicker
-                style={{ width: 200, marginLeft: "2%", marginBottom: "2%" }}
-                date={startDate}
+                 style={styles.input}
                 mode="date"
                 placeholder="Select Start Date"
                 format="YYYY-MM-DD"
@@ -279,19 +233,14 @@ export default FriendsScreen = props => {
               />
             </View>
           
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
               <Text
-                style={{
-                  marginBottom: 10,
-                  fontSize: 15,
-                  marginRight: 4,
-                  marginTop: 8
-                }}
+                style={styles.label}
               >
                 End Date
               </Text>
               <DatePicker
-                style={{ width: 200, marginBottom: "2%", marginLeft: "4%" }}
+                 style={styles.input}
                 date={endDate}
                 mode="date"
                 placeholder="Select End Date"
@@ -317,27 +266,15 @@ export default FriendsScreen = props => {
               />
             </View>
 
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row",marginBottom: 8,paddingLeft: 15 }}>
               <Text
-                style={{
-                  marginBottom: 10,
-                  fontSize: 15,
-                  marginRight: 4,
-                  marginTop: 8
-                }}
+                style={styles.label}
               >
                 Offered Amount
               </Text>
               <TextInput
                 require
-                style={{
-                  width: "62%",
-                  height: 40,
-                  borderColor: "gray",
-                  borderWidth: 1,
-                  marginLeft: "1%",
-                  marginBottom: "2%"
-                }}
+                style={styles.input}
                 onChangeText={text => setOfferedAmount(text)}
                 placeholder="Offered Amount"
                 // value={offeredAmount}
@@ -347,7 +284,7 @@ export default FriendsScreen = props => {
               />
             </View>
             <View
-              style={{ width: "30%", marginLeft: "63%", marginBottom: "2%" }}
+              style={{ width: "30%", marginLeft: "63%", marginBottom: "2%" , marginTop: "5%"}}
             >
               <Button
                 disabled={submitBtn}
@@ -366,25 +303,15 @@ export default FriendsScreen = props => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 15,
-    backgroundColor: "#fff"
-  },
-  num: {
-    borderColor: "black",
-    borderWidth: 1.1,
-    marginLeft: "60%",
-    width: 100,
-    height: 35,
-    backgroundColor: "lightblue"
-  },
-  num2: {
-    borderColor: "black",
-    borderWidth: 1.1,
-    width: 100,
-    height: 35,
-    backgroundColor: "gray"
+AdvertismentRequest.navigationOptions = {
+  title: "Advertisement Requests",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTitleStyle: {
+    color: "white"
   }
-});
+};
+//
+const styles = StyleSheet.create({
+  input: { height: 40, borderColor:"#284057", borderWidth: 1, width: "60%" ,backgroundColor:"white", paddingLeft: 7},
+  label: { fontSize: 15, color: "#284057", width: "30%",fontWeight:"bold" }
+}) 

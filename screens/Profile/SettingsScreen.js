@@ -1,33 +1,67 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, View, Button, SafeAreaView , ScrollView} from "react-native";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/storage";
+import "firebase/functions";
+import * as ImagePicker from "expo-image-picker";
+import { Avatar, ListItem, Icon, Text } from "react-native-elements";
+import "firebase/auth";
+import db from "../../db.js";
 
-import { createDrawerNavigator } from "react-navigation-drawer";
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import PaymentCard from "./Payment";
-import AddVehicle from "./AddVehicle";
-import ProfileScreen from "./ProfileScreen.js";
-import Vehicle from "./Vehicle";
-import AddCard from "./AddCard";
-import LinksScreen from "./LinksScreen";
-import PartialPayment from "../../screens/PartialPayment";
 
-const VehicleStack = createStackNavigator(
-  {
-    Vehicle: Vehicle,
-    AddVehicle: AddVehicle,
-  },
-  {
-    headerMode: "none",
-  }
-);
-
-const CardStack = createStackNavigator({
-  Payment: PaymentCard,
-  AddCard: AddCard,
-});
 
 export default function SettingsScreen(props) {
+  const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
+  // const [displayName, setDisplayName] = useState("");
+  // const [uri, setUri] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
+  const loggedInUser = useRef()
+  const [update , setUpate] = useState(false)
+  const[ ads , setAds] = useState([])
+
+  const askPermission = async () => {
+    const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+    setHasCameraRollPermission(status === "granted");
+  };
+
+  useEffect(()=>{
+
+  },[ update])
+
+  useEffect(() => {
+    console.log(firebase.auth().currentUser.uid);
+    handleSet();
+    getUser()
+    askPermission();
+
+    db.collection("Advertisement").where("uid", "==", firebase.auth().currentUser.uid).onSnapshot(querySnapshot => {
+      let ads = [];
+
+      querySnapshot.forEach(doc => {
+          ads.push({ id: doc.id, ...doc.data(), isSelected: false });
+      });
+     
+      setAds([...ads]);
+    });
+
+
+  }, []);
+
+  const getUser = async () => {
+    let loggeduser = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
+    loggedInUser.current = loggeduser.data()
+    console.log("the user ---->", loggedInUser.current.role) 
+    setUpate(!update) 
+  }
+
+
+  const CardStack = createStackNavigator({
+    Payment: PaymentCard,
+    AddCard: AddCard,
+  });
+
+
   const MyDrawerNavigator = createDrawerNavigator({
     Home: ProfileScreen,
     Vehicle: VehicleStack,
@@ -42,7 +76,7 @@ export default function SettingsScreen(props) {
   const files = ["Profile", "Payment", "Vehicle", "Friends", "Reward"];
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>
         <Avatar
           containerStyle={{ marginTop: 10 }}
@@ -74,7 +108,13 @@ export default function SettingsScreen(props) {
           />
         ))}
       </View>
-    </View>
+
+
+
+
+
+      <Button title="Log Out" onPress={handleLogout} />
+    </ScrollView>
   );
 }
 
@@ -173,4 +213,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#2e78b7",
   },
-});
+})

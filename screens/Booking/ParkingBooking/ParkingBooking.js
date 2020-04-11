@@ -21,6 +21,9 @@ import {
   Picker,
   Dimensions,
 } from "react-native";
+import { AsyncStorage } from "react-native";
+import FlashMessage from "react-native-flash-message";
+import { showMessage, hideMessage } from "react-native-flash-message";
 import ReactNativePickerModule from "react-native-picker-module";
 import { Col, Row, Grid } from "react-native-easy-grid";
 
@@ -34,6 +37,24 @@ export default function ParkingBooking(props) {
   const [endTime, setEndTime] = useState("00:00");
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [blocks, setBlocks] = useState([]);
+
+  const unsubscribe = props.navigation.addListener('didFocus', () => {
+    console.log('focussed');
+    track()
+});
+
+const track = async()=>{
+  let old = await db.collection("tracking").doc("track").get()
+  let newTrack = parseInt(old.data().parking) + 1
+  db.collection("tracking").doc("track").update({ parking: newTrack})
+  AsyncStorage.setItem("parking", "yes");
+  
+  showMessage({
+    message: newTrack + " User/Users Trying To Book a Parking Right Now!!",
+    //description: newTrack + " Users Are Trying To Book a Parking Right Now !!",
+    type: "success"
+  })
+}
   const [isVisible, setIsVisible] = useState(false);
   const [rating, setRating] = useState(0);
   let pickerRef = null;
@@ -286,6 +307,7 @@ export default function ParkingBooking(props) {
           </Row>
         </Grid>
       </Row>
+      <FlashMessage position="bottom" animationDuration={700} duration={4000} style={{marginBottom:100}} />
       <Modal animationType="slide" transparent={true} visible={isVisible}>
         <View style={styles.centeredView}>
           <View style={{ ...styles.modalView }}>

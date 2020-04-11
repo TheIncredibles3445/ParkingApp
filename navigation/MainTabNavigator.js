@@ -37,16 +37,17 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
-import ChangeRole from "../screens/Admin/ChangeRole";
-import WorkerSchedule from "../screens/Profile/WorkerSchedule";
-import ScheduleDetails from "../screens/Profile/ScheuduleDetails";
-import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails";
-import MyAdvertisement from "../screens/Adverisement/MyAdvertisements";
-import AdminAdvertisements from "../screens/Admin/AdminAdvertisements";
-import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails";
-import AdvertisementList from "../screens/Admin/AdvertisementsList";
-import PartialPayment from "../screens/PartialPayment";
-
+import ChangeRole from "../screens/Admin/ChangeRole"
+import WorkerSchedule from "../screens/Profile/WorkerSchedule"
+import ScheduleDetails from "../screens/Profile/ScheuduleDetails"
+import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails"
+import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
+import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
+import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
+import AdvertisementList from "../screens/Admin/AdvertisementsList"
+import PartialPayment from "../screens/PartialPayment"
+import Statistics from "../screens/Admin/Statistics"
+import FindParking from "../screens/Booking/FindParkings"
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/Profile/LinksScreen";
@@ -86,6 +87,8 @@ const HomeStack = createStackNavigator(
     Payment: Payment,
     ReportScreen: ReportScreen,
     Direction: Direction,
+    FindParking: FindParking,
+    RewardScreen:RewardScreen
   },
   config
 );
@@ -101,56 +104,6 @@ HomeStack.navigationOptions = {
 };
 
 HomeStack.path = "";
-
-const AdminStack = createStackNavigator({
-  Main: {
-    screen: AdminPanel,
-  },
-  Services: {
-    screen: ServicesScreen,
-  },
-  WorkersManagement: {
-    screen: WorkersManagementScreen,
-  },
-  ServiceDetails: {
-    screen: ServiceDetailsScreen,
-  },
-  UserAccounts: {
-    screen: UserAccountsScreen,
-  },
-  AllReport: {
-    screen: AllReportsScreen,
-  },
-  Adv: {
-    screen: AdminAdvertisements,
-  },
-  AdminAdvDetails: {
-    screen: AdminAdvDetails,
-  },
-  AdvertisementList: {
-    screen: AdvertisementList,
-  },
-  Discounts: {
-    screen: DiscountsScreen,
-  },
-  ChangeRole: {
-    screen: ChangeRole,
-  },
-  WorkersRating: {
-    screen: WorkersRating,
-  },
-});
-//the simulator wont work >>. i have to shut down the pc it always happen
-AdminStack.navigationOptions = {
-  tabBarLabel: "Admin Panel",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-    />
-  ),
-};
-AdminStack.path = "";
 
 const SettingsStack = createStackNavigator(
   {
@@ -178,20 +131,40 @@ const SettingsStack = createStackNavigator(
 SettingsStack.navigationOptions = {
   tabBarLabel: "Profile",
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-options" : "md-options"}
-    />
+    <Icon name="md-person" type="ionicon" color={focused ? "#edf3f8" : "white"}/>
   ),
 };
 
 SettingsStack.path = "";
 
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  SettingsStack,
-  AdminStack,
-});
+// useEffect(()=>{
+// getUser()
+// },[])
+
+// const getUser = async() => {
+
+//   if( firebase.auth().currentUser.uid ){
+//     let user = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
+//     console.log("the userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",user)
+//   }
+// }
+const user = null
+firebase.auth().onAuthStateChanged((user) =>{
+  console.log("-----------------------------------------------------------user",user)
+})
+
+// const tabNavigator = createBottomTabNavigator({
+//   HomeStack,
+//   SettingsStack,
+//   //AdminStack
+// },
+//   {tabBarOptions: {
+//     style: {
+//       backgroundColor: "#5a91bf"
+//     }
+//   }
+// }
+//   ,);
 
 const ProfileStack = createStackNavigator({
   ProfileScreen: ProfileScreen,
@@ -212,7 +185,7 @@ const tabNavigator = createBottomTabNavigator(
   {
     HomeStack: HomeStack,
     SettingsStack: SettingsStack,
-    AdminStack: AdminStack,
+    // AdminStack: AdminStack,
   },
   {
     navigationOptions: ({ navigation }) => {
@@ -222,7 +195,10 @@ const tabNavigator = createBottomTabNavigator(
       return {
         header: null,
         headerTitle: routeName,
-      };
+        style: {
+          backgroundColor: "#5a91bf"
+        }
+      }
     },
   }
 );

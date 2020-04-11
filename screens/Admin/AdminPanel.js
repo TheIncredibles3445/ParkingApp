@@ -1,69 +1,74 @@
 import React from "react";
-import { ScrollView, StyleSheet, Button, View, Text } from "react-native";
+import { ScrollView, StyleSheet, Button, View, Text , TouchableOpacity } from "react-native";
 import { ExpoLinksView } from "@expo/samples";
 import { Divider } from "react-native-elements";
 
 export default function AdminPanel(props) {
   return (
-    <ScrollView style={styles.container}>
-      {/* <Text style={{ fontSize: 35, marginLeft: "15%" }}> Welcome Admin!! </Text> */}
-      <View
-        style={{
-          width: 250,
-          marginRight: "auto",
-          marginLeft: "auto",
-          justifyContent: "space-evenly",
-          marginBottom: 10,
-          marginTop: "15%",
-          borderRadius: 10,
-        }}
-      >
-        <Button
-          title="Services Manegement"
-          onPress={() => props.navigation.navigate("Services")}
-        />
+    <View style={styles.container}>
+    
+      {/**
+       * Go ahead and delete ExpoLinksView and replace it with your content;
+       * we just wanted to provide you with some helpful links.
+       */}
+      
+        
+        <TouchableOpacity onPress={() => props.navigation.navigate("Services")} style={styles.btns}>
+          <Text style={styles.text}>Services Manegement</Text>
+          </TouchableOpacity>
 
-        <Text style={{ marginBottom: 10 }}></Text>
+        <TouchableOpacity onPress={() => props.navigation.navigate("UserAccounts")} style={styles.btns}>
+          <Text style={styles.text}>Users Manegement</Text>
+          </TouchableOpacity>
 
-        <Button
-          title="Users Manegement"
-          onPress={() => props.navigation.navigate("UserAccounts")}
-        />
+        <TouchableOpacity onPress={() => props.navigation.navigate("AllReport")} style={styles.btns}>
+          <Text style={styles.text}>All Reports</Text>
+          </TouchableOpacity>
 
-        <Text style={{ marginBottom: 10 }}></Text>
+        <TouchableOpacity onPress={() => props.navigation.navigate("Adv")} style={styles.btns}>
+          <Text style={styles.text}>Advertisements</Text>
+          </TouchableOpacity>
 
-        <Button
-          title="All Reports"
-          onPress={() => props.navigation.navigate("AllReport")}
-        />
+        <TouchableOpacity onPress={() => props.navigation.navigate("Statistics")} style={styles.btns}>
+          <Text style={styles.text}>Statistics</Text>
+          </TouchableOpacity>
 
-        <Text style={{ marginBottom: 10 }}></Text>
-        <Button title="Advertisements" onPress={() => props.navigation.navigate("Adv")} />
-        <Button
-          title="Discounts"
-          onPress={() => props.navigation.navigate("Discounts")}
-        />
+        <TouchableOpacity  onPress={() => props.navigation.navigate("Discounts")} style={styles.btns}>
+          <Text style={styles.text}>Discounts</Text>
+          </TouchableOpacity>
 
-        <Text style={{ marginBottom: 10 }}></Text>
+        <TouchableOpacity style={styles.btns} onPress={() => props.navigation.navigate("WorkersRating")}>
+          <Text style={styles.text}>Workers Rating</Text>
+          </TouchableOpacity>
 
-        <Button title="others.." onPress={() => console.log("go to others")} />
-        <Button
-          title="Workers Rating"
-          onPress={() => props.navigation.navigate("WorkersRating")}
-        />
-      </View>
-    </ScrollView>
+      
+    
+    </View>
   );
 }
 
 AdminPanel.navigationOptions = {
   title: "Admin Panel",
+  headerStyle:{ backgroundColor:"#5a91bf" },
+  headerTitleStyle:{
+      color: "white"}
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#E7EAEB",
+    backgroundColor: '#F5FCFF',
+   // height:"100%"
   },
+  text:{color:"#263c5a" , fontSize:18 , marginRight:"auto",marginLeft:"auto"},
+  btns:{ 
+    marginBottom: 10, 
+    backgroundColor: "#B0C4DE",
+     borderRadius:7 , 
+     height:"10%" ,
+      paddingTop:5 , 
+      width:"50%", 
+      marginRight:"auto",
+      marginLeft:"auto" }
 });

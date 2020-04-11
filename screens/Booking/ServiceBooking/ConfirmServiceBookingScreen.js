@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,Icon
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -18,6 +18,7 @@ import db from "../../../db.js";
 import DatePicker from "react-native-datepicker";
 import moment from "moment";
 import { AsyncStorage } from "react-native";
+import * as Animatable from 'react-native-animatable';
 
 export default function ConfirmServiceBookingScreen(props) {
   const booking = props.navigation.getParam("booking", "some default value");
@@ -27,6 +28,7 @@ export default function ConfirmServiceBookingScreen(props) {
   const bookingTotal2 = useRef();
 
   useEffect(() => {
+    
     console.log("-------------<<<< Confirm Booking >>>>-----------", booking);
     track()
     addBookings();
@@ -99,17 +101,13 @@ export default function ConfirmServiceBookingScreen(props) {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .get();
-    if (user.data().pendingAmount) {
-      bookingTotal.current =
-        parseInt(bookingTotal.current) + parseInt(user.data().pendingAmount);
+    
+      bookingTotal.current = parseInt(bookingTotal.current) + parseInt(user.data().pendingAmount);
+      let newPoints = 20 + parseInt(user.data().points)
       db.collection("users")
         .doc(firebase.auth().currentUser.uid)
-        .update({ pendingAmount: bookingTotal.current });
-    } else {
-      db.collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .update({ pendingAmount: bookingTotal.current });
-    }
+        .update({ pendingAmount: bookingTotal.current , points: newPoints});
+   
   };
 
   const payLater = async () => {
@@ -117,19 +115,54 @@ export default function ConfirmServiceBookingScreen(props) {
   };
 
   return (
-    <View>
-      <Text> Confirm Booking</Text>
-      <Button
-        title="Pay Now"
-        onPress={() =>
-          props.navigation.navigate("Payment", {
-            booking: booking,
-            total: bookingTotal2.current,
-            id: bookingId.current
-          })
-        }
-      />
-      <Button title="Pay Later" onPress={() => payLater()} />
+    <View stule={{ alignItems:"center", marginRight: "auto",
+    marginLeft: "auto"}}>
+      <View style={{}}></View>
+      <Text style={{
+            height: 50,
+            //width: 200,
+            fontSize: 25,
+            //backgroundColor: "#F0FFFF",
+            marginRight: "auto",
+            marginTop: "15%",
+            marginLeft: "auto",
+            color: "#284057"
+          }}> PICK YOUR PAYMENT METHOD</Text>
+      
+
+      <Animatable.View animation="fadeInRight" delay={2}>
+      <TouchableOpacity 
+      style={{backgroundColor: "#b7c9e1",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5 , marginBottom:50,marginRight: "auto",
+      marginLeft: "auto"}}
+       onPress={() => payLater()}>
+        <Text style={{fontSize:20, fontWeight:"bold",color:"white"}}>PAY LATER</Text>
+        </TouchableOpacity>
+        </Animatable.View>
+
+        <Animatable.View animation="fadeInRight" delay={2}>
+        <TouchableOpacity 
+        icon={<Icon type="material" name="payment" size={25} color="white" />}
+      style={{backgroundColor: "#b7c9e1",padding:5 , width:"50%", height:50 ,   alignItems:"center", borderRadius:5,marginRight: "auto",
+      marginLeft: "auto"}}
+      onPress={() =>
+        props.navigation.navigate("Payment", {
+          booking: booking,
+          total: bookingTotal2.current,
+          id: bookingId.current
+        })
+      }>
+        <Text style={{fontSize:20, fontWeight:"bold",color:"white"}}>PAY NOW</Text>
+        </TouchableOpacity>
+        </Animatable.View>
     </View>
   );
 }
+
+ConfirmServiceBookingScreen.navigationOptions = {
+  title: "Confirm",
+  headerStyle:{ backgroundColor:"#5a91bf" },
+  headerTitleStyle:{
+      color: "white"}
+};
+
+{/**<Animatable.View animation="bounce"  iterationCount={3}> */}

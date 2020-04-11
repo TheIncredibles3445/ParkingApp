@@ -9,17 +9,16 @@ import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 
 export default function Direction(props) {
-  const blockId = props.navigation.getParam("blockId", "2NY04zHOtojiXfNKQyAU");
-  const parkingId = props.navigation.getParam(
-    "parkingId",
-    "6Huqq5waKBehjQ9MHboL"
-  );
+  const blockId = props.blockId
+  const parkingId = props.parkingId
+  
 
   const [directions, setDirections] = useState([]);
   const api = "5b3ce3597851110001cf6248267b8b98f368411ebff98ddcdef0d186";
   const apiKey = "AIzaSyCKP2xT_4a4pgceP8EokUKB7mnJ_S5BPEI";
 
   useEffect(() => {
+    console.log("props.blockId -----------------------------",props.blockId)
     getDirections();
   }, []);
 
@@ -32,20 +31,20 @@ export default function Direction(props) {
     }
 
     let location = await Location.getCurrentPositionAsync({
-      enableHighAccuracy: false,
+      enableHighAccuracy: false
     });
     console.log("location, ", location);
     const userLocation = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
+      longitude: location.coords.longitude
     };
 
     const parkingLocation = (
       await db
         .collection("block")
-        .doc(blockId)
+        .doc(props.blockId)
         .collection("parking")
-        .doc(parkingId)
+        .doc(props.parkingId)
         .get()
     ).data();
 
@@ -59,9 +58,9 @@ export default function Direction(props) {
     console.log("coordinates", coordinate);
   };
 
-  const convertArrayToObject = (coordinates) => {
+  const convertArrayToObject = coordinates => {
     const result = [];
-    coordinates.map((item) => {
+    coordinates.map(item => {
       // item.map(dir => {
       //   const direct = { latitude: dir[0], longitude: dir[1] };
       //   console.log(direct);
@@ -79,8 +78,8 @@ export default function Direction(props) {
       initialRegion={{
         latitude: 25.286106,
         longitude: 51.534817,
-        latitudeDelta: 0.08,
-        longitudeDelta: 0.08,
+        latitudeDelta: 0.8,
+        longitudeDelta: 0.8
       }}
       provider={PROVIDER_GOOGLE}
       style={styles.map}
@@ -106,15 +105,11 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-  },
+    bottom: 0
+  }
 });
 
-Direction.navigationOptions = (props) => ({
-  headerTitle: "Direction",
-  headerTintColor: "white",
-  headerStyle: {
-    backgroundColor: "#5a91bf",
-  },
+Direction.navigationOptions = props => ({
+  headerTitle: "Direction"
   //   headerRight: () => <Button title="Home" type="clear" />
 });

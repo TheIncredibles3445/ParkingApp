@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker, Alert
 } from "react-native";
 
 import "firebase/auth";
@@ -18,6 +18,9 @@ import DatePicker from "react-native-datepicker";
 import moment from "moment";
 import { AsyncStorage } from "react-native";
 import { checkForUpdateAsync } from "expo/build/Updates/Updates";
+import * as Animatable from 'react-native-animatable';
+import FlashMessage from "react-native-flash-message";
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 export default function ServiceBookingScreen(props) {
   const [services, setServices] = useState([]);
@@ -38,19 +41,7 @@ export default function ServiceBookingScreen(props) {
   const sService = useRef();
   const [showTime, setShowTime] = useState(false);
 
-
-  const unsubscribe = props.navigation.addListener('didFocus', () => {
-    console.log('focussed');
-    track()
-});
-
-const track = async()=>{
-  let old = await db.collection("tracking").doc("track").get()
-  let newTrack = parseInt(old.data().service) + 1
-  db.collection("tracking").doc("track").update({ service: newTrack})
-  AsyncStorage.setItem("service", "yes");
-
-}
+  
   useEffect(() => {
     manageTimeRange();
     db.collection("service")
@@ -73,11 +64,10 @@ const track = async()=>{
     console.log("------------------------------blocks", block);
   }, []);
 
-  
+
 
   const getWorkers = () => {
     setSelectedTime();
-    //setAvailableTimings([])
 
     if (selectedService) {
       let w = [];
@@ -106,7 +96,7 @@ const track = async()=>{
           });
           setParking([...parking]);
         });
-        console.log("here in 92",parking)
+      console.log("here in 92", parking)
     } else {
       setParking([]);
     }
@@ -119,7 +109,61 @@ const track = async()=>{
     //finalTimingList.current = []
   }, [selectedService]);
 
+  useEffect(()=>{
+    const unsubscribe = props.navigation.addListener('didFocus', () => {
+      console.log('focussed');
+      track()
+    });
+  },[])
+
   const manageTimeRange = () => {
+    let now = moment().format("h:mm A")
+    let first = moment("7:00 AM").format("h:mm A")
+    let second = moment("2:30 AM").format("h:mm A")
+    console.log("timesssssssssssssssssssssssssssssssssss", now)
+    // if( parseInt(now.split(":")[0]) >= 3 && parseInt(now.split(":")[0]) <= 11 && now.split(":")[1].split(" ")[1] == "PM"){
+    //   Alert.alert(
+    //     "Sorry!",
+    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
+    //     [
+    //       {
+    //         text: "OK",
+    //         onPress: () => props.navigation.navigate("Home"),
+    //         style: "cancel"
+    //       }
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
+    // else if(parseInt(now.split(":")[0]) >= 1 && parseInt(now.split(":")[0]) < 7 && now.split(":")[1].split(" ")[1] == "AM"){
+    //   Alert.alert(
+    //     "Sorry!",
+    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
+    //     [
+    //       {
+    //         text: "OK",
+    //         onPress: () => props.navigation.navigate("Home"),
+    //         style: "cancel"
+    //       }
+    //     ],
+    //     { cancelable: false }
+    //   ); 
+    // }
+    // else if(parseInt(now.split(":")[0]) == 12 && now.split(":")[1].split(" ")[1] == "AM"){
+    //   Alert.alert(
+    //     "Sorry!",
+    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
+    //     [
+    //       {
+    //         text: "OK",
+    //         onPress: () => props.navigation.navigate("Home"),
+    //         style: "cancel"
+    //       }
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
+
     let startTime = "";
     let hour = moment()
       .format("LTS")
@@ -129,6 +173,8 @@ const track = async()=>{
       .format("LTS")
       .split(":")[1];
     let timings = [
+      `7:00 AM ${moment().format("YYYY-MM-DD")}`,
+      `7:30 AM ${moment().format("YYYY-MM-DD")}`,
       `8:00 AM ${moment().format("YYYY-MM-DD")}`,
       `8:30 AM ${moment().format("YYYY-MM-DD")}`,
       `9:00 AM ${moment().format("YYYY-MM-DD")}`,
@@ -145,12 +191,12 @@ const track = async()=>{
       `2:30 PM ${moment().format("YYYY-MM-DD")}`,
       `3:00 PM ${moment().format("YYYY-MM-DD")}`,
       `3:30 PM ${moment().format("YYYY-MM-DD")}`,
-      `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
-      `7:30 PM ${moment().format("YYYY-MM-DD")}`,
-      `8:00 PM ${moment().format("YYYY-MM-DD")}`,
-      `8:30 PM ${moment().format("YYYY-MM-DD")}`,
-      `9:00 PM ${moment().format("YYYY-MM-DD")}`
-   
+      // `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
+      // `7:30 PM ${moment().format("YYYY-MM-DD")}`,
+      // `8:00 PM ${moment().format("YYYY-MM-DD")}`,
+      // `8:30 PM ${moment().format("YYYY-MM-DD")}`,
+      // `9:00 PM ${moment().format("YYYY-MM-DD")}`
+
     ];
     if (minute > 30 && parseInt(hour) !== 12) {
       startTime = nextHour + ":00";
@@ -159,10 +205,13 @@ const track = async()=>{
     } else {
       startTime = hour + ":30";
     }
+    //console.log(startTime)
 
     let timingsForBooking = [];
     for (let i = 0; i < timings.length; i++) {
+      console.log("time found :", startTime, timings[i].split(" ")[0])
       if (timings[i].split(" ")[0] === startTime) {
+        console.log("time found :", startTime)
         for (let k = i; k < timings.length; k++) {
           timingsForBooking.push(timings[k]);
         }
@@ -266,73 +315,95 @@ const track = async()=>{
     props.navigation.navigate("ConfirmBooking", { booking: bookings });
   };
 
+  
+
+  const track = async () => {
+    let old = await db.collection("tracking").doc("track").get()
+    let newTrack = parseInt(old.data().service) + 1
+    db.collection("tracking").doc("track").update({ service: newTrack })
+    AsyncStorage.setItem("service", "yes");
+
+
+    showMessage({
+      message: newTrack + " User/Users Trying To Book a Service Right Now !!",
+      //description: newTrack + " Users Are Trying To Book a Service Right Now !!",
+      type: "success"
+    })
+
+  }
+
   return (
-    <View style={{ width: "80%", marginLeft: "auto", marginRight: "auto" }}>
-      {services.length !== 0 ? (
-        <Picker
-          selectedValue={selectedService}
-          style={{
-            height: 50,
-            width: 200,
-            fontSize: 20,
-            backgroundColor: "#DCDCDC",
-            marginBottom: 4,
-            marginTop: 4,
-            marginRight: "auto",
-            marginLeft: "auto"
-          }}
-          onValueChange={itemValue => setSelectedService(itemValue)}
-        >
-          <Picker.Item label="SERVICES" value="" />
-          {services.map(s => (
-            <Picker.Item label={s.Name} value={s} />
-          ))}
-        </Picker>
-      ) : null}
+    <ScrollView style={{ width: "100%", backgroundColor:'#F0F8FF', height:"100%" }}>
 
-      {block.length !== 0 ? (
-        <Picker
-          selectedValue={selectedBlock}
-          style={{
-            height: 50,
-            width: 200,
-            fontSize: 20,
-            backgroundColor: "#DCDCDC",
-            marginBottom: 4,
-            marginTop: 4,
-            marginRight: "auto",
-            marginLeft: "auto"
-          }}
-          onValueChange={itemValue => setSelectedBlock(itemValue)}
-        >
-          <Picker.Item label={"BLOCK"} value={""} disabled />
-          {block.map(s => (
-            <Picker.Item label={s.name} value={s} />
-          ))}
-        </Picker>
-      ) : null}
-
-      {parking.length !== 0 ? (
-        <Picker
-          selectedValue={selectedParking}
-          style={{
-            height: 50,
-            width: 200,
-            fontSize: 20,
-            backgroundColor: "#DCDCDC",
-            marginBottom: 4,
-            marginTop: 4,
-            marginRight: "auto",
-            marginLeft: "auto"
-          }}
-          onValueChange={itemValue => setSelectedParking(itemValue)}
-        >
-          <Picker.Item label={"PARKING"} value={""} disabled />
-          {parking.map(a => (
-            <Picker.Item label={a.name + ""} value={a} />
-          ))}
-        </Picker>
-      ) : null}
+      <Animatable.View animation="fadeInRight" delay={2}>
+        {services.length !== 0 ? (
+          <Picker
+            selectedValue={selectedService}
+            style={{
+              height: 50,
+              width: 200,
+              fontSize: 20,
+              backgroundColor: "#DCDCDC",
+              marginBottom: 4,
+              marginTop: 4,
+              marginRight: "auto",
+              marginLeft: "auto"
+            }}
+            onValueChange={itemValue => setSelectedService(itemValue)}
+          >
+            <Picker.Item label="SERVICES" value="" />
+            {services.map(s => (
+              <Picker.Item label={s.Name} value={s} />
+            ))}
+          </Picker>
+        ) : null}
+      </Animatable.View>
+      <Animatable.View animation="fadeInRight" delay={3}>
+        {block.length !== 0 ? (
+          <Picker
+            selectedValue={selectedBlock}
+            style={{
+              height: 50,
+              width: 200,
+              fontSize: 20,
+              backgroundColor: "#DCDCDC",
+              marginBottom: 4,
+              marginTop: 4,
+              marginRight: "auto",
+              marginLeft: "auto"
+            }}
+            onValueChange={itemValue => setSelectedBlock(itemValue)}
+          >
+            <Picker.Item label={"BLOCK"} value={""} disabled />
+            {block.map(s => (
+              <Picker.Item label={s.name} value={s} />
+            ))}
+          </Picker>
+        ) : null}
+      </Animatable.View>
+      <Animatable.View animation="fadeInRight" delay={2}>
+        {parking.length !== 0 ? (
+          <Picker
+            selectedValue={selectedParking}
+            style={{
+              height: 50,
+              width: 200,
+              fontSize: 20,
+              backgroundColor: "#DCDCDC",
+              marginBottom: 4,
+              marginTop: 4,
+              marginRight: "auto",
+              marginLeft: "auto"
+            }}
+            onValueChange={itemValue => setSelectedParking(itemValue)}
+          >
+            <Picker.Item label={"PARKING"} value={""} disabled />
+            {parking.map(a => (
+              <Picker.Item label={a.name + ""} value={a} />
+            ))}
+          </Picker>
+        ) : null}
+      </Animatable.View>
       {showTime ? (
         <Picker
           selectedValue={selectedTime}
@@ -358,14 +429,21 @@ const track = async()=>{
         </Picker>
       ) : null}
 
-      {selectedParking && selectedService && selectedBlock ? (
-        <Button title="Search" onPress={() => getWorkers()} />
-      ) : null}
-      {selectedTime ? <Button title="Book" onPress={() => book()} /> : null}
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
 
+        {selectedParking && selectedService && selectedBlock ? (
+          <TouchableOpacity style={{ backgroundColor: "#b7c9e1", padding: 5, margin: 7, width: "30%", height: 40, alignItems: "center", borderRadius: 5 }} onPress={() => getWorkers()}>
+            <Text style={{ fontSize: 20, color: "white" , fontWeight:"bold"}}>Search</Text>
+          </TouchableOpacity>
+        ) : null}
+        {selectedTime ? <TouchableOpacity style={{ backgroundColor: "#b7c9e1", padding: 5, margin: 7, width: "30%", height: 40, alignItems: "center", borderRadius: 5 }} onPress={() => book()}>
+          <Text style={{ fontSize: 20, color: "white", fontWeight:"bold" }}>Book</Text>
+        </TouchableOpacity> : null}
+
+      </View>
       <Text
         style={{
-          width: 200,
+          width: "100%",
           borderBottomColor: "#DCDCDC",
           borderBottomWidth: 1,
           marginBottom: 10
@@ -376,37 +454,51 @@ const track = async()=>{
           style={{
             height: 50,
             width: 200,
-            fontSize: 20,
-            backgroundColor: "#F0FFFF",
-            marginRight: "auto",
-            marginLeft: "auto"
+            fontSize: 30,
+            //backgroundColor: "#F0FFFF",
+            //marginRight: "auto",
+            marginLeft: "20%",
+            color: "#284057"
           }}
         >
           {" "}
           Bookings{" "}
         </Text>
       ) : null}
+      <Animatable.View animation="fadeInRight" delay={2}>
+        
+          {userBookings.length !== 0
+            ? userBookings.map((b, index) => (
+              <View style={{
+                width: "70%", backgroundColor: "#DCDCDC", marginRight: "auto", marginLeft: "auto", flexDirection: "row", justifyContent: "space-evenly",
+                borderBottomWidth: 2, marginBottom: "3%", borderColor: "#696969", borderBottomWidth: 3, padding: 7,marginLeft: "20%",
+              }}>
+                <View style={{ }}>
+                  <Text style={{ fontSize: 18, color: "#696969" }}>{b.service.Name} </Text>
+                  <Text style={{ fontSize: 15, color: "#696969" }}>{b.time} </Text>
+                </View>
+                <View style={{ width: 100, float: "left" }}>
 
-      {userBookings.length !== 0
-        ? userBookings.map((b, index) => (
-            <View style={{ marginRight: "auto", marginLeft: "auto" }}>
-              <View style={{ float: "left" }}>
-                <Text>{b.service.Name} </Text>
-                <Text>{b.time} </Text>
+                  <TouchableOpacity style={{ backgroundColor: "#A9A9A9", padding: 5, width: "30%", marginLeft: "auto", alignItems: "center", borderRadius: 5 }} onPress={() => deleteBooking(index)}>
+                    <Text style={{ fontSize: 15, color: "#696969" }}>X</Text>
+                  </TouchableOpacity>
+                  {/**<> */}
+                </View>
               </View>
-              <View style={{ width: 30, float: "left" }}>
-                <Button title="X" onPress={() => deleteBooking(index)} />
-              </View>
-            </View>
-          ))
-        : null}
-
+            ))
+            : null}
+       
+      </Animatable.View>
       {userBookings.length !== 0 ? (
-        <Button title="Confirm Booking" onPress={() => confirm()} />
+        <TouchableOpacity style={{ backgroundColor: "#5a91bf", padding: 5, width: "40%", height: 50, alignItems: "center",marginBottom: "5%",marginLeft: "20%",  }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
       ) : null}
-    </View>
+      <FlashMessage position="bottom" animationDuration={300} duration={3000} />
+    </ScrollView>
   );
 }
 ServiceBookingScreen.navigationOptions = {
-  title: "Service Booking"
+  title: "Service Booking",
+  headerStyle:{ backgroundColor:"#5a91bf" },
+  headerTitleStyle:{
+      color: "white"}
 };

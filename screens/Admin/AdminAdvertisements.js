@@ -9,7 +9,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ScrollViewBase
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -60,7 +61,7 @@ export default function AdminAdvertisement(props) {
   const active = () => {
     getAds()
     let temp = ads
-    temp = temp.filter( t =>  new Date(t.startDate).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(t.endDate).getTime())
+    temp = temp.filter(t => new Date(t.startDate).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(t.endDate).getTime())
     showAdv.current = temp
   }
   const pending = () => {
@@ -73,7 +74,7 @@ export default function AdminAdvertisement(props) {
   return (
     <View style={styles.container}>
 
-      <View>
+      <View style={{ marginBottom: "5%" }}>
         <View style={styles.box2}>
           <TouchableOpacity onPress={() => active()} style={styles.btns2}><Text style={styles.text}>Active</Text></TouchableOpacity>
 
@@ -89,21 +90,27 @@ export default function AdminAdvertisement(props) {
       </View>
 
       {
-        showAdv.current ?
-          <View style={{ marginTop: "2%" }}>
+        showAdv.current && showAdv.current.length > 0 ?
+          <ScrollView style={{
+            marginTop: "2%"
+          }}>
+
             {
 
               showAdv.current.map(a =>
 
-                <TouchableOpacity onPress={() => props.navigation.navigate("AdminAdvDetails", { adv: a })} ><Text style={styles.list}>{a.title}</Text></TouchableOpacity>
+                <TouchableOpacity style={{
+                   height: 80
+                }} onPress={() => props.navigation.navigate("AdminAdvDetails", { adv: a })} >
+                  <Text style={styles.list}>Title: {a.title} {"\n"} ID: {a.id}</Text></TouchableOpacity>
 
               )}
-            {/* <Button title="Go Back" onPress={()=>setShowBtn(true)} /> */}
+              
 
-          </View>
-          : null
+
+          </ScrollView>
+          : <Text style={{ fontSize: 20 }}>NO ADVERISEMENTS IN THIS SECTION!</Text>
       }
-
 
 
     </View>
@@ -111,44 +118,53 @@ export default function AdminAdvertisement(props) {
 }
 
 AdminAdvertisement.navigationOptions = {
-  title: "Advertisements"
+  title: "Advertisements",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTitleStyle: {
+    color: "white"
+  }
+
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#F5FCFF' },
   head: { height: 40, backgroundColor: '#f1f8ff' },
   text: { fontSize: 20, color: "#F0FFFF" },
-  box: { backgroundColor: "#FFFAFA", flexDirection: "row", alignItems: "center", padding: 6 },
-  box2: { backgroundColor: "#FFFAFA", flexDirection: "row", padding: 6, alignItems: "center" },
+  box: {
+    borderColor: "#B0C4DE",
+    borderBottomWidth: 4, backgroundColor: "#F5FCFF", flexDirection: "row", alignItems: "center", padding: 6
+  },
+  box2: { backgroundColor: "#F5FCFF", flexDirection: "row", padding: 6, alignItems: "center" },
   btns: {
-    backgroundColor: "#5F9EA0",
+    backgroundColor: "#B0C4DE",
     padding: 5,
     width: "30%",
     marginLeft: 10,
     height: 50,
     fontSize: 20,
     borderColor: "black",
-    borderRadius: 5
+    borderRadius: 5, alignItems: "center"
   },
   btns2: {
-    backgroundColor: "#5F9EA0",
+    backgroundColor: "#B0C4DE",
     padding: 5,
-    width: "36%",
+    width: "46%",
     marginLeft: 10,
     height: 50,
     fontSize: 20,
-    borderRadius: 5
+    borderRadius: 5, alignItems: "center"
   },
   list: {
-    backgroundColor: "#F5F5DC",
+    backgroundColor: "#eef2f7",
     padding: 5,
-    width: "100%",
-    marginBottom: 4,
+    width: "80%",
+    //marginBottom: 4,
     height: 40,
     fontSize: 15,
-    borderColor: "#F0E68C",
-    borderBottomWidth: 4,
-    borderRadius: 5
+    borderColor: "#40668c",
+    borderWidth: 1,
+    height: "90%",
+    borderRadius: 5, paddingLeft: "5%", color: "#40668c", fontWeight: "bold", fontSize: 17, marginLeft: "auto", marginRight: "auto"
   },
   search: { backgroundColor: "#DCDCDC", padding: 5, width: "50%", alignItems: "baseline" }
 });
