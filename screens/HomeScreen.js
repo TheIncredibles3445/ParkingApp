@@ -35,6 +35,7 @@ export default function HomeScreen(props) {
   });
 
   useEffect(() => {
+    console.log(firebase.auth().currentUser);
     db.collection("Advertisement")
       .where("adStatus", "==", "Approved")
       .get()

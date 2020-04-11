@@ -114,13 +114,13 @@ export default function Vehicle(props) {
 }
 
 Vehicle.navigationOptions = {
-  //title: "My Vehicles"
-  drawerIcon: ({ tintColor }) => (
-    <Image
-      source={require("../../assets/images/profile.png")}
-      style={[styles.icon, { tintColor: tintColor }]}
-    />
-  ),
+  title: "My Vehicles"
+  // drawerIcon: ({ tintColor }) => (
+  //   <Image
+  //     source={require("../../assets/images/profile.png")}
+  //     style={[styles.icon, { tintColor: tintColor }]}
+  //   />
+  // ),
 };
 
 const styles = StyleSheet.create({

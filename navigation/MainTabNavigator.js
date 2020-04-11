@@ -162,7 +162,7 @@ const SettingsStack = createStackNavigator(
     // Settings: SettingsScreen,
     Profile: ProfileScreen,
     EditProfile: Profile,
-    Payment: PaymentCard,
+    Card: PaymentCard,
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
     AddCard: AddCard,
@@ -171,7 +171,7 @@ const SettingsStack = createStackNavigator(
     ScheduleDetails: ScheduleDetails,
     AdvertisementDetails: AdvertisementDetails,
     MyAdvertisement: MyAdvertisement,
-    // PartialPayment: PartialPayment,
+    PartialPayment: PartialPayment,
     AllBookings: AllBookings,
     ParkingBookingsDetails: ParkingBookingsDetails,
     ServiceBookingDetails: ServiceBookingDetails,
@@ -202,7 +202,7 @@ const VehicleStack = createStackNavigator({
 });
 
 const CardStack = createStackNavigator({
-  PaymentCard: PaymentCard,
+  Card: PaymentCard,
   AddCard: AddCard,
 });
 
@@ -256,20 +256,24 @@ const VehicleStk = createStackNavigator({
   VehicleStk: VehicleStack,
 });
 
+const CardStk = createStackNavigator({
+  HomeDrawerStk: tabNavigator,
+  CardStk: PaymentCard,
+});
+
 const FriendsStk = createStackNavigator({
   HomeDrawerStk: tabNavigator,
   Friends: LinksScreen,
-});
-
-const CardStk = createStackNavigator({
-  HomeDrawerStk: tabNavigator,
-  Cards: CardStack,
 });
 
 const AppDrawerNavigator = createDrawerNavigator(
   {
     Home: {
       screen: DrawerStack,
+      contentOptions: {
+        activeTintColor: "red",
+        inactiveTintColor: "blue",
+      },
       navigationOptions: {
         drawerLabel: "Home",
         drawerIcon: (

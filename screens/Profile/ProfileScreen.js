@@ -117,39 +117,27 @@ export default function ProfileScreen(props) {
     }
   };
 
-  const list = [
-    "MY PROFILE",
-    "PAYMENT",
-    "VEHICLES",
-    "FRIENDS",
-    "MY BOOKINGS",
-    "PAY",
-  ];
-  const files = [
-    "Profile",
-    "Payment",
-    "Vehicle",
-    "Friends",
-    "AllBookings",
-    "PartialPayment",
-  ];
+  const list = ["MY PROFILE", "MY BOOKINGS", "PAY"];
+  const files = ["Profile", "AllBookings", "PartialPayment"];
   return (
     <View style={styles.container}>
       <View
         style={{ flex: 2, alignItems: "center", backgroundColor: "#005992" }}
       >
-        <Avatar
-          containerStyle={{ marginTop: 10 }}
-          rounded
-          size={100}
-          source={{
-            uri: photoURL,
-          }}
-          overlayContainerStyle={{ backgroundColor: "white" }}
-          showEditButton
-          onEditPress={handlePickImage}
-          // editButton={<Icon type="feather" name="edit-2" color="red" />}
-        />
+        {photoURL && (
+          <Avatar
+            containerStyle={{ marginTop: 10 }}
+            rounded
+            size={100}
+            source={{
+              uri: photoURL,
+            }}
+            overlayContainerStyle={{ backgroundColor: "white" }}
+            showEditButton
+            onEditPress={handlePickImage}
+            // editButton={<Icon type="feather" name="edit-2" color="red" />}
+          />
+        )}
         <Text style={{ color: "white", fontWeight: "bold", fontSize: 15 }}>
           You are logged in as
         </Text>
@@ -160,7 +148,7 @@ export default function ProfileScreen(props) {
         </Text>
       </View>
       <View style={{ flex: 4 }}>
-        {/* {list.map((item, index) => (
+        {list.map((item, index) => (
           <ListItem
             key={index}
             title={item}
@@ -172,7 +160,7 @@ export default function ProfileScreen(props) {
               })
             }
           />
-        ))} */}
+        ))}
 
         {loggedInUser.current && loggedInUser.current.role === "worker" ? (
           <View style={{ flex: 4 }}>
