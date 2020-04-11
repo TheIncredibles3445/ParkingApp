@@ -88,60 +88,73 @@ export default function WorkerSchedule(props) {
     }
 
     return (
-        <View style={styles.container}>
-
+        <View style={{backgroundColor: "#F0F8FF", height:"100%", paddingTop: 10 }}>
+<View style={{padding:10,borderColor:"#B0C4DE",borderWidth:3 , backgroundColor:"white" , width:"80%" ,marginRight:"auto", marginLeft:"auto" , height:"20%"}}>
             <View style={styles.box}>
-                <Text style={styles.user}>Name</Text>
-                <Text style={styles.user}>{user.displayName}</Text>
+                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold", color:"#396a93"}}>Name</Text>
+                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold"}}>{user.displayName}</Text>
             </View>
             <View style={styles.box}>
-                <Text style={styles.user}>Email</Text>
-                <Text style={styles.user}>{user.email}</Text>
+                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold", color:"#396a93"}}>Email</Text>
+                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold"}}>{user.email}</Text>
+            </View>
+            <View style={styles.box}>
+                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold", color:"#396a93"}}>Rating</Text>
+                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold"}}>4</Text>
+            </View>
             </View>
 
-
-            <View style={styles.box}>
-                <View style={{ padding: 5, width: "50%", alignItems: "center" }}>
+            <View style={{ flexDirection:"row" , marginTop:"2%", marginBottom:"2%" , justifyContent:"center"}}>
+                <View style={{ padding: 5,  alignItems: "center" }}>
                     <Button color={ show == "H"? "#008B8B" :"#A9A9A9"} title="History" onPress={() => setShow("H")} />
                 </View>
-                <View style={{ padding: 5, width: "50%", alignItems: "center" }}>
+                <View style={{ padding: 5, alignItems: "center" }}>
                     <Button color={ show == "T"? "#008B8B" :"#A9A9A9"} title="Today" onPress={() => setShow("T")} />
                 </View>
 
             </View>
-
-        <ScrollView>
+            {/* <View style={{ borderBottomColor:"#284057",borderBottomWidth:3 ,
+                     width:"100%", marginRight:"auto" , marginLeft:"auto" }}></View> */}
+        <ScrollView style={{marginBottom:"5%", borderColor:"#B0C4DE",borderWidth:3 , backgroundColor:"white" , width:"80%" , marginLeft:"auto", marginRight:"auto"}}>
+            
             {
                 show == "H" && historySchedule.current?
                     historySchedule.current.map(t =>
-                        <TouchableOpacity style={styles.box}  onPress={() =>
+                        <TouchableOpacity style={{}}  onPress={() =>
                             props.navigation.navigate("ScheduleDetails", {
                               booking: t.Booking,
                               serviceBooking: t.Service_booking
                             })
                           }>
                             
-                    <Text style={styles.user}>{t.dateTime}</Text>
+                    <Text 
+                    style={{ borderBottomColor:"#B0C4DE",borderBottomWidth:3 ,
+                     width:"70%" , marginRight:"auto" , marginLeft:"auto" ,
+                      alignItems:"center", padding:20, fontSize:15}}>
+                          {t.dateTime}</Text>
                         </TouchableOpacity>
                     )
 
                     : show == "T" && todaySchedule.current?
                         todaySchedule.current.map(t =>
-                            <TouchableOpacity style={styles.box}  onPress={() =>
+                            <TouchableOpacity style={{}}  onPress={() =>
                                 props.navigation.navigate("ScheduleDetails", {
                                   booking: t.Booking,
                                   serviceBooking: t.Service_booking
                                 })
                               }> 
                              
-                                <Text style={styles.user}>{t.dateTime}</Text>
+                                <Text style={{ borderBottomColor:"#B0C4DE",borderBottomWidth:3 ,
+                     width:"70%" , marginRight:"auto" , marginLeft:"auto" ,
+                      alignItems:"center", padding:20, fontSize:15}}>{t.dateTime}</Text>
                             </TouchableOpacity>
                         )
                         :
                         null
             }
+            
     </ScrollView>
-
+    
 
 
         </View>
@@ -151,16 +164,21 @@ export default function WorkerSchedule(props) {
 }
 WorkerSchedule.navigationOptions = {
     title: 'Schedule',
+    headerStyle:{ backgroundColor:"#5a91bf" },
+    headerTitleStyle:{
+        color: "white"}
+  
 };
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
     head: { height: 40, backgroundColor: '#f1f8ff' },
     text: { margin: 6 },
-    box: {
-        backgroundColor: "#FFFAFA", padding: 5, flexDirection: "row", borderBottomColor: "#DCDCDC",
-        borderBottomWidth: 1,
-    },
-    user: { marginLeft:"auto", marginRight:"auto",backgroundColor: "#F0FFF0", padding: 5, width: "50%", alignItems: "center" },
-    search: { backgroundColor: "#DCDCDC", padding: 5, width: "50%", alignItems: "center" }
+    box: { flexDirection: "row", borderBottomColor: "#b7c9e1",borderBottomWidth: 1, height:"33.5%"
+},
+        // marginLeft: "10%",
+        // backgroundColor: "white",, width:"100%",
+        // 
+    user: { marginLeft:"auto", marginRight:"auto",backgroundColor: "#b7c9e1", padding: 5, width: "50%", alignItems: "center" },
+    search: { backgroundColor: "#b7c9e1", padding: 5, width: "50%", alignItems: "center" }
 });
