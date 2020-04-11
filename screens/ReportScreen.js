@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Platform } from "react-native";
+import { Platform, ShadowPropTypesIOS } from "react-native";
 import {
   TextInput,
-  Button,
+  // Button,
   ScrollView,
   StyleSheet,
   SafeAreaView,
@@ -19,8 +19,9 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import DatePicker from "react-native-datepicker";
 import * as Location from "expo-location";
+import { Button } from "react-native-elements";
 
-export default function ReportScreen() {
+export default function ReportScreen(props) {
   // here im using react hooks as useState which used to store the data
   // and down I used useEffect to get the variables
   // for example, in plateNumber element the state can be accessed with the first element which is plateNumber and can be set with the second element which is setPlateNumber.
@@ -41,37 +42,46 @@ export default function ReportScreen() {
   const handleLogout = () => {
     firebase.auth().signOut();
   };
+
   const handleSubmit = async () => {
     let loc = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     };
 
-    const response = await fetch(image);
-    const blob = await response.blob();
-    const putResult = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .put(blob);
-    const url = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .getDownloadURL();
+   
 
-    db.collection("Reports")
+     let reqId = 0
+     let adv = await db.collection("Reports")
       // .doc(firebase.auth().currentUser.uid)
       .add({
         userId: firebase.auth().currentUser.uid,
         reporterName: reporterName,
         description: description,
         date: date,
-        image: url,
+        image: "",
         location: loc,
         plateNumber: plateNumber,
         status: status,
+      }).then(function(docRef) {
+        reqId =  docRef.id;
       });
+      console.log("req id ------------------------------", reqId)
+
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const putResult = await firebase
+        .storage()
+        .ref()
+        .child(`/reports/${firebase.auth().currentUser.uid}${reqId}`)
+        .put(blob);
+      const url = await firebase
+        .storage()
+        .ref()
+        .child(`/reports/${firebase.auth().currentUser.uid}${reqId}`)
+        .getDownloadURL();
+
+        db.collection("Reports").doc(reqId).update({ image : url})
     // gives points to the user
     const userRef = await db
       .collection("users")
@@ -81,6 +91,7 @@ export default function ReportScreen() {
     let userPoint = user.points + 50;
     user.points = userPoint;
     db.collection("users").doc(firebase.auth().currentUser.uid).update(user);
+    props.navigation.navigate("Home") 
   };
 
   const _pickImage = async () => {
@@ -93,20 +104,6 @@ export default function ReportScreen() {
       setImage(result.uri);
     }
   };
-
-  // const changeButtonFlag = () =>{
-  //   if(
-  //     description !== "" &&
-  //     datetime !== ""&&
-  //     plateNumber !== "" &&
-  //     image !== ""
-  //   ){
-  //     return false
-  //   }else{
-  //     return true
-  //   }
-
-  // }
 
   const getPermission = async () => {
     const status = await Permissions.askAsync(Permissions.CAMERA);
@@ -149,7 +146,9 @@ export default function ReportScreen() {
         <KeyboardAvoidingView enabled behavior="padding">
           <Text
             style={{
-              marginBottom: 30,
+              marginTop: "3%",
+              color: "#005992",
+              fontWeight: "bold",
               fontSize: 22,
               marginLeft: "auto",
               marginRight: "auto",
@@ -157,13 +156,15 @@ export default function ReportScreen() {
           >
             Problems Report Form
           </Text>
-          {/* <Text style={{ marginLeft: "30%" }}> Fill the following report </Text> */}
+          <Text style={{ marginBottom: "7%", fontSize: 15, marginTop: "5%" }}>
+            Please fill the following fields to report a problem:
+          </Text>
 
           <View style={{ flexDirection: "row" }}>
             <Text
               style={{
                 marginBottom: 10,
-                fontSize: 15,
+                fontSize: 16,
                 marginRight: 4,
                 marginTop: 8,
               }}
@@ -193,7 +194,7 @@ export default function ReportScreen() {
             <Text
               style={{
                 marginBottom: 10,
-                fontSize: 15,
+                fontSize: 16,
                 marginRight: 4,
                 marginTop: 8,
               }}
@@ -207,7 +208,7 @@ export default function ReportScreen() {
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
-                marginLeft: "9.5%",
+                marginLeft: "10%",
                 textAlignVertical: "top",
                 marginBottom: "4%",
                 backgroundColor: "#f5f5f5",
@@ -222,9 +223,9 @@ export default function ReportScreen() {
             <DatePicker
               style={{
                 width: "70.5%",
-                marginLeft: "3.5%",
+                marginLeft: "5%",
                 marginBottom: "6%",
-                fontSize: 15,
+                fontSize: 16,
               }}
               date={date}
               mode="datetime"
@@ -274,9 +275,11 @@ export default function ReportScreen() {
                 borderWidth: 1,
                 borderRadius: 5,
                 backgroundColor: "#f5f5f5",
-                marginLeft: "5.8%",
+                marginLeft: "7.5%",
                 marginTop: "2%",
               }}
+              keyboardType={"numeric"}
+                numeric
               value={plateNumber}
               onChangeText={(last) => setPlateNumber(last)}
               placeholder="plateNumber"
@@ -286,9 +289,9 @@ export default function ReportScreen() {
             <Text
               style={{
                 marginBottom: 10,
-                fontSize: 15,
+                fontSize: 16,
                 // marginRight: 7,
-                marginTop: 55,
+                marginTop: 48,
                 marginLeft: "1.5%",
               }}
             >
@@ -308,29 +311,32 @@ export default function ReportScreen() {
             <View style={{ flexDirection: "row" }}>
               <View
                 style={{
-                  width: "28%",
+                  width: "33%",
                   height: "2%",
                   marginLeft: "18%",
                   marginRight: 20,
-                  marginTop: "10%",
+                  marginTop: "12%",
                 }}
               >
                 <Button
-                  color="#005992"
+                  buttonStyle={{ backgroundColor: "#B0C4DE" }}
+                  titleStyle={{ alignItems: "center", color: "#263c5a" }}
                   title="Choose file"
                   onPress={() => _pickImage()}
                 />
               </View>
               <View
                 style={{
-                  width: "28%",
-                  height: "1%",
-                  marginRight: "20%",
-                  marginTop: "10%",
+                  width: "33%",
+                  height: "2%",
+                  marginRight: "5%",
+                  marginTop: "12%",
+                  backgroundColor: "#B0C4DE",
                 }}
               >
                 <Button
-                  color="#005992"
+                  buttonStyle={{ backgroundColor: "#B0C4DE" }}
+                  titleStyle={{ alignItems: "center", color: "#263c5a" }}
                   title="Camera Roll"
                   onPress={() => _openCamera()}
                 />
@@ -340,15 +346,29 @@ export default function ReportScreen() {
           </View>
           <View
             style={{
-              width: "30%",
-              marginLeft: "63%",
-              marginTop: "20%",
-              borderRadius: 10,
-              borderWidth: 2,
-              borderColor: "#005992",
+              width: "35%",
+              height: "12%",
+              marginLeft: "60%",
+              marginTop: "16%",
+
+              // color: "#B0C4DE",
+              // borderRadius: 10,
+              // borderWidth: 1,
+
+              // justifyContent:"center",
+              // alignItems:"center",
+              // borderColor: "#B0C4DE",
             }}
           >
-            <Button color="#005992" title="Submit" onPress={handleSubmit} />
+            <Button
+              buttonStyle={{
+                backgroundColor: "#B0C4DE",
+                borderColor: "#263c5a",
+              }}
+              titleStyle={{ alignItems: "center", color: "#263c5a" }}
+              title="Submit"
+              onPress={handleSubmit}
+            ></Button>
           </View>
           {/* <View style={{ width: 100, marginLeft: "10%" }}>
         <Button title="Logout" onPress={handleLogout} />
@@ -363,14 +383,14 @@ export default function ReportScreen() {
 ReportScreen.navigationOptions = {
   title: "Reports",
   headerTintColor: "white",
-  headerStyle: { backgroundColor: "#005992" },
+  headerStyle: { backgroundColor: "#5a91bf" },
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#F0F8FF",
   },
   input: {
     //flex: 1,

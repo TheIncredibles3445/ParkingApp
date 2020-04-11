@@ -12,7 +12,7 @@ import {
   Alert,
   Platform,
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
@@ -115,7 +115,7 @@ export default function HomeScreen(props) {
 }
 
 HomeScreen.navigationOptions = {
-  header: null
+  header: null,
 };
 
 function DevelopmentModeNotice() {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     paddingRight: "35%",
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: "lightgreen"
+    backgroundColor: "lightgreen",
   },
   notSelected: {
     borderColor: "black",
@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
     paddingLeft: "35%",
     paddingRight: "35%",
     paddingTop: 10,
-    paddingBottom: 10
-  }
+    paddingBottom: 10,
+  },
 });
 
 // const styles = StyleSheet.create({

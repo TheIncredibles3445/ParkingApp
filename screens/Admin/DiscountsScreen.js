@@ -35,21 +35,30 @@ export default function DiscountsScreen(props) {
     db.collection("discounts").add({
       name: name,
       code: code,
-      percentage: percentage,
+      percentage: parseInt(percentage),
       usage: usage,
       startDate: startDate,
       endDate: endDate,
-      requiredPoints: requiredPoints,
+      requiredPoints: parseInt(requiredPoints),
       active: active,
     });
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
+    <View style={styles.container}>
+      <ScrollView style={{ height: "100%", flex: 1 }}>
         <KeyboardAvoidingView enabled behavior="padding">
-          <Text style={{ fontSize: 25, marginLeft: "30%" }}>Discount Form</Text>
-          <Divider style={{ marginTop: 5 }} />
+          <Text
+            style={{
+              fontSize: 25,
+              marginLeft: "28%",
+              color: "#263c5a",
+              fontWeight: "bold",
+            }}
+          >
+            Discount Form
+          </Text>
+          {/* <Divider style={{ marginTop: 3 }} /> */}
           <View style={{ flexDirection: "row" }}>
             <Text
               style={{
@@ -98,7 +107,7 @@ export default function DiscountsScreen(props) {
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
-                marginLeft: "5.3%",
+                marginLeft: "5%",
                 marginBottom: "1%",
                 marginTop: "3.5%",
                 backgroundColor: "#f5f5f5",
@@ -108,29 +117,42 @@ export default function DiscountsScreen(props) {
               placeholder=" Discount Code .."
             />
           </View>
-          <View style={{ flexDirection: "row", padding: 5 }}>
+          <View style={{ flexDirection: "row", width: "100%", height: "9%" }}>
             <Text
               style={{
                 marginBottom: 10,
                 fontSize: 15,
-                marginRight: 4,
-                marginTop: "8%",
+                marginRight: 8,
+                marginTop: "5%",
+                fontSize: 15,
               }}
             >
               Percentage:
             </Text>
 
             <Picker
-              style={styles.picker}
+              style={{
+                width: "60%",
+                height: "90%",
+                borderColor: "gray",
+                borderWidth: 1,
+                borderRadius: 5,
+                marginLeft: "10%",
+                marginBottom: "1%",
+                marginTop: "2.5%",
+                backgroundColor: "#f5f5f5",
+              }}
               mode="dropdown"
+              itemStyle={{ height: "100%" }}
               selectedValue={percentage}
               onValueChange={(num) => setPercentage(num)}
             >
               <Picker.Item label="Select.." value="" />
-              <Picker.Item label="5" value="5" />
-              <Picker.Item label="10" value="10" />
-              <Picker.Item label="15" value="15" />
-              <Picker.Item label="20" value="20" />
+              <Picker.Item label="5%" value="5" />
+              <Picker.Item label="10%" value="10" />
+              <Picker.Item label="15%" value="15" />
+              <Picker.Item label="20%" value="20" />
+              <Picker.Item label="25%" value="25" />
             </Picker>
           </View>
           <View style={{ flexDirection: "row" }}>
@@ -147,12 +169,12 @@ export default function DiscountsScreen(props) {
 
             <TextInput
               style={{
-                width: "57%",
-                height: 33,
+                width: "56%",
+                height: 32,
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
-                marginLeft: "18.5%",
+                marginLeft: "20%",
                 marginBottom: "2%",
                 marginTop: "5%",
                 backgroundColor: "#f5f5f5",
@@ -177,7 +199,7 @@ export default function DiscountsScreen(props) {
             <TextInput
               style={{
                 width: "60%",
-                height: 30,
+                height: 28,
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
@@ -191,12 +213,12 @@ export default function DiscountsScreen(props) {
               placeholder=" Required Points .."
             />
           </View>
-          {/* </View> */}
+
           <View style={{ flexDirection: "row" }}>
             <Text style={{ fontSize: 15, marginTop: "4%" }}>Start Date: </Text>
             <DatePicker
               style={{
-                width: "71%",
+                width: "72%",
                 marginLeft: "1.9%",
                 marginTop: "2%",
                 marginBottom: "6%",
@@ -220,6 +242,7 @@ export default function DiscountsScreen(props) {
                 },
                 dateInput: {
                   marginLeft: 44,
+                  borderColor: "gray",
                   borderRadius: 5,
                   backgroundColor: "#f5f5f5",
                 },
@@ -235,7 +258,7 @@ export default function DiscountsScreen(props) {
             <Text style={{ fontSize: 15, marginTop: "2%" }}>End Date: </Text>
             <DatePicker
               style={{
-                width: "71%",
+                width: "72%",
                 marginLeft: "4%",
                 marginTop: "1%",
                 marginBottom: "5%",
@@ -259,6 +282,7 @@ export default function DiscountsScreen(props) {
                 dateInput: {
                   marginLeft: 43,
                   marginBottom: "4%",
+                  borderColor: "gray",
                   borderRadius: 5,
                   backgroundColor: "#f5f5f5",
                 },
@@ -273,33 +297,45 @@ export default function DiscountsScreen(props) {
 
           <View
             style={{
-              marginBottom: "15%",
+              width: "50%",
               alignItems: "center",
               justifyContent: "center",
+              marginLeft: "25%",
             }}
           >
             <Button
               onPress={handleCreate}
               title="Create"
-              // color="red"
-              buttonStyle={{ paddingEnd: 50, paddingStart: 50 }}
-              titleStyle={{ alignItems: "center" }}
+              buttonStyle={{
+                paddingEnd: 50,
+                borderWidth: 1,
+                borderColor: "#263c5a",
+                paddingStart: 50,
+                backgroundColor: "#B0C4DE",
+              }}
+              titleStyle={{
+                alignItems: "center",
+                color: "#263c5a",
+                // borderColor: "#B0C4DE",
+              }}
             />
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 DiscountsScreen.navigationOptions = {
-  title: "Discounts",
+  title: "Discount",
+  headerTintColor: "white",
+  headerStyle: { backgroundColor: "#5a91bf" },
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#F0F8FF",
   },
   input: {
     //flex: 1,
@@ -314,6 +350,8 @@ const styles = StyleSheet.create({
     width: "62%",
     marginTop: "5%",
     marginLeft: 38,
+    borderWidth: 2,
+    borderColor: "black",
     // borderWidth: 1,
     // borderRadius: 8,
     // backgroundColor: "#f5f5f5",
