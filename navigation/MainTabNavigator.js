@@ -195,11 +195,16 @@ const tabNavigator = createBottomTabNavigator(
       return {
         header: null,
         headerTitle: routeName,
-        style: {
-          backgroundColor: "#5a91bf"
-        }
+        
       }
     },
+    tabBarOptions: {
+      activeTintColor:"#edf3f8",
+      inactiveTintColor: "white",
+      style: {
+        backgroundColor: "#5a91bf"
+      }
+    }
   }
 );
 
@@ -235,7 +240,7 @@ const VehicleStk = createStackNavigator({
 });
 
 const CardStk = createStackNavigator({
-  HomeDrawerStk: tabNavigator,
+  // HomeDrawerStk: tabNavigator,
   CardStk: PaymentCard,
 });
 
