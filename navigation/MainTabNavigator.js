@@ -18,13 +18,15 @@ import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
 import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
 import FriendScreen from "../screens/Profile/FriendsScreen";
-import WorkersRating from "../screens/Admin/WorkersRating"
+import WorkersRating from "../screens/Admin/WorkersRating";
 
 //Lamees's imports
 import ReportScreen from "../screens/ReportScreen";
 import AllReportsScreen from "../screens/Admin/AllReportsScreen";
 import DiscountsScreen from "../screens/Admin/DiscountsScreen";
 import AdminScreen from "../screens/Admin/AdminScreen";
+// for the points
+import RewardScreen from "../screens/Profile/RewardScreen";
 
 //Amal's Imports
 import AdminPanel from "../screens/Admin/AdminPanel";
@@ -134,10 +136,9 @@ const AdminStack = createStackNavigator({
   ChangeRole: {
     screen: ChangeRole,
   },
-  WorkersRating:{
+  WorkersRating: {
     screen: WorkersRating,
-  }
-
+  },
 });
 //the simulator wont work >>. i have to shut down the pc it always happen
 AdminStack.navigationOptions = {
@@ -161,6 +162,7 @@ const SettingsStack = createStackNavigator(
     AddVehicle: AddVehicle,
     AddCard: AddCard,
     Friends: LinksScreen,
+    Reward: RewardScreen,
     Schedule: WorkerSchedule,
     ScheduleDetails: ScheduleDetails,
     AdvertisementDetails: AdvertisementDetails,
@@ -184,6 +186,12 @@ SettingsStack.navigationOptions = {
 };
 
 SettingsStack.path = "";
+
+const tabNavigator = createBottomTabNavigator({
+  HomeStack,
+  SettingsStack,
+  AdminStack,
+});
 
 const ProfileStack = createStackNavigator({
   ProfileScreen: ProfileScreen,

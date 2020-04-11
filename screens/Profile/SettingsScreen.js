@@ -38,9 +38,44 @@ export default function SettingsScreen(props) {
     // AddVehicle: AddVehicle,
   });
 
-  const MyApp = createAppContainer(MyDrawerNavigator);
+  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "MY POINTS"];
+  const files = ["Profile", "Payment", "Vehicle", "Friends", "Reward"];
 
-  return <MyApp />;
+  return (
+    <View style={styles.container}>
+      <View style={{ flex: 2, alignItems: "center" }}>
+        <Avatar
+          containerStyle={{ marginTop: 10 }}
+          rounded
+          size={100}
+          source={{
+            uri: photoURL,
+          }}
+          overlayContainerStyle={{ backgroundColor: "white" }}
+          showEditButton
+          onEditPress={handlePickImage}
+          // editButton={<Icon type="feather" name="edit-2" color="red" />}
+        />
+        <Text>You are logged in as</Text>
+        <Text>{firebase.auth().currentUser.email}</Text>
+      </View>
+      <View style={{ flex: 4 }}>
+        {list.map((item, index) => (
+          <ListItem
+            key={index}
+            title={item}
+            bottomDivider
+            rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
+            onPress={() =>
+              props.navigation.navigate(files[index], {
+                user: firebase.auth().currentUser,
+              })
+            }
+          />
+        ))}
+      </View>
+    </View>
+  );
 }
 
 SettingsScreen.navigationOptions = {
