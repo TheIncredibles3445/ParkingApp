@@ -117,8 +117,8 @@ export default function ProfileScreen(props) {
     }
   };
 
-  const list = ["MY PROFILE", "MY BOOKINGS", "PAY"];
-  const files = ["Profile", "AllBookings", "PartialPayment"];
+  const list = ["MY PROFILE", "MY BOOKINGS", "PAY", "MY POINTS"];
+  const files = ["Profile", "AllBookings", "PartialPayment", "RewardScreen"];
   return (
     <View style={styles.container}>
       <View
