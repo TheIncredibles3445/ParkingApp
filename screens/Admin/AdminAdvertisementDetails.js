@@ -8,7 +8,7 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View, KeyboardAvoidingView , SafeAreaView
 } from "react-native";
 import * as SMS from "expo-sms";
 import firebase from "firebase/app";
@@ -88,17 +88,19 @@ export default function AdminAdvertisementDetails(props) {
     }
 
     return (
-        <View>
+        
+                <View style={styles.container}>
             
                 <Text style={styles.title}>{adv.title}</Text>
                 <Text style={styles.email}>User: {advertiser ? advertiser.email : null}</Text>
                 <Image
-                    style={{ width: 100, height: 100 , marginLeft:"4%" }}
+                    style={{ width: 100, height: 100 , marginLeft:"4%" ,marginBottom:"5%"}}
                     source={{ uri: adv.photoURL }}
                 />
-                <Text style={styles.email}>Offers</Text>
+                
                 {adv.adStatus === "Pending" && adv.handledBy === "" ?
                     <View>
+                        <Text style={styles.email}>Offers</Text>
                         {offers.map((o, index) =>
                             <Text style={styles.list}>OFFER NO.{index + 1}{"\n"}FROM: {o.startDate} TO: {o.endDate} {"\n"}OFFERED AMOUNT: {o.offeredAmount} QR {"\n"}UPDATED ON: {o.date}</Text>
                         )}
@@ -106,14 +108,17 @@ export default function AdminAdvertisementDetails(props) {
                         <TouchableOpacity style={styles.btns2} onPress={() => handleAdv()}><Text style={styles.text}>HANDEL</Text></TouchableOpacity></View> : null}
                 {adv.adStatus === "Pending" && adv.handledBy === firebase.auth().currentUser.uid && offers.length > 0 ?
                     <View style={styles.adminSe}>
-                        <ScrollView style={{ height: "15%"}}>
+                        <ScrollView style={{ height: "20%", paddingBottom:5 , backgroundColor:"#b7c9e1"}}>
                             {offers.map((o, index) =>
                                 <Text style={styles.list}>OFFER NO.{index + 1}{"\n"}FROM: {o.startDate} TO: {o.endDate} {"\n"}OFFERED AMOUNT: {o.offeredAmount} QR {"\n"}UPDATED ON: {o.date}</Text>
                             )}
                         </ScrollView>
                         {
                             offers[offers.length - 1].feedback == "" ?
-                                <View>
+                                <KeyboardAvoidingView
+                                behavior={Platform.Os == "ios" ? "padding" : "height"}
+                                //style={styles.container}
+                              >
                                     <TextInput
                                         value={feedback}
                                         placeholder={"ADD A FEEDBACK"}
@@ -130,9 +135,9 @@ export default function AdminAdvertisementDetails(props) {
 
                                      </View> 
 
-                                </View>
+                                </KeyboardAvoidingView>
                                 :
-                                <View>
+                                <View style={styles.box2}>
                                     <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Approved")} ><Text style={styles.text}>Approve</Text></TouchableOpacity>
                                     <TouchableOpacity style={styles.btns2} onPress={() => handleStatus("Declined")} ><Text style={styles.text}>Decline</Text></TouchableOpacity>
                                 </View>
@@ -142,19 +147,25 @@ export default function AdminAdvertisementDetails(props) {
                     : null}
             
         </View>
+        
 
     )
 }
-
+AdminAdvertisementDetails.navigationOptions = {
+    title: "Details",
+    headerStyle:{ backgroundColor:"#5a91bf" },
+    headerTitleStyle:{
+        color: "white"}
+  };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+    container: { flex: 1, padding: 16, paddingTop: 5, backgroundColor: "#F0F8FF" },
     head: { height: 40, backgroundColor: '#f1f8ff' },
     text: { fontSize: 17, color: "#F0FFFF", marginLeft: "auto", marginRight: "auto" },
-    box: { backgroundColor: "#FFFAFA", flexDirection: "row", alignItems: "center", padding: 6 },
-    box2: { backgroundColor: "#FFFAFA", flexDirection: "row", padding: 6, alignItems: "center" },
+    box: { backgroundColor: "#FFFAFA", flexDirection: "row", alignItems: "center", padding: 6, backgroundColor: "#F0F8FF" },
+    box2: { marginTop: "5%",backgroundColor: "#FFFAFA", flexDirection: "row", padding: 6, alignItems: "center", backgroundColor: "#F0F8FF", marginLeft: "auto", marginRight: "auto" },
     btns: {
-        backgroundColor: "#5F9EA0",
+        backgroundColor: "#B0C4DE",
         padding: 5,
         width: "30%",
         marginLeft: 10,
@@ -164,7 +175,7 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     btns2: {
-        backgroundColor: "#5F9EA0",
+        backgroundColor: "#B0C4DE",
         padding: 5,
         width: "30%",
         marginLeft: 10,
@@ -176,30 +187,32 @@ const styles = StyleSheet.create({
     list: {
         marginLeft: "auto",
         marginRight: "auto",
-        backgroundColor: "#F0FFF0",
+        backgroundColor: "#b7c9e1",
         padding: 5,
         width: "90%",
         marginBottom: 4,
+        marginTop: 4,
         height: 82,
         fontSize: 15,
-        borderColor: "#66CDAA",
+        borderColor: "#6f93c3",
         borderBottomWidth: 4,
         borderRadius: 5
     },
     feedbackBox: {
         
         borderWidth: 1,
-        borderColor: "#5F9EA0",
+        borderColor: "#6f93c3",
         height: "40%",
         marginTop: "2%",
         marginBottom: "5%",
         width: "85%",
         marginLeft: "auto",
-        marginRight: "auto"
+        marginRight: "auto",
+        backgroundColor:"#ffffff"
     },
     title: {
         fontSize: 30,
-        color: "#5F9EA0",
+        color: "#284057",
         width: "90%",
         marginLeft: "auto",
         marginRight: "auto"
@@ -207,7 +220,7 @@ const styles = StyleSheet.create({
     },
     email: {
         fontSize: 20,
-        color: "#5F9EA0",
+        color: "#284057",
         width: "90%",
         marginLeft: "auto",
         marginRight: "auto"

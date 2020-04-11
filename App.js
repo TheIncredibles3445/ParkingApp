@@ -20,15 +20,15 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { encode, decode } from "base-64";
-
+    
 if (!global.btoa) {
   global.btoa = encode;
 }
 if (!global.atob) {
   global.atob = decode;
-}
-
+} 
 import AppNavigator from "./navigation/AppNavigator";
+import AdminAppNavigator from "./navigation/AdminAppNavigator";
 import Animated, { Easing } from "react-native-reanimated";
 import {
   TapGestureHandler,
@@ -38,11 +38,10 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "./db";
-
 import Svg, { Image, Circle, ClipPath } from "react-native-svg";
 
 console.disableYellowBox = true;
-
+ 
 const screen = Dimensions.get("screen");
 const { width, height } = Dimensions.get("window");
 
@@ -54,8 +53,8 @@ function cacheImages(images) {
       return Asset.fromModule(image).downloadAsync();
     }
   });
-}
-
+}   
+ 
 const {
   Value,
   event,
@@ -106,6 +105,7 @@ function runTiming(clock, value, dest) {
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [user, setUser] = useState(null);
+  const [loggedInUser , setLoggedInUser] = useState()
   const email = useRef();
   const password = useRef();
   const emailR = useRef();
@@ -175,14 +175,25 @@ export default function App(props) {
     extrapolate: Extrapolate.CLAMP,
   });
 
+
   const loadAssetsAsync = async () => {
     const imageAssets = cacheImages([require("./assets/images/park.png")]);
     await Promise.all([...imageAssets]);
   };
+  useEffect(()=>{
+    getUser()
+  },[])
+
+  const getUser = async() =>{
+    let u = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
+    setLoggedInUser(u.data())
+    console.log("---------------------------userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",user)
+  }
 
   useEffect(() => {
+    getUser()
     return firebase.auth().onAuthStateChanged(setUser);
-
+    
   }, []);
 
   const handleRegister = async () => {
@@ -201,6 +212,7 @@ export default function App(props) {
     }
   };
 
+
   const setUpUser = () => {
     db.collection("users").doc(firebase.auth().currentUser.uid).set({
       lastLogin: new Date(),
@@ -213,7 +225,7 @@ export default function App(props) {
       photoURL: "",
       phoneNumber : phone.current
     });
-  };
+  };  
 
   const handleLogin = async () => {
     if (email.current  && password.current ) {
@@ -226,11 +238,16 @@ export default function App(props) {
     }
   };
 
-  const updateUserLogin = () => {
+  const updateUserLogin = async() => {
+    
     db.collection("users").doc(firebase.auth().currentUser.uid).update({
       lastLogin: new Date(),
     });
+    
   };
+
+
+  useEffect(()=>{},[loggedInUser])
 
   const handleEmail = (text) => {
     email.current = text;
@@ -250,7 +267,6 @@ export default function App(props) {
   const handlePhone = (text) => {
     phone.current = text;
   };
-
   if (!isLoadingComplete && !props.skipLoadingScreen && !isReady) {
     return (
       <AppLoading
@@ -267,7 +283,7 @@ export default function App(props) {
           flex: 1,
           backgroundColor: "white",
           justifyContent: "flex-end",
-        }}
+        }} 
       >
         <Animated.View
           style={{
@@ -287,6 +303,7 @@ export default function App(props) {
               clipPath="url(#clip)"
             />
           </Svg>
+
         </Animated.View>
         <View style={{ height: height / 4, justifyContent: "center" }}>
           <TapGestureHandler onHandlerStateChange={onStateChange}>
@@ -296,7 +313,7 @@ export default function App(props) {
                 backgroundColor: "#2E71DC",
                 opacity: buttonOpacity,
                 transform: [{ translateY: buttonY }],
-              }}
+              }}  
             >
               <Text
                 style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
@@ -372,17 +389,18 @@ export default function App(props) {
                   style={styles.input}
                 />
                 <TextInput
-                  value={phone}
+                   value={phone}
                   placeholder="PHONE NUMBER"
                   placeholderTextColor="black"
                   onChangeText={(text) => handlePhone(text)}
                   keyboardType="numeric"
                   style={styles.input}
                 />
+
               </View>
             </View>
 
-            <Animated.View
+             <Animated.View
               style={{ flexDirection: "row", justifyContent: "space-evenly" }}
             >
               <TouchableOpacity onPress={handleLogin}>
@@ -406,14 +424,23 @@ export default function App(props) {
     );
   } else {
     return (
+      
       <SafeAreaView style={styles.container}>
-        {Platform.OS === "ios" && <StatusBar barStyle="default" />}
+        
+        {
+        loggedInUser && loggedInUser.role != "admin" ?
         <AppNavigator />
+        : loggedInUser && loggedInUser.role == "admin" ?
+        
+        <AdminAppNavigator />
+        : null
+      }
+       
       </SafeAreaView>
     );
   }
 }
-
+    
 async function loadResourcesAsync() {
   await Promise.all([
     Asset.loadAsync([
@@ -428,8 +455,8 @@ async function loadResourcesAsync() {
       "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf"),
     }),
   ]);
-}
 
+}
 function handleLoadingError(error) {
   // In this case, you might want to report the error to your error reporting
   // service, for example Sentry
@@ -439,6 +466,7 @@ function handleLoadingError(error) {
 function handleFinishLoading(setLoadingComplete) {
   setLoadingComplete(true);
 }
+
 
 const styles = StyleSheet.create({
   container: {

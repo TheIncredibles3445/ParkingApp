@@ -1,4 +1,3 @@
-// import * as WebBrowser from "expo-web-browser";
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-native-datepicker";
 
@@ -127,7 +126,7 @@ export default function HomeScreen(props) {
         }
 
       </View>
-      <Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#30819c", marginBottom: "2%" }}>CNA-Q Parking Assistant</Text>
+      <Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#284057", marginBottom: "2%" }}>CNA-Q Parking Assistant</Text>
 
       <View
         style={{ marginLeft: "auto", marginRight: "auto", flexDirection: "row", width: "85%", height: "8%" }}>
@@ -211,7 +210,7 @@ export default function HomeScreen(props) {
                 style={styles.icons}
                 source={require('../assets/images/advertise2.png')}
               />
-              <Text style={styles.labels}>Advertise With Us</Text>
+              <Text style={styles.labels}>Advertise With us</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -324,10 +323,11 @@ const styles = StyleSheet.create({
   },
   labels: {
     fontSize: 21,
-    color: "#30819c",
+    color: "#284057",
     marginLeft: "auto",
     marginRight: "auto",
-    //fontWeight:10
+    fontWeight:"bold",
+    //fontFamily: "Cochin"
 
   },
   btns: {
@@ -340,4 +340,3 @@ const styles = StyleSheet.create({
   }
 
 });
-

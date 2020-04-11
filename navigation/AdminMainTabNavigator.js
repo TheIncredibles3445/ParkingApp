@@ -90,56 +90,56 @@ HomeStack.navigationOptions = {
 
 HomeStack.path = "";
 
-// const AdminStack = createStackNavigator({
-//   Main: {
-//     screen: AdminPanel
-//   },
-//   Services: {
-//     screen: ServicesScreen
-//   },
-//   WorkersManagement: {
-//     screen: WorkersManagementScreen
-//   },
-//   ServiceDetails: {
-//     screen: ServiceDetailsScreen
-//   },
-//   UserAccounts: {
-//     screen: UserAccountsScreen
-//   },
-//   AllReport: {
-//     screen: AllReportsScreen
-//   },
-//   Adv: {
-//     screen: AdminAdvertisements
-//   },
-//   AdminAdvDetails: {
-//     screen: AdminAdvDetails
-//   },
-//   AdvertisementList: {
-//     screen: AdvertisementList
-//   },
-//   Discounts: {
-//     screen: DiscountsScreen
-//   },
-//   ChangeRole: {
-//     screen: ChangeRole
-//   },
-//   Statistics: {
-//     screen: Statistics
-//   }
+const AdminStack = createStackNavigator({
+  Main: {
+    screen: AdminPanel
+  },
+  Services: {
+    screen: ServicesScreen
+  },
+  WorkersManagement: {
+    screen: WorkersManagementScreen
+  },
+  ServiceDetails: {
+    screen: ServiceDetailsScreen
+  },
+  UserAccounts: {
+    screen: UserAccountsScreen
+  },
+  AllReport: {
+    screen: AllReportsScreen
+  },
+  Adv: {
+    screen: AdminAdvertisements
+  },
+  AdminAdvDetails: {
+    screen: AdminAdvDetails
+  },
+  AdvertisementList: {
+    screen: AdvertisementList
+  },
+  Discounts: {
+    screen: DiscountsScreen
+  },
+  ChangeRole: {
+    screen: ChangeRole
+  },
+  Statistics: {
+    screen: Statistics
+  }
 
-// });
+});
 //the simulator wont work >>. i have to shut down the pc it always happen
-// AdminStack.navigationOptions = {
-//   tabBarLabel: "Admin Panel",
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-//     />
-//   )
-// };
-// AdminStack.path = "";
+AdminStack.navigationOptions = {
+  tabBarLabel: "Admin Panel",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
+    />
+  )
+};
+AdminStack.path = "";
 
 // const ServiceBookingStack = createStackNavigator({
 //   Main: {
@@ -230,15 +230,11 @@ SettingsStack.path = "";
 //     console.log("the userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",user)
 //   }
 // }
-const user = null
-firebase.auth().onAuthStateChanged((user) =>{
-  console.log("-----------------------------------------------------------user",user)
-})
 
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   SettingsStack,
-  //AdminStack
+  AdminStack
 },
   {tabBarOptions: {
     style: {

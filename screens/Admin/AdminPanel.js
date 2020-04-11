@@ -48,7 +48,9 @@ export default function AdminPanel(props) {
 
 AdminPanel.navigationOptions = {
   title: "Admin Panel",
-  headerStyle:{ backgroundColor:"#246175"}
+  headerStyle:{ backgroundColor:"#5a91bf" },
+  headerTitleStyle:{
+      color: "white"}
 };
 
 const styles = StyleSheet.create({

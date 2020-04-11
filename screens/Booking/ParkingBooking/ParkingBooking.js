@@ -44,8 +44,8 @@ const track = async()=>{
   AsyncStorage.setItem("parking", "yes");
   
   showMessage({
-    message: "My message title",
-    description: newTrack + " Users Are Trying To Book a Parking Right Now !!",
+    message: newTrack + " User/Users Trying To Book a Parking Right Now!!",
+    //description: newTrack + " Users Are Trying To Book a Parking Right Now !!",
     type: "success"
   })
 }

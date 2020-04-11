@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Alert,
   Image,
@@ -20,7 +20,7 @@ import moment from "moment";
 import { AsyncStorage } from "react-native";
 
 export default function Payment(props) {
-  
+
   const bookingId = props.navigation.getParam("id", "some default value");
   const total = props.navigation.getParam("total", "some default value");
   const [cardNumber, setCardNumber] = useState();
@@ -35,11 +35,46 @@ export default function Payment(props) {
   const date = moment().format("YYYY-MM-DD T HH:mm");
   const blockId = props.navigation.getParam("blockId", "No params");
   const parkingId = props.navigation.getParam("parkingId", "No params");
-
+  const [discount, setDiscount] = useState()
+  const [newAmount, setNewAmount] = useState(0)
+  //const [DiscountId , setDiscountId] = useState("") 
+  const [update, setUpdate] = useState(true)
+  //const discountId = useRef()
   useEffect(() => {
     //console.log("props", booking, bookingId, total)
+    getDiscount();
     getMyCard();
-  });
+
+  }, []);
+
+  const getDiscount = async () => {
+    let user = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
+
+    
+    if (user.data().discount && user.data().discount !== "") {
+      const disc = await db.collection("discounts").doc(user.data().discount).get()
+      setDiscount(disc.data())
+      //calculate(user.data())
+    }
+  }
+
+
+  useEffect(() => {
+    setUpdate(!update)
+  }, [newAmount])
+
+  useEffect(() => {
+    console.log("the discount", discount)
+    if(discount){
+      let percentage = parseInt(discount.percentage) / 100
+    let p = total * percentage
+    let newTotal = total - p
+    setNewAmount(newTotal)
+    }
+    
+  }, [discount])
+
+
   const getMyCard = () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -66,15 +101,42 @@ export default function Payment(props) {
   }, [selectedCard]);
 
   const pay = async () => {
-    db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .collection("Payments")
-      .add({
-        type: "credit card",
-        amount: total,
-        bookingId,
-        date
-      });
+    if (discount) {
+      db.collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("Payments")
+        .add({
+          type: "credit card",
+          amount: newAmount,
+          bookingId,
+          date
+        });
+      console.log("--------------------------------------", discount)
+      //update usage in 
+      //**
+      let user = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
+      let newUsage = await db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).get()
+      let num = parseInt(newUsage.data().usage) + 1
+      if (num == parseInt(discount.usage)) {
+        db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).delete()
+        db.collection("users").doc(firebase.auth().currentUser.uid).update({ discount: "" })
+      }
+      else {
+        db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).update({ usage: num })
+      }
+
+    }
+    else {
+      db.collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("Payments")
+        .add({
+          type: "credit card",
+          amount: total,
+          bookingId,
+          date
+        });
+    }
 
     let update = await db
       .collection("users")
@@ -101,7 +163,7 @@ export default function Payment(props) {
   };
 
   const handleNavigationAlert = () => {
-    if(parkingId != "No params" && blockId != "No params"){
+    if (parkingId != "No params" && blockId != "No params") {
       Alert.alert(
         "Navigation",
         "Do You Want The Direction For Your Latest Booking?",
@@ -123,10 +185,10 @@ export default function Payment(props) {
         { cancelable: false }
       );
     }
-    else{
+    else {
       props.navigation.navigate("Home")
     }
-    
+
   };
 
   const saveCreditCard = () => {
@@ -148,7 +210,8 @@ export default function Payment(props) {
 
   return (
     <View>
-      <Text>Payment</Text>
+
+
       {userCards ? (
         <Picker
           selectedValue={selectedCard}
@@ -171,7 +234,18 @@ export default function Payment(props) {
         </Picker>
       ) : null}
 
-      <Text>Amount: {total}</Text>
+      {
+        discount ?
+          <View>
+            <Text>Applying {discount.code} </Text>
+            <Text>For {discount.percentage}% Discount</Text>
+            <Text>Before: {total}</Text>
+            <Text>After: {newAmount.toFixed(2)}</Text>
+          </View>
+          :
+          <Text>Amount: {total}</Text>
+      }
+
       <Text>First Name</Text>
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
@@ -240,11 +314,11 @@ export default function Payment(props) {
         onPress={() => pay()}
         disabled={
           firstName &&
-          provider &&
-          lastName &&
-          cardNumber &&
-          expiry &&
-          securityCode
+            provider &&
+            lastName &&
+            cardNumber &&
+            expiry &&
+            securityCode
             ? false
             : true
         }
