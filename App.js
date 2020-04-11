@@ -209,9 +209,11 @@ export default function App(props) {
       pendingAmount: 0,
       advPendingAmount: 0,
       points: 0,
-      displayName: "",
+      displayName: emailR.current,
       photoURL: "",
-      phoneNumber : phone.current
+      phoneNumber : phone.current,
+      photoURL:
+        "https://image.shutterstock.com/image-vector/blank-avatar-photo-place-holder-260nw-1114445501.jpg",
     });
   };
 
@@ -231,6 +233,7 @@ export default function App(props) {
       lastLogin: new Date(),
     });
   };
+
 
   const handleEmail = (text) => {
     email.current = text;

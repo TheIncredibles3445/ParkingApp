@@ -17,7 +17,7 @@ import {
   Button,
   SafeAreaView,
   StyleSheet,
-  Picker
+  Picker,
 } from "react-native";
 export default function ParkingBooking(props) {
   //============================ START DATE AND TIME ============================
@@ -28,6 +28,7 @@ export default function ParkingBooking(props) {
   const [endTime, setEndTime] = useState("00:00");
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [blocks, setBlocks] = useState([]);
+  const [bookingStatus, setBookingStatus] = useState([]);
 
   const unsubscribe = props.navigation.addListener('didFocus', () => {
     console.log('focussed');
@@ -46,15 +47,32 @@ const track = async()=>{
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Friends")
-      .onSnapshot(querySnapShot => {
+      .where("booking", "==", true)
+      .onSnapshot((querySnapShot) => {
         let friends = [];
-        querySnapShot.forEach(doc => {
+        querySnapShot.forEach((doc) => {
           friends.push({ id: doc.id, ...doc.data() });
         });
-     
-        //console.log("one and only", friends.id);
+        // let bookingSta = [];
+        // for(let i=0; i<friends.length;i++){
+        //   if(friends[i].booking ===true){
+        //     bookingSta.push
+        //   }
+        // }
+        // let statuss = [];
+        // friends.map(async (item) => {
+        //   let friendsStatus = await db
+        //     .collection("users")
+        //     .doc(item.id)
+        //     .collection("Friends")
+        //     .doc(firebase.auth().currentUser.uid)
+        //     .get();
+        //   statuss.push(friendsStatus.data().status);
+        //   console.log("inside", statuss);
+        // });
+        // setStatus(statuss);
+        // console.log("outside", status);
         setFriendsList(friends);
-        console.log("my frienxxdss", friendsList);
       });
   }, []);
 
@@ -62,7 +80,7 @@ const track = async()=>{
     db.collection("block").onSnapshot(querySnapshot => {
       let blcks = [];
 
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         blcks.push({ id: doc.id, ...doc.data(), isSelected: false });
       });
       setBlocks([...blcks]);
@@ -75,7 +93,7 @@ const track = async()=>{
 
   const handleSelectedBlock = (item, index) => {
     let tempBlocks = blocks;
-    tempBlocks.map(tempItem => {
+    tempBlocks.map((tempItem) => {
       if (tempItem.isSelected) {
         tempItem.isSelected = false;
       }
@@ -109,7 +127,7 @@ const track = async()=>{
       const data = {
         startTime: startTime,
         endTime: endTime,
-        selectedBlock: selectedBlock
+        selectedBlock: selectedBlock,
       };
 
       props.navigation.navigate("Parking", { data: data, friend: friend });
@@ -117,7 +135,7 @@ const track = async()=>{
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View style={{ flex: 1, alignItems: "center" }}>
         <Text style={{ fontSize: 20 }}>Book your desired Parking spot!</Text>
       </View>
@@ -134,9 +152,9 @@ const track = async()=>{
             cancelBtnText="Cancel"
             is24Hour={true}
             customStyles={{
-              datePickerCon: { color: "black" }
+              datePickerCon: { color: "black" },
             }}
-            onDateChange={time => setStartTime(time)}
+            onDateChange={(time) => setStartTime(time)}
           />
 
           <Text style={{ fontSize: 20 }}>SELECT END TIME</Text>
@@ -150,16 +168,16 @@ const track = async()=>{
             cancelBtnText="Cancel"
             is24Hour={true}
             customStyles={{
-              datePickerCon: { color: "black" }
+              datePickerCon: { color: "black" },
             }}
-            onDateChange={time => setEndTime(time)}
+            onDateChange={(time) => setEndTime(time)}
           />
         </View>
         <View
           style={{
             flex: 4,
             alignItems: "center",
-            justifyContent: "space-evenly"
+            justifyContent: "space-evenly",
           }}
         >
           <Text style={{ fontSize: 20 }}>Select Block</Text>
@@ -176,18 +194,17 @@ const track = async()=>{
             </TouchableOpacity>
           ))}
         </View>
-        <Text>Book for af friends</Text>
+        <Text>Book for a friend</Text>
 
         <Picker
           mode="dropdown"
           selectedValue={friend}
-          style={{ height: 50, width: 150 }}
           onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
         >
           <Picker.Item label={"Select"} value={""} disabled />
-          {friendsList.map((v, index) => {
-            return <Picker.Item label={v.displayName} value={v.id} />;
-          })}
+          {friendsList.map((v, index) => (
+            <Picker.Item label={v.displayName} value={v.id} />
+          ))}
         </Picker>
 
         <Button title="BOOK" onPress={() => handleBooking()} />
@@ -208,7 +225,7 @@ const track = async()=>{
 }
 
 ParkingBooking.navigationOptions = {
-  title: "Parking Booking"
+  title: "Parking Booking",
 };
 
 function DevelopmentModeNotice() {
@@ -255,7 +272,7 @@ const styles = StyleSheet.create({
     paddingRight: "35%",
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: "lightgreen"
+    backgroundColor: "lightgreen",
   },
   notSelected: {
     borderColor: "black",
@@ -264,8 +281,8 @@ const styles = StyleSheet.create({
     paddingLeft: "35%",
     paddingRight: "35%",
     paddingTop: 10,
-    paddingBottom: 10
-  }
+    paddingBottom: 10,
+  },
 });
 
 // const styles = StyleSheet.create({
