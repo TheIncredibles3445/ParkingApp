@@ -66,13 +66,13 @@ export default function WorkersRating(props) {
   return (
     <View style={{ backgroundColor: "#F0F8FF", flex: 1 }}>
       <ScrollView style={{ marginTop: 30 }}>
-        <Divider style={{ color: "white", fontWeight: 12 }} />
-        <DataTable.Header>
-          <DataTable.Title>Worker Name</DataTable.Title>
-          <DataTable.Title>Service</DataTable.Title>
-          <DataTable.Title numeric> Average Rating</DataTable.Title>
-        </DataTable.Header>
-
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Cell>Worker Name</DataTable.Cell>
+            <DataTable.Cell>Service</DataTable.Cell>
+            <DataTable.Cell numeric> Average Rating</DataTable.Cell>
+          </DataTable.Header>
+        </DataTable>
         {workersNames.map((item, index) => {
           return (
             <View key={index}>
@@ -80,7 +80,7 @@ export default function WorkersRating(props) {
                 <DataTable.Row>
                   <DataTable.Cell> {item.displayName}</DataTable.Cell>
                   <Text>{item.service}</Text>
-                  <DataTable.Cell numeric> {item.avgRating}/4</DataTable.Cell>
+                  <DataTable.Cell numeric> {item.avgRating}/5</DataTable.Cell>
                 </DataTable.Row>
               </DataTable>
             </View>

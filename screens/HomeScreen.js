@@ -24,7 +24,7 @@ export default function HomeScreen(props) {
   //============================ START DATE AND TIME ============================
   const image = {
     uri:
-      "https://ak2.picdn.net/shutterstock/videos/28857412/thumb/7.jpg",
+      "",
   };
   const [isVerified, setIsVerified] = useState(true);
 
@@ -75,7 +75,7 @@ export default function HomeScreen(props) {
           }
         >
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 30 }}>Welcome</Text>
+           
             <Image
               source={require("../assets/images/cnaq.png")}
               style={{ width: "100%", height: 60 }}
@@ -85,14 +85,15 @@ export default function HomeScreen(props) {
           <View style={{ flex: 5 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               <TouchableOpacity
-                style={{ width: "50%" }}
+                style={{ width: "100%" }}
                 disabled={!isVerified}
                 onPress={() => props.navigation.navigate("ParkingBooking")}
               >
                 <Card
                   title="Parking Booking"
-                  image={require("../assets/images/parking-lot.jpg")}
-                  imageWrapperStyle={{ padding: 10 }}
+                  image={require("../assets/images/p.gif")}
+                 // imageWrapperStyle={{ padding: 10 }}
+                  imageStyle={{ width: 100,height:200 }}
                 ></Card>
               </TouchableOpacity>
               <TouchableOpacity
@@ -114,7 +115,7 @@ export default function HomeScreen(props) {
                 <Card
                   title="Report"
                   image={require("../assets/images/report-icon.png")}
-                  imageWrapperStyle={{ padding: 1 }}
+                  imageWrapperStyle={{ padding: 15 }}
                 ></Card>
               </TouchableOpacity>
             </View>

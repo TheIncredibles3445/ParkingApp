@@ -12,21 +12,23 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  Switch,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { SearchBar, Badge, Divider, Avatar } from "react-native-elements";
 import db from "../../db.js";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { user } from "firebase-functions/lib/providers/auth";
-// import { ScrollView } from "react-native-gesture-handler";
 import { Card } from "react-native-shadow-cards";
 import * as Animatable from "react-native-animatable";
+import { Snackbar } from "react-native-paper";
 
 const LinksScreen = (props) => {
   const data = props.navigation.getParam("data", "No params");
   const [users, setUsers] = useState([]);
+  const [name, setName] = useState("");
 
+  const [v, setV] = useState(false);
   const [text, setText] = useState("");
   const [enableFriends, setEnableFriends] = useState(true);
   const [arrayholder, setArrayHolder] = useState([]);
@@ -41,7 +43,22 @@ const LinksScreen = (props) => {
 
   const [myfriendList, setMyfriendList] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(true);
 
+  const toggleSwitch = (item, isEnabled) => {
+    setIsEnabled(!isEnabled);
+    db.collection("users")
+      .doc(item.id)
+      .collection("Friends")
+      .doc(firebase.auth().currentUser.uid)
+      .update({ booking: isEnabled });
+
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Friends")
+      .doc(item.id)
+      .update({ booking: isEnabled });
+  };
   const ssetModalVisible = (visible) => {
     setmodalVisible(visible);
   };
@@ -60,11 +77,6 @@ const LinksScreen = (props) => {
       setArrayHolder(users);
     });
   };
-
-  //async: means this function will return a promises always
-  // this function will map throught the current user sub collection > "MyRequest" and i store the result in useState array variable since the user can
-  // have more than one request and it will be accessible in the return part
-  // I pushed only the Id of the user beacuse i am just gonna compare if the setMyfriendList array include one of the usersa array
   const getMyFriends = async () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -79,11 +91,9 @@ const LinksScreen = (props) => {
       });
   };
 
-  //this useEffect will run when any of these two state variables are changed in the state to re-render
   useEffect(() => {}, [myfriendList]);
   useEffect(() => {}, [myfriends]);
 
-  //In this use effect there is 4 functions will be called one time once the app is rendered
   useEffect(() => {
     getFriends();
     handleUsers();
@@ -91,15 +101,6 @@ const LinksScreen = (props) => {
     showRequest();
   }, []);
 
-  //search bar -----------------------------------------------
-  //1- array holder: an array that have all the users names
-  //2- this function will run the filter function on the arrayholder, it will filter
-  //   based on th names of the users
-  //3- first store the name inside the itemData and convert it to uppercase
-  //4- second i used indexOf to compare both text and return true if the text is found
-  //   inside the itemData >> so if true return the filtered item and set the users array to the filtered item only
-  //   if false nothing will show
-  //5- setText(text): to save the text value of the user in the search bar
   const searchFunction = (text) => {
     const newData = arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
@@ -113,12 +114,6 @@ const LinksScreen = (props) => {
     setText(text);
   };
 
-  //THIS IS CREATE FUNCTION
-  //async: means this function will return a promises always
-  //when the user clicks on the button "follow" this process is going to:
-  // add a sub collection called "Request" for user 'b' with user 'a' id as document id for the sub collection and it has one field which is status showing that Friend Request Received
-  //and its going to add sub collection called "MyRequest" for user 'a' with user 'b' as document id for the sub collection and it has status field too
-  // then calling the function getMyFriends() which explained above
   const handleFollow = async (item) => {
     await db
       .collection("users")
@@ -141,13 +136,6 @@ const LinksScreen = (props) => {
     const userRef = await db.collection("users").doc(id).get();
     return userRef.data();
   };
-
-  //THIS IS A SELECT FUNCTION
-  //async: means this function will return a promises always
-  //this function is used to show the list of follow request the the current user get
-  // so first go to the users collection >> go to the current user document using current user id >> go to "Request" sub collection
-  // loop through that sub collection and get all the document in it and push the documnts in an local arrat then store it in
-  //useState array const setFriendRequestList(request);
   const showRequest = async () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -164,14 +152,6 @@ const LinksScreen = (props) => {
       });
   };
 
-  //THIS IS DELETE FUNCTION
-  // the logic is: when current user follow someone and the button changes from "follow" to "requested" user can unfollow them and that will change
-  // the button back to "follow"
-  // when the button is back to "follow" this is where the function will be called
-  // it's going to the user 'a' sub collection "MyRequest" and remove the documet thats stores user 'b' details
-  // and same for user 'b' the document for user 'a' will be deleted from 'Request' sub collection
-  //async: means this function will return a promises always
-
   const handleUnFollow = async (item) => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -186,12 +166,6 @@ const LinksScreen = (props) => {
       .delete();
   };
 
-  //THIS IS A DELETE FUNCTION
-  //Logic: when user 'a' have a follow request from user 'b' and its showing in the follow request list
-  //of user 'a', when user 'a' press the decline button this is going to remove the document of user 'b' from user 'a' "Request" sub collection
-  // and its going to remove user 'a' from user 'b' "MyRequest" sub collection using .delete() function
-  // and this functionis using async since i am callingback the data from firebase
-  //async: means this function will return a promises always
   const declineRequest = async (item) => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -209,11 +183,6 @@ const LinksScreen = (props) => {
     console.log("friendsRequestList.length", friendsRequestList.length);
   };
 
-  //SELECT FUNCTION
-  //This function will go to the current user document then to his/her Friends sub collection and it will loop through all the document
-  // in that sub collection to get all the friends/users for the current user i pushed that in an array and i stored in a useSatate const
-  // which is setMyfriends(friends)
-  //async: means this function will return a promises always
   const getFriends = async () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -228,22 +197,6 @@ const LinksScreen = (props) => {
       });
   };
 
-  // THIS IS CREATE AND DELETE FUNCTION
-  //This function is taking the user object (item) as a parameter
-  // I put async since I am taking the details of the item from firebase
-  // then i got all the info about the current user using get() and .data()
-  // then i added a sub collection for both users called "Friends" with each user details
-  // and since they are friends no I used .delete() function to delete users doc from Request and MyRequest sub  collection
-  // after that  I am calling the two functions  getMyFriends() and getFriends() to
-  // after that  I am calling the two functions  getMyFriends() and getFriends() tolay the friends list  for the current user in My Friends section
-  //-----------------------------------------
-  //current user >> a ----- the the one who requested >> b
-  //it takes user b data as a parameter and what this function gonna do is: its going to
-  // add sub collection with the name “Friends” for both users with each others id as
-  //  a document id for the sub collection “Friends”, and remove the request from
-  //  “MyRequest” for user b and “Request” for user a and then calling the two functions
-  //  “getMyFriends” and “getFriends”
-  //async: means this function will return a promises always
   const handleAccept = async (item) => {
     //console.log("Error removing document-----: ", item.id)
     const currentUser = firebase.auth().currentUser;
@@ -254,7 +207,13 @@ const LinksScreen = (props) => {
       .doc(item.id)
       .collection("Friends")
       .doc(currentUser.uid)
-      .set(userData);
+      .set({
+        displayName: userData.displayName,
+        email: userData.email,
+        photoURL: userData.photoURL,
+        booking: true,
+        bookingRequest: true,
+      });
 
     db.collection("users")
       .doc(currentUser.uid)
@@ -265,10 +224,8 @@ const LinksScreen = (props) => {
         email: item.email,
         photoURL: item.photoURL,
         uid: item.id,
-        // phone: item.phone,
-        // phone: item.phone,
-        // photoURL: item.photoURL,
-        // points: item.points
+        booking: true,
+        bookingRequest: true,
       });
 
     db.collection("users")
@@ -289,6 +246,14 @@ const LinksScreen = (props) => {
     setmodalVisible(!modalVisible);
   };
 
+  const checkFriend = (id) => {
+    let friendsId = [];
+    for (let i = 0; i < myfriends.length; i++) {
+      friendsId.push(myfriends[i].id);
+    }
+    return friendsId.includes(id)
+  };
+
   //async: means this function will return a promises always
   // it will remove the user b from user a “Friends” sub collection and same for user b
   const handleRemoveFriend = async (item) => {
@@ -305,7 +270,7 @@ const LinksScreen = (props) => {
       .collection("Friends")
       .doc(firebase.auth().currentUser.uid)
       .delete();
-    setmodalVisible(!modalVisible);
+    // setmodalVisible(!modalVisible);
   };
 
   // const checkFriend = (id) => {
@@ -536,16 +501,24 @@ const LinksScreen = (props) => {
                                   "item.displayName",
                                   item.displayName
                                 )}
+                                {setName(item.displayName)}
                               </Text>
                             </View>
                             <View>
                               <View style={{ flexDirection: "row" }}>
-                                <View
-                                  style={{
-                                    marginLeft: "5%",
-                                    marginTop: 10,
+                                <Switch
+                                  trackColor={{
+                                    false: "#767577",
+                                    true: "#81b0ff",
                                   }}
-                                ></View>
+                                  thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                                  ios_backgroundColor="#3e3e3e"
+                                  onValueChange={() =>
+                                    toggleSwitch(item, isEnabled)
+                                  }
+                                  value={item.booking}
+                                />
+
                                 <View
                                   style={{
                                     marginLeft: "59%",
@@ -557,11 +530,13 @@ const LinksScreen = (props) => {
                                   <Button
                                     color={"#263c5a"}
                                     title="Remove"
-                                    onPress={() => handleRemoveFriend(item.id)}
-                                  />
+                                    onPress={() =>
+                                      handleRemoveFriend(item.id) && setV(!v)
+                                    }
+                                  >
+                                    {v ? "Hide" : "Show"}
+                                  </Button>
                                 </View>
-
-                                <View style={{}}></View>
                               </View>
                             </View>
                           </Card>
@@ -594,6 +569,10 @@ const LinksScreen = (props) => {
             </ScrollView>
           </View>
         </View>
+        <Snackbar visible={v} onDismiss={() => setV(false)} duration={4000}>
+          You removed <Text style={{ fontWeight: "bold" }}>{name} </Text>from
+          your friend list!
+        </Snackbar>
       </Modal>
 
       <Text
@@ -616,68 +595,74 @@ const LinksScreen = (props) => {
             //Item Separator View
             renderItem={({ item }) => {
               return item.id !== firebase.auth().currentUser.uid ? (
-                // !checkFriend(item.id)
-                <View>
-                  {console.log("my friendss", item.id)}
-                  <Card
-                    style={{
-                      width: "95%",
-                      margin: 4,
-                      marginRight: "auto",
-                      marginLeft: "auto",
-                    }}
-                  >
-                    <View key={item.id} style={{ flexDirection: "row" }}>
-                      <Animatable.View animation="zoomIn" iterationCount={1}>
-                        <Image
-                          style={{
-                            width: 100,
-                            height: 80,
-                            marginLeft: 15,
-                            marginTop: 10,
-                          }}
-                          source={{ uri: item.photoURL }}
-                        />
-                      </Animatable.View>
-                      <View
-                        style={
-                          myfriendList.includes(item.id)
-                            ? styles.num2
-                            : styles.num
-                        }
-                      >
-                        {/* in here i checked if the current user friend list include the user id that he/she just followed
-                        if yes show requested if no show follow  as a title for the button */}
-                        <Button
-                          color={
-                            myfriendList.includes(item.id) ? "white" : "#263c5a"
-                          }
-                          onPress={
-                            myfriendList.includes(item.id)
-                              ? () => handleUnFollow(item.id)
-                              : () => handleFollow(item.id)
-                          }
-                          title={
-                            myfriendList.includes(item.id)
-                              ? "Requested"
-                              : "Follow"
-                          }
-                        />
-                      </View>
-                    </View>
-                    <Text
-                      style={{ marginTop: 2, marginLeft: 30, marginBottom: 20 }}
+                !checkFriend(item.id) ? (
+                  <View>
+                    {/* {console.log("my friendss", item.id)} */}
+                    <Card
+                      style={{
+                        width: "95%",
+                        margin: 4,
+                        marginRight: "auto",
+                        marginLeft: "auto",
+                      }}
                     >
-                      {item.displayName}
-                    </Text>
-                  </Card>
-                </View>
+                      <View key={item.id} style={{ flexDirection: "row" }}>
+                        <Animatable.View animation="zoomIn" iterationCount={1}>
+                          <Image
+                            style={{
+                              width: 100,
+                              height: 80,
+                              marginLeft: 15,
+                              marginTop: 10,
+                            }}
+                            source={{ uri: item.photoURL }}
+                          />
+                        </Animatable.View>
+                        <View
+                          style={
+                            myfriendList.includes(item.id)
+                              ? styles.num2
+                              : styles.num
+                          }
+                        >
+                          {/* in here i checked if the current user friend list include the user id that he/she just followed
+                        if yes show requested if no show follow  as a title for the button */}
+                          <Button
+                            color={
+                              myfriendList.includes(item.id)
+                                ? "white"
+                                : "#263c5a"
+                            }
+                            onPress={
+                              myfriendList.includes(item.id)
+                                ? () => handleUnFollow(item.id)
+                                : () => handleFollow(item.id)
+                            }
+                            title={
+                              myfriendList.includes(item.id)
+                                ? "Requested"
+                                : "Follow"
+                            }
+                          />
+                        </View>
+                      </View>
+                      <Text
+                        style={{
+                          marginTop: 2,
+                          marginLeft: 30,
+                          marginBottom: 20,
+                        }}
+                      >
+                        {item.displayName}
+                      </Text>
+                    </Card>
+                  </View>
+                ) : null
               ) : null;
             }}
             enableEmptySections={true}
             style={{ marginTop: 10 }}
-            key
-            Extractor={(item, index) => index.toString()}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
       </ScrollView>
@@ -694,6 +679,15 @@ LinksScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
+  view: {
+    backgroundColor: "#F0F8FF",
+    flex: 1,
+  },
+  view2: {
+    backgroundColor: "#243447",
+    flex: 1,
+    color: "white",
+  },
   container: {
     flex: 1,
     paddingTop: 15,

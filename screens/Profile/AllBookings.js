@@ -16,7 +16,7 @@ export default function AllBookings(props) {
 
   const AllBookingsDB = async () => {
     db.collection("booking")
-      .orderBy("date","desc")
+      .orderBy("date", "desc")
       .onSnapshot((querySnapShot) => {
         const all = [];
         querySnapShot.forEach((doc) => {
@@ -44,12 +44,13 @@ export default function AllBookings(props) {
     <View style={{ backgroundColor: "#F0F8FF", flex: 1 }}>
       <View>
         <ScrollView style={{ marginTop: 30 }}>
-          <DataTable.Header>
-            <DataTable.Title>Date</DataTable.Title>
-            <DataTable.Title numeric>Type</DataTable.Title>
-            <DataTable.Title numeric>Price</DataTable.Title>
-          </DataTable.Header>
-
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Cell>Date</DataTable.Cell>
+              <DataTable.Cell numeric>Type</DataTable.Cell>
+              <DataTable.Cell numeric>Price</DataTable.Cell>
+            </DataTable.Header>
+          </DataTable>
           {allBookings.map((item, index) => {
             return item.userId === firebase.auth().currentUser.uid ? (
               <View key={item.id}>
