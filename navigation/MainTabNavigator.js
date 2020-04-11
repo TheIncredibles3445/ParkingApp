@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 
 import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
-import AdvertisementScreen from "../screens/Advetrisements";
+import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
 import FriendScreen from "../screens/Profile/FriendsScreen";
 import WorkersRating from "../screens/Admin/WorkersRating"
 
@@ -24,12 +24,19 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
-import ChangeRole from "../screens/Admin/ChangeRole";
+import ChangeRole from "../screens/Admin/ChangeRole"
+import WorkerSchedule from "../screens/Profile/WorkerSchedule"
+import ScheduleDetails from "../screens/Profile/ScheuduleDetails"
+import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails"
+import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
+import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
+import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
+import AdvertisementList from "../screens/Admin/AdvertisementsList"
+import PartialPayment from "../screens/PartialPayment"
 
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/Profile/LinksScreen";
-import TestScreen from "../screens/TestScreen";
 import ParkingBooking from "../screens/Booking/ParkingBooking/ParkingBooking";
 import SettingsScreen from "../screens/Profile/SettingsScreen";
 import Parking from "../screens/Booking/ParkingBooking/Parkings";
@@ -55,7 +62,7 @@ const HomeStack = createStackNavigator(
     ParkingBooking: ParkingBooking,
     Parking: Parking,
     Checkout: Checkout,
-    Advertisement: AdvertisementScreen,
+    Advertisement: AdvertisementRequest,
     ServiceBooking: ServiceBookingScreen,
     ConfirmBooking: ConfirmServiceBookingScreen,
     Payment: Payment,
@@ -96,6 +103,15 @@ const AdminStack = createStackNavigator({
   AllReport: {
     screen: AllReportsScreen,
   },
+  Adv: {
+    screen: AdminAdvertisements
+  },
+  AdminAdvDetails: {
+    screen: AdminAdvDetails
+  },
+  AdvertisementList:{
+    screen: AdvertisementList
+  },
   Discounts: {
     screen: DiscountsScreen,
   },
@@ -105,6 +121,7 @@ const AdminStack = createStackNavigator({
   WorkersRating:{
     screen: WorkersRating,
   }
+
 });
 //the simulator wont work >>. i have to shut down the pc it always happen
 AdminStack.navigationOptions = {
@@ -161,7 +178,6 @@ TestStack.navigationOptions = {
   ),
 };
 
-TestStack.path = "";
 
 const SettingsStack = createStackNavigator(
   {
@@ -172,6 +188,11 @@ const SettingsStack = createStackNavigator(
     AddVehicle: AddVehicle,
     AddCard: AddCard,
     Friends: LinksScreen,
+    Schedule: WorkerSchedule,
+    ScheduleDetails: ScheduleDetails,
+    AdvertisementDetails: AdvertisementDetails,
+    MyAdvertisement: MyAdvertisement,
+    PartialPayment: PartialPayment,
     AllBookings: AllBookings,
     ParkingBookingsDetails: ParkingBookingsDetails,
     ServiceBookingDetails: ServiceBookingDetails,
@@ -193,11 +214,8 @@ SettingsStack.path = "";
 
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
-  // LinksStack,
-  // TestStack,
   SettingsStack,
-  AdminStack,
-  // ServiceBookingStack
+  AdminStack
 });
 
 tabNavigator.path = "";

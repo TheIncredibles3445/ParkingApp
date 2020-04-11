@@ -42,9 +42,9 @@ export default function Direction(props) {
 
     const parkingLocation = (
       await db
-        .collection("Block")
+        .collection("block")
         .doc(blockId)
-        .collection("Parking")
+        .collection("parking")
         .doc(parkingId)
         .get()
     ).data();

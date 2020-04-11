@@ -4,21 +4,20 @@
 // - modify firebase version in package.json to "7.11.0"
 // - do a yarn install
 // - change App.js to fix bug (see top of file)
-
 var firebase = require("firebase/app");
 require("firebase/firestore");
 
 // Initialize Cloud Firestore through Firebase
 // replace with your own config
 firebase.initializeApp({
-  // apiKey: "AIzaSyBA7ElfHLwZ6tu-fbByGQi6mpJTaAh__rQ",
-  // authDomain: "messages1-c16bc.firebaseapp.com",
-  // databaseURL: "https://messages1-c16bc.firebaseio.com",
-  // projectId: "messages1-c16bc",
-  // storageBucket: "messages1-c16bc.appspot.com",
-  // messagingSenderId: "26907623108",
-  // appId: "1:26907623108:web:123dc947b016a3a6245391",
-  // measurementId: "G-LQNMLNGSN5"
+  apiKey: "AIzaSyCNs3ICBXqvnOHf9SP05LwfxZnXM2CXFrg",
+  authDomain: "parking-app-3b592.firebaseapp.com",
+  databaseURL: "https://parking-app-3b592.firebaseio.com",
+  projectId: "parking-app-3b592",
+  storageBucket: "parking-app-3b592.appspot.com",
+  messagingSenderId: "167019920679",
+  appId: "1:167019920679:web:848574c0f0a6bc3772bd02",
+  measurementId: "G-TYS24KVHHM"
 });
 const db = firebase.firestore();
 
@@ -31,25 +30,32 @@ const DELAY = 10;
 
 // an array to be filled from db
 // - change to suit your own db schema and simulation needs
-const messages = [];
+const parkings = [];
 
 const init = async () => {
   // do once only, not a listener
-  const querySnapshot = await db.collection("messages").get();
-  querySnapshot.forEach(doc => {
-    messages.push({ id: doc.id, ...doc.data() });
-  });
-  console.log("done init: ", messages);
+  const querySnapshot = await db.collection("Block").get();
+  for (let block of querySnapshot.docs) {
+    let parking = await db
+      .collection("Block")
+      .doc(block.id)
+      .collection("Parking")
+      .get();
+    for (let park of parking.docs) {
+      parkings.push({ id: park.id, ...park.data(), blockId: block.id });
+    }
+  }
+  console.log("done init: ", parkings);
 };
 
 const simulate = async () => {
   // get necessary data from db for simulation to start
   await init();
 
-  // simulate something (e.g. db update) every DELAY seconds
+  // // simulate something (e.g. db update) every DELAY seconds
   setInterval(async () => {
     // select a random item
-    const i = Math.floor(Math.random() * messages.length);
+    const i = Math.floor(Math.random() * parkings.length);
 
     // change it somehow
     // - must modify local copy of db data
@@ -57,25 +63,27 @@ const simulate = async () => {
     const rnd = Math.random();
     let choice = "";
 
+    let parkingSpot = parkings[i];
+    console.log("parking before changing line 67 => ", parkingSpot);
+    
     // - use percentages to decide what to do
     // - change to suit your own needs
-    if (rnd < 0.3333) {
-      choice = " ;)";
-    } else if (rnd < 0.6666) {
-      choice = " :(";
+    if (rnd < 0.6666) {
+      parking.isParked = true;
     } else {
-      choice = " :/";
+      parking.isParked = false;
     }
-    messages[i].text += choice;
-
+    console.log("parking before changing line 75 => ", parkingSpot);
+    console.log("Parking Object in the array => ", parkings[i]);
+    
     // update the db
-    const { id, ...message } = messages[i];
-    await db
-      .collection("messages")
-      .doc(id)
-      .set(message);
+    const { id, ...parking } = parkings[i];
+    // await db
+    //   .collection("Block").doc(parking.blockId).c
+    //   .doc(id)
+    //   .set(message);
 
-    console.log("simulated with item[", i, "]: ", message.text);
+    console.log("simulated with item[", i, "]: ", parking);
   }, DELAY * 1000);
 };
 

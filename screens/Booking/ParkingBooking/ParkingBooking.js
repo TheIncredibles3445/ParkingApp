@@ -30,6 +30,19 @@ export default function ParkingBooking(props) {
   const [blocks, setBlocks] = useState([]);
   const [bookingStatus, setBookingStatus] = useState([]);
 
+  const unsubscribe = props.navigation.addListener('didFocus', () => {
+    console.log('focussed');
+    track()
+});
+
+const track = async()=>{
+  let old = await db.collection("tracking").doc("track").get()
+  let newTrack = parseInt(old.data().parking) + 1
+  db.collection("tracking").doc("track").update({ parking: newTrack})
+  AsyncStorage.setItem("parking", "yes");
+
+}
+
   useEffect(() => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -64,7 +77,7 @@ export default function ParkingBooking(props) {
   }, []);
 
   useEffect(() => {
-    db.collection("block").onSnapshot((querySnapshot) => {
+    db.collection("block").onSnapshot(querySnapshot => {
       let blcks = [];
 
       querySnapshot.forEach((doc) => {

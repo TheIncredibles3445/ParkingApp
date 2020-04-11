@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Button, SafeAreaView } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -6,26 +6,54 @@ import "firebase/storage";
 import "firebase/functions";
 import * as ImagePicker from "expo-image-picker";
 import { Avatar, ListItem, Icon, Text } from "react-native-elements";
-// import { Ionicons } from "@expo/vector-icons";
-// import { Text } from "react-native-animatable";
-// import { ScrollView } from "react-native-gesture-handler";
+import "firebase/auth";
+import db from "../../db.js";
+
+
 
 export default function SettingsScreen(props) {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   // const [displayName, setDisplayName] = useState("");
   // const [uri, setUri] = useState("");
   const [photoURL, setPhotoURL] = useState("");
-  // const [phone, setPhone] = useState("");
+  const loggedInUser = useRef()
+  const [update , setUpate] = useState(false)
+  const[ ads , setAds] = useState([])
 
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
     setHasCameraRollPermission(status === "granted");
   };
 
+  useEffect(()=>{
+
+  },[ update])
+
   useEffect(() => {
-    // console.log(firebase.auth().currentUser);
+    console.log(firebase.auth().currentUser.uid);
+    handleSet();
+    getUser()
     askPermission();
+
+    db.collection("Advertisement").where("uid", "==", firebase.auth().currentUser.uid).onSnapshot(querySnapshot => {
+      let ads = [];
+
+      querySnapshot.forEach(doc => {
+          ads.push({ id: doc.id, ...doc.data(), isSelected: false });
+      });
+     
+      setAds([...ads]);
+    });
+
+
   }, []);
+
+  const getUser = async () => {
+    let loggeduser = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
+    loggedInUser.current = loggeduser.data()
+    console.log("the user ---->", loggedInUser.current.role) 
+    setUpate(!update) 
+  }
 
   const handleSet = () => {
     const user = firebase.auth().currentUser;
@@ -34,15 +62,19 @@ export default function SettingsScreen(props) {
     // setPhone(user.phoneNumber);
   };
 
+  
   const handleLogout = () => {
     firebase.auth().signOut();
+
   };
 
-  useEffect(() => {
-    handleSet();
-  }, []);
 
-  useEffect(() => {}, [photoURL]);
+
+  useEffect(() => {
+    
+  }, [loggedInUser.current ]);
+
+  useEffect(() => { }, [photoURL]);
 
   const handleSave = async uri => {
     const response = await fetch(uri);
@@ -65,6 +97,7 @@ export default function SettingsScreen(props) {
     setPhotoURL(url);
   };
 
+
   const handlePickImage = async () => {
     // show camera roll, allow user to select
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -81,8 +114,8 @@ export default function SettingsScreen(props) {
     }
   };
 
-  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "My BOOKINGS"];
-  const files = ["Profile", "Payment", "Vehicle", "Friends", "AllBookings"];
+  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "My BOOKINGS", "Pay"];
+  const files = ["Profile", "Payment", "Vehicle", "Friends", "AllBookings","PartialPayment"];
   return (
     <View style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>
@@ -96,7 +129,7 @@ export default function SettingsScreen(props) {
           overlayContainerStyle={{ backgroundColor: "white" }}
           showEditButton
           onEditPress={handlePickImage}
-          // editButton={<Icon type="feather" name="edit-2" color="red" />}
+        // editButton={<Icon type="feather" name="edit-2" color="red" />}
         />
         <Text>You are logged in as</Text>
         <Text>{firebase.auth().currentUser.email}</Text>
@@ -115,35 +148,54 @@ export default function SettingsScreen(props) {
             }
           />
         ))}
-        {/* <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24
-          }}
-          onChangeText={setDisplayName}
-          placeholder="Display Name"
-          value={displayName}
-        /> */}
-        {/* <Input
-          placeholder="Name"
-          label="Name"
-          onChangeText={setDisplayName}
-          value={displayName}
-        />
-        <Input
-          placeholder="Phone"
-          label="Phone"
-          onChangeText={setDisplayName}
-          value={phone}
-        /> */}
+
+        
+        {
+
+          loggedInUser.current && loggedInUser.current.role === "worker" ?
+            <View style={{ flex: 4 }}>
+
+              <ListItem
+                title="Schedule"
+                bottomDivider
+                rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
+                onPress={() =>
+                  props.navigation.navigate("Schedule", {
+                    user: loggedInUser.current
+                  })
+                }
+              />
+            </View>
+            : 
+            null
+        }
+
+        {
+          ads.length > 0 ?
+          <View style={{ flex: 4 }}>
+
+              <ListItem
+                title="My Advertisements"
+                bottomDivider
+                rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
+                onPress={() =>
+                  props.navigation.navigate("MyAdvertisement", {
+                    myAds: ads
+                  })
+                }
+              />
+            </View>
+          :
+
+          null
+        }
+
       </View>
 
-      {/* {photoURL !== "" && (
-        <Image style={{ width: 100, height: 100 }} source={{ uri: photoURL }} />
-      )} */}
-      {/* <Button title="Pick Image" onPress={handlePickImage} /> */}
+
+
+
+
       <Button title="Log Out" onPress={handleLogout} />
     </View>
   );

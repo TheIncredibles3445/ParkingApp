@@ -38,13 +38,13 @@ export default function Checkout(props) {
   };
 
   const getAllBlocks = async () => {
-    const blocks = await db.collection("Block").get();
+    const blocks = await db.collection("block").get();
     let parkings = [];
     for (let block of blocks.docs) {
       const parkingsLots = await db
-        .collection("Block")
+        .collection("block")
         .doc(block.id)
-        .collection("Parking")
+        .collection("parking")
         .get();
       for (let parking of parkingsLots.docs) {
         parkings.push({

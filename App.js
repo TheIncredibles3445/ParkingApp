@@ -1,7 +1,7 @@
 import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Input, Icon, Button, Text, Overlay } from "react-native-elements";
 
@@ -10,8 +10,11 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  // Image,
+  KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  TextInput,
   SafeAreaView,
   Dimensions,
 } from "react-native";
@@ -26,53 +29,172 @@ if (!global.atob) {
 }
 
 import AppNavigator from "./navigation/AppNavigator";
-
+import Animated, { Easing } from "react-native-reanimated";
+import {
+  TapGestureHandler,
+  State,
+  TouchableOpacity,
+} from "react-native-gesture-handler";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "./db";
+
+import Svg, { Image, Circle, ClipPath } from "react-native-svg";
+
 console.disableYellowBox = true;
 
 const screen = Dimensions.get("screen");
+const { width, height } = Dimensions.get("window");
+
+function cacheImages(images) {
+  return images.map((image) => {
+    if (typeof image === "string") {
+      return Image.prefetch(image);
+    } else {
+      return Asset.fromModule(image).downloadAsync();
+    }
+  });
+}
+
+const {
+  Value,
+  event,
+  block,
+  cond,
+  eq,
+  set,
+  Clock,
+  startClock,
+  stopClock,
+  debug,
+  timing,
+  clockRunning,
+  interpolate,
+  Extrapolate,
+  concat,
+} = Animated;
+
+function runTiming(clock, value, dest) {
+  const state = {
+    finished: new Value(0),
+    position: new Value(0),
+    time: new Value(0),
+    frameTime: new Value(0),
+  };
+
+  const config = {
+    duration: 1000,
+    toValue: new Value(0),
+    easing: Easing.inOut(Easing.ease),
+  };
+
+  return block([
+    cond(clockRunning(clock), 0, [
+      set(state.finished, 0),
+      set(state.time, 0),
+      set(state.position, value),
+      set(state.frameTime, 0),
+      set(config.toValue, dest),
+      startClock(clock),
+    ]),
+    timing(clock, state, config),
+    cond(state.finished, debug("stop clock", stopClock(clock))),
+    state.position,
+  ]);
+}
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [user, setUser] = useState(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [userName, setUserName] = useState("");
-  const [isLogin, setIsLogin] = useState(false);
-  const [register, setRegister] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [dimensions, setDimensions] = useState({ screen });
-  const [forgotEmail, setForgotEmail] = useState("");
+  const email = useRef();
+  const password = useRef();
+  const emailR = useRef();
+  const passwordR = useRef();
+  const phone = useRef();
+  const [isReady, setIsReady] = useState(false);
 
-  const onChange = ({ screen }) => {
-    setDimensions({ screen });
+  const buttonOpacity = new Value(1);
+
+  const onStateChange = event([
+    {
+      nativeEvent: ({ state }) =>
+        block([
+          cond(
+            eq(state, State.END),
+            set(buttonOpacity, runTiming(new Clock(), 1, 0))
+          ),
+        ]),
+    },
+  ]);
+
+  const onCloseState = event([
+    {
+      nativeEvent: ({ state }) =>
+        block([
+          cond(
+            eq(state, State.END),
+            set(buttonOpacity, runTiming(new Clock(), 0, 1))
+          ),
+        ]),
+    },
+  ]);
+
+  const buttonY = interpolate(buttonOpacity, {
+    inputRange: [0, 1],
+    outputRange: [100, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const bgY = interpolate(buttonOpacity, {
+    inputRange: [0, 1],
+    outputRange: [-height / 2 - 50, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const textInputOpacity = interpolate(buttonOpacity, {
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const textInputZIndex = interpolate(buttonOpacity, {
+    inputRange: [0, 1],
+    outputRange: [1, -1],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const textInputY = interpolate(buttonOpacity, {
+    inputRange: [0, 1],
+    outputRange: [0, 100],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const rotateCross = interpolate(buttonOpacity, {
+    inputRange: [0, 1],
+    outputRange: [180, 360],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const loadAssetsAsync = async () => {
+    const imageAssets = cacheImages([require("./assets/images/park.png")]);
+    await Promise.all([...imageAssets]);
   };
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged(setUser);
-  }, []);
 
-  useEffect(() => {
-    Dimensions.addEventListener("change", onChange);
-    return () => {
-      Dimensions.removeEventListener("change", onChange);
-    };
   }, []);
 
   const handleRegister = async () => {
-    if (userName !== "" && email !== "" && password !== "") {
-      await firebase.auth().createUserWithEmailAndPassword(email, password);
+    if (emailR.current && passwordR.current && phone.current ) {
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(emailR.current, passwordR.current);
       const response = await fetch(
         `https://us-central1-parking-assistant-d2d25.cloudfunctions.net/initUser?uid=${
-          firebase.auth().currentUser.uid
-        }&email=${email}&displayName=${userName}`
+        firebase.auth().currentUser.uid
+        }&email=${email.current}`
       );
-
-      const user = firebase.auth().currentUser;
-      const verify = await user.sendEmailVerification();
-
       setUpUser();
     } else {
       alert("Enter All Credentials");
@@ -81,26 +203,25 @@ export default function App(props) {
 
   const setUpUser = () => {
     db.collection("users").doc(firebase.auth().currentUser.uid).set({
-      email: firebase.auth().currentUser.email,
-      displayName: userName,
-      phoneNumber: firebase.auth().currentUser.phoneNumber,
-      points: 0,
+      lastLogin: new Date(),
+      email : emailR.current,
+      role :"user",
       pendingAmount: 0,
       advPendingAmount: 0,
-      role: "user",
+      points: 0,
+      displayName: emailR.current,
+      photoURL: "",
+      phoneNumber : phone.current,
       photoURL:
         "https://image.shutterstock.com/image-vector/blank-avatar-photo-place-holder-260nw-1114445501.jpg",
-      lastLogin: new Date(),
     });
   };
 
-  const handleShowRegister = (value) => {
-    setRegister(value);
-  };
-
   const handleLogin = async () => {
-    if (email !== "" && password !== "") {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
+    if (email.current  && password.current ) {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(email.current, password.current);
       updateUserLogin();
     } else {
       alert("Enter Email and Password");
@@ -113,19 +234,27 @@ export default function App(props) {
     });
   };
 
-  const handleSubmit = () => {
-    firebase
-      .auth()
-      .sendPasswordResetEmail(forgotEmail)
-      .then(() => {
-        alert("Check Your Email");
-      })
-      .catch((error) => {
-        console.log("Error !", error);
-      });
+
+  const handleEmail = (text) => {
+    email.current = text;
   };
 
-  if (!isLoadingComplete && !props.skipLoadingScreen) {
+  const handlePassword = (text) => {
+    password.current = text;
+  };
+
+  const handlePasswordR = (text) => {
+    passwordR.current = text;
+  };
+  const handleEmailR = (text) => {
+    emailR.current = text;
+  };
+
+  const handlePhone = (text) => {
+    phone.current = text;
+  };
+
+  if (!isLoadingComplete && !props.skipLoadingScreen && !isReady) {
     return (
       <AppLoading
         startAsync={loadResourcesAsync}
@@ -134,231 +263,149 @@ export default function App(props) {
       />
     );
   } else if (!user) {
-    return !register ? (
-      <SafeAreaView style={Platform.OS !== "ios" ? { marginTop: "5%" } : null}>
-        <View>
-          <Text
-            style={{
-              marginLeft: "2%",
-              color: "black",
-              fontWeight: "bold",
-              fontSize: 25,
-              opacity: 0.4,
-            }}
-          >
-            Login
-          </Text>
-        </View>
-        <View style={{ marginTop: "5%" }}>
-          <Input
-            label="Email"
-            keyboardType="email-address"
-            autoFocus={true}
-            value={email}
-            placeholder="Email"
-            onChangeText={setEmail}
-            rightIcon={
-              <Icon name="email" type="material" size={24} color="black" />
-            }
-          />
-        </View>
-        <View style={{ marginTop: "5%" }}>
-          <Input
-            inputContainerStyleStyle={{ marginTop: "10%" }}
-            label="Password"
-            value={password}
-            placeholder="Password"
-            onChangeText={setPassword}
-            secureTextEntry={true}
-            rightIcon={
-              <Icon name="lock" type="font-awesome" size={25} color="black" />
-            }
-          />
-        </View>
-        <View style={{ alignItems: "center" }}>
-          <Button
-            type="clear"
-            title="Forgot Password ?"
-            onPress={() => setVisible(true)}
-          />
-        </View>
-        <View
+    return (
+      <KeyboardAvoidingView
+        behavior={Platform.Os == "ios" ? "padding" : "height"}
+        style={{
+          flex: 1,
+          backgroundColor: "white",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Animated.View
           style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginTop: "2%",
+            ...StyleSheet.absoluteFill,
+            transform: [{ translateY: bgY }],
           }}
         >
-          <Text
-            style={{
-              fontSize: 16,
-              marginLeft: "2%",
-              alignItems: "center",
-              marginTop: "2%",
-            }}
-          >
-            Don't have an account ?
-          </Text>
-          <Button
-            type="clear"
-            title="Register"
-            onPress={() => handleShowRegister(true)}
-          />
-        </View>
-        <View style={{ alignItems: "center", marginTop: "5%" }}>
-          <Button
-            buttonStyle={{
-              borderRadius: 30,
-              paddingLeft: "30%",
-              paddingRight: "30%",
-            }}
-            title="Login"
-            onPress={handleLogin}
-          />
-        </View>
-        <Overlay
-          isVisible={visible}
-          windowBackgroundColor="rgba(255, 255, 255, .5)"
-          width={dimensions.screen.width}
-          height={dimensions.screen.height}
-        >
-          <SafeAreaView
-            style={Platform.OS !== "ios" ? { marginTop: "40%" } : null}
-          >
-            <View>
+          <Svg height={height + 50} width={width}>
+            <ClipPath id="clip">
+              <Circle r={height + 50} cx={width / 2} />
+            </ClipPath>
+            <Image
+              href={require("./assets/images/park.png")}
+              height={height + 50}
+              width={width}
+              preserveAspectRatio="xMidYMid slice"
+              clipPath="url(#clip)"
+            />
+          </Svg>
+        </Animated.View>
+        <View style={{ height: height / 4, justifyContent: "center" }}>
+          <TapGestureHandler onHandlerStateChange={onStateChange}>
+            <Animated.View
+              style={{
+                ...styles.button,
+                backgroundColor: "#2E71DC",
+                opacity: buttonOpacity,
+                transform: [{ translateY: buttonY }],
+              }}
+            >
               <Text
-                style={{
-                  marginLeft: "2%",
-                  color: "black",
-                  fontWeight: "bold",
-                  fontSize: 25,
-                  opacity: 0.4,
-                }}
+                style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
               >
-                Forgot Password
+                SIGN IN / SIGN UP
               </Text>
-            </View>
-            <View style={{ marginTop: "5%" }}>
-              <Input
-                label="Email"
-                keyboardType="email-address"
-                autoFocus={true}
-                value={forgotEmail}
-                placeholder="Email"
-                onChangeText={setForgotEmail}
-                rightIcon={
-                  <Icon name="email" type="material" size={24} color="black" />
-                }
-              />
-            </View>
-
-            <View style={{ alignItems: "center", marginTop: "5%" }}>
-              <Button
-                buttonStyle={{
-                  borderRadius: 30,
-                  paddingLeft: "30%",
-                  paddingRight: "30%",
-                }}
-                title="Submit"
-                onPress={handleSubmit}
-              />
-            </View>
-
-            <View style={{ alignItems: "center", marginTop: "5%" }}>
-              <Button
-                buttonStyle={{
-                  borderRadius: 30,
-                  paddingLeft: "30%",
-                  paddingRight: "30%",
-                }}
-                title="Close"
-                onPress={() => setVisible(false)}
-              />
-            </View>
-          </SafeAreaView>
-        </Overlay>
-      </SafeAreaView>
-    ) : (
-      <SafeAreaView style={Platform.OS !== "ios" ? { marginTop: "5%" } : null}>
-        <View>
-          <Text
+            </Animated.View>
+          </TapGestureHandler>
+          <Animated.View
             style={{
-              marginLeft: "2%",
-              color: "black",
-              fontWeight: "bold",
-              fontSize: 25,
-              opacity: 0.4,
+              zIndex: textInputZIndex,
+              opacity: textInputOpacity,
+              transform: [{ translateY: textInputY }],
+              height: height / 2,
+              ...StyleSheet.absoluteFill,
+              top: null,
+              justifyContent: "center",
             }}
           >
-            Register
-          </Text>
-        </View>
-        <View style={{ marginTop: "5%" }}>
-          <Input
-            label="Email"
-            keyboardType="email-address"
-            autoFocus={true}
-            value={email}
-            placeholder="Email"
-            onChangeText={setEmail}
-            rightIcon={
-              <Icon name="email" type="material" size={24} color="black" />
-            }
-          />
-        </View>
-        <View style={{ marginTop: "5%" }}>
-          <Input
-            inputContainerStyleStyle={{ marginTop: "10%" }}
-            label="Password"
-            value={password}
-            placeholder="Password"
-            onChangeText={setPassword}
-            secureTextEntry={true}
-            rightIcon={
-              <Icon name="lock" type="font-awesome" size={25} color="black" />
-            }
-          />
-        </View>
-        <View
-          style={{
-            marginTop: "5%",
-          }}
-        >
-          <Input
-            inputContainerStyleStyle={{ marginTop: "10%" }}
-            label="Username"
-            value={userName}
-            placeholder="Username"
-            onChangeText={setUserName}
-            rightIcon={
-              <Icon name="user" type="font-awesome" size={25} color="black" />
-            }
-          />
-        </View>
+            <TapGestureHandler onHandlerStateChange={onCloseState}>
+              <Animated.View style={styles.closeButton}>
+                <Animated.Text
+                  style={{
+                    fontSize: 15,
+                    transform: [{ rotate: concat(rotateCross, "deg") }],
+                  }}
+                >
+                  X
+                </Animated.Text>
+              </Animated.View>
+            </TapGestureHandler>
+            <View style={{ flexDirection: "row"  }}>
+              {/**login */}
+              <View>
+                <TextInput
+                  keyboardType="email-address"
+                  placeholderTextColor="black"
+                  value={email}
+                  placeholder="EMAIL"
+                  onChangeText={(text) => handleEmail(text)}
+                  style={styles.input}
+                />
 
-        <View style={{ alignItems: "center", marginTop: "5%" }}>
-          <Button
-            buttonStyle={{
-              borderRadius: 30,
-              paddingLeft: "30%",
-              paddingRight: "30%",
-            }}
-            title="Register"
-            onPress={handleRegister}
-          />
+                <TextInput
+                  value={password}
+                  placeholder="PASSWORD"
+                  placeholderTextColor="black"
+                  onChangeText={(text) => handlePassword(text)}
+                  secureTextEntry={true}
+                  style={styles.input}
+                />
+
+              </View>
+              <View style={{borderLeftWidth:0.5}}></View>
+
+              {/**register */}
+              <View>
+                <TextInput
+                  keyboardType="email-address"
+                  placeholderTextColor="black"
+                  value={emailR}
+                  placeholder="EMAIL"
+                  onChangeText={(text) => handleEmailR(text)}
+                  style={styles.input}
+                />
+
+                <TextInput
+                  value={passwordR}
+                  placeholder="PASSWORD"
+                  placeholderTextColor="black"
+                  onChangeText={(text) => handlePasswordR(text)}
+                  secureTextEntry={true}
+                  style={styles.input}
+                />
+                <TextInput
+                  value={phone}
+                  placeholder="PHONE NUMBER"
+                  placeholderTextColor="black"
+                  onChangeText={(text) => handlePhone(text)}
+                  keyboardType="numeric"
+                  style={styles.input}
+                />
+              </View>
+            </View>
+
+            <Animated.View
+              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+            >
+              <TouchableOpacity onPress={handleLogin}>
+                <Animated.View style={styles.button}>
+                  <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                    SIGN IN
+                  </Text>
+                </Animated.View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleRegister}>
+                <Animated.View style={styles.button}>
+                  <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                    SIGN UP
+                  </Text>
+                </Animated.View>
+              </TouchableOpacity>
+            </Animated.View>
+          </Animated.View>
         </View>
-        <View style={{ alignItems: "center", marginTop: "5%" }}>
-          <Button
-            buttonStyle={{
-              borderRadius: 30,
-              paddingLeft: "30%",
-              paddingRight: "30%",
-            }}
-            title="Go Back"
-            onPress={() => handleShowRegister(false)}
-          />
-        </View>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   } else {
     return (
@@ -399,7 +446,7 @@ function handleFinishLoading(setLoadingComplete) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F0FFFF"
   },
   contentContainer: {
     paddingTop: "10%",
@@ -411,5 +458,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "white",
+    height: 70,
+    marginHorizontal: 20,
+    borderRadius: 35,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 5,
+    shadowOffset: { width: 2, height: 2 },
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+  },
+  closeButton: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    top: -20,
+    left: width / 2 - 20,
+    shadowOffset: { width: 2, height: 2 },
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+  },
+  input: {
+    margin: "1%",
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 0.5,
+    //marginHorizontal: 20,
+    paddingLeft: 10,
+    //marginVertical: 5,
+    borderColor: "rgba(0,0,0,0.2)",
+    width:200
   },
 });
