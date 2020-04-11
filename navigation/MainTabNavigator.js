@@ -1,8 +1,19 @@
 import React from "react";
-import { Platform } from "react-native";
+import {
+  Platform,
+  SafeAreaView,
+  View,
+  Text,
+  ScrollView,
+  Image,
+} from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-
+import { createDrawerNavigator, DrawerItems } from "react-navigation-drawer";
+import { Avatar, Icon } from "react-native-elements";
+import db from "../db";
+import firebase from "firebase";
+import "firebase/auth";
 import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
 import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
@@ -49,9 +60,26 @@ import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
+import ProfileScreen from "../screens/Profile/ProfileScreen";
 const config = Platform.select({
   web: { headerMode: "screen" },
   default: {},
+});
+
+// const adminUsers = [];
+
+// db.collection("users")
+//   .where("role", "==", "Admin")
+//   .onSnapshot((query) => {
+//     query.forEach((docs) => {
+//       adminUsers.push({ id: docs.id, ...docs.data() });
+//     });
+//     console.log("Admins => ", adminUsers);
+//   });
+
+let loggedInUser = null;
+firebase.auth().onAuthStateChanged(async (user) => {
+  loggedInUser = user;
 });
 
 const HomeStack = createStackNavigator(
@@ -129,53 +157,11 @@ AdminStack.navigationOptions = {
 };
 AdminStack.path = "";
 
-// const ServiceBookingStack = createStackNavigator({
-//   Main: {
-//     screen: ServiceBookingScreen
-//   },
-//   ConfirmBooking: {
-//     screen: ConfirmServiceBookingScreen
-//   },
-//   // Payment: {
-//   //   screen: Payment
-//   // },
-//   Home: {
-//     screen: HomeScreen
-//   }
-// });
-// ServiceBookingStack.navigationOptions = {
-//   tabBarLabel: "Book a Service",
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-//     />
-//   )
-// };
-// ServiceBookingStack.path = "";
-
-//
-// const TestStack = createStackNavigator(
-//   {
-//     Test: Test,
-//   },
-//   config
-// );
-
-// TestStack.navigationOptions = {
-//   tabBarLabel: "Test",
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-//     />
-//   ),
-// };
-
 const SettingsStack = createStackNavigator(
   {
-    Settings: SettingsScreen,
-    Profile: Profile,
+    // Settings: SettingsScreen,
+    Profile: ProfileScreen,
+    EditProfile: Profile,
     Payment: PaymentCard,
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
@@ -185,7 +171,7 @@ const SettingsStack = createStackNavigator(
     ScheduleDetails: ScheduleDetails,
     AdvertisementDetails: AdvertisementDetails,
     MyAdvertisement: MyAdvertisement,
-    PartialPayment: PartialPayment,
+    // PartialPayment: PartialPayment,
     AllBookings: AllBookings,
     ParkingBookingsDetails: ParkingBookingsDetails,
     ServiceBookingDetails: ServiceBookingDetails,
@@ -205,12 +191,185 @@ SettingsStack.navigationOptions = {
 
 SettingsStack.path = "";
 
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  SettingsStack,
-  AdminStack,
+const ProfileStack = createStackNavigator({
+  ProfileScreen: ProfileScreen,
+  Profile: Profile,
 });
+
+const VehicleStack = createStackNavigator({
+  Vehicle: Vehicle,
+  AddVehicle: AddVehicle,
+});
+
+const CardStack = createStackNavigator({
+  PaymentCard: PaymentCard,
+  AddCard: AddCard,
+});
+
+const tabNavigator = createBottomTabNavigator(
+  {
+    HomeStack: HomeStack,
+    SettingsStack: SettingsStack,
+    AdminStack: AdminStack,
+  },
+  {
+    navigationOptions: ({ navigation }) => {
+      const { routeName, routes } = navigation.state.routes[
+        navigation.state.index
+      ];
+      return {
+        header: null,
+        headerTitle: routeName,
+      };
+    },
+  }
+);
 
 tabNavigator.path = "";
 
-export default tabNavigator;
+const HomeStk = createStackNavigator({
+  Home: HomeScreen,
+});
+
+const DrawerStack = createStackNavigator(
+  {
+    HomeDrawerStack: tabNavigator,
+    HomeStk: HomeStk,
+  },
+  {
+    drawerIcon: ({ tintColor }) => (
+      <Image
+        source={require("../assets/images/home.png")}
+        style={[styles.icon, { tintColor: tintColor }]}
+      />
+    ),
+  }
+);
+
+const ProfileStk = createStackNavigator({
+  HomeDrawerStk: tabNavigator,
+  ProfileStk: ProfileStack,
+});
+
+const VehicleStk = createStackNavigator({
+  HomeDrawerStk: tabNavigator,
+  VehicleStk: VehicleStack,
+});
+
+const FriendsStk = createStackNavigator({
+  HomeDrawerStk: tabNavigator,
+  Friends: LinksScreen,
+});
+
+const CardStk = createStackNavigator({
+  HomeDrawerStk: tabNavigator,
+  Cards: CardStack,
+});
+
+const AppDrawerNavigator = createDrawerNavigator(
+  {
+    Home: {
+      screen: DrawerStack,
+      navigationOptions: {
+        drawerLabel: "Home",
+        drawerIcon: (
+          <Image
+            source={require("../assets/images/home.png")}
+            style={{ width: 22, height: 22 }}
+          />
+        ),
+      },
+    },
+    Profile: {
+      screen: ProfileStk,
+      navigationOptions: {
+        drawerLabel: "Profile",
+        drawerIcon: (
+          <Icon
+            name="ios-person"
+            type="ionicon"
+            // style={{ width: 33, height: 33 }}
+          />
+        ),
+      },
+    },
+    Vehicle: {
+      screen: VehicleStk,
+      navigationOptions: {
+        drawerLabel: "Vehicle",
+        drawerIcon: (
+          <Icon
+            name="md-car"
+            type="ionicon"
+            style={{ width: 24, height: 24 }}
+          />
+        ),
+      },
+    },
+    Friends: {
+      screen: FriendsStk,
+      navigationOptions: {
+        drawerLabel: "Friends",
+        drawerIcon: (
+          <Icon
+            name="people-outline"
+            type="material"
+            style={{ width: 24, height: 24 }}
+          />
+        ),
+      },
+    },
+    Cards: {
+      screen: CardStk,
+      navigationOptions: {
+        drawerLabel: "Cards",
+        drawerIcon: (
+          <Icon
+            name="ios-card"
+            type="ionicon"
+            style={{ width: 24, height: 24 }}
+          />
+        ),
+      },
+    },
+  },
+  {
+    drawerBackgroundColor: "#F0F8FF",
+    navigationOptions: {
+      backgroundColor: "red",
+    },
+    contentOptions: {
+      activeTintColor: "black",
+      inactiveTintColor: "black",
+    },
+    contentComponent: (props) => (
+      <SafeAreaView style={{ flex: 1 }}>
+        <View
+          style={{
+            height: 200,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {loggedInUser && (
+            <SafeAreaView style={{ marginTop: "20 %" }}>
+              <Avatar
+                source={{ uri: loggedInUser.photoURL }}
+                size="large"
+                rounded
+              />
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ fontSize: 20 }}>{loggedInUser.displayName}</Text>
+              </View>
+            </SafeAreaView>
+          )}
+        </View>
+        <ScrollView>
+          <DrawerItems {...props} />
+        </ScrollView>
+      </SafeAreaView>
+    ),
+  }
+);
+
+export default AppDrawerNavigator;
