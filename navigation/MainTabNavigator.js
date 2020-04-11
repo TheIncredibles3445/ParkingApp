@@ -18,6 +18,7 @@ import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
 import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
 import FriendScreen from "../screens/Profile/FriendsScreen";
+import WorkersRating from "../screens/Admin/WorkersRating"
 
 //Lamees's imports
 import ReportScreen from "../screens/ReportScreen";
@@ -65,17 +66,6 @@ const config = Platform.select({
   web: { headerMode: "screen" },
   default: {},
 });
-
-// const adminUsers = [];
-
-// db.collection("users")
-//   .where("role", "==", "Admin")
-//   .onSnapshot((query) => {
-//     query.forEach((docs) => {
-//       adminUsers.push({ id: docs.id, ...docs.data() });
-//     });
-//     console.log("Admins => ", adminUsers);
-//   });
 
 let loggedInUser = null;
 firebase.auth().onAuthStateChanged(async (user) => {
@@ -144,6 +134,10 @@ const AdminStack = createStackNavigator({
   ChangeRole: {
     screen: ChangeRole,
   },
+  WorkersRating:{
+    screen: WorkersRating,
+  }
+
 });
 //the simulator wont work >>. i have to shut down the pc it always happen
 AdminStack.navigationOptions = {

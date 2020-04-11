@@ -13,6 +13,8 @@ import {
   Platform,
   SafeAreaView,
   StyleSheet,
+  ImageBackground,
+  Image,
 } from "react-native";
 import { Card, Text, Button, Icon } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
@@ -22,6 +24,11 @@ import { AsyncStorage } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen(props) {
+  //============================ START DATE AND TIME ============================
+  const image = {
+    uri: "",
+  };
+
   const [ads, setAds] = useState([]);
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
@@ -32,10 +39,31 @@ export default function HomeScreen(props) {
 
   const unsubscribe = props.navigation.addListener("didFocus", () => {
     console.log("focussed");
+    track();
   });
 
+  const track = async () => {
+    console.log(" in track");
+    let old = await db.collection("tracking").doc("track").get();
+    // AsyncStorage.setItem("service", "yes");
+    let check = await AsyncStorage.getItem("service");
+    console.log(check);
+    if (check === "yes") {
+      let newTrack = parseInt(old.data().service) - 1;
+      db.collection("tracking").doc("track").update({ service: newTrack });
+      AsyncStorage.setItem("service", "no");
+    }
+
+    let check2 = await AsyncStorage.getItem("parking");
+    console.log(check2);
+    if (check2 === "yes") {
+      let newTrack = parseInt(old.data().parking) - 1;
+      db.collection("tracking").doc("track").update({ parking: newTrack });
+      AsyncStorage.setItem("parking", "no");
+    }
+  };
+
   useEffect(() => {
-    console.log(firebase.auth().currentUser);
     db.collection("Advertisement")
       .where("adStatus", "==", "Approved")
       .get()
@@ -80,18 +108,18 @@ export default function HomeScreen(props) {
 
   // }, [timer]);
 
-  const track = async () => {
-    console.log(" in track");
-    let old = await db.collection("tracking").doc("track").get();
-    // AsyncStorage.setItem("service", "yes");
-    let check = await AsyncStorage.getItem("service");
-    console.log(check);
-    if (check === "yes") {
-      let newTrack = parseInt(old.data().service) - 1;
-      db.collection("tracking").doc("track").update({ service: newTrack });
-      AsyncStorage.setItem("service", "no");
-    }
-  };
+  // const track = async () => {
+  //   console.log(" in track");
+  //   let old = await db.collection("tracking").doc("track").get();
+  //   // AsyncStorage.setItem("service", "yes");
+  //   let check = await AsyncStorage.getItem("service");
+  //   console.log(check);
+  //   if (check === "yes") {
+  //     let newTrack = parseInt(old.data().service) - 1;
+  //     db.collection("tracking").doc("track").update({ service: newTrack });
+  //     AsyncStorage.setItem("service", "no");
+  //   }
+  // };
 
   const getAds = async () => {
     db.collection("Advertisement")
@@ -159,7 +187,7 @@ export default function HomeScreen(props) {
   //   );
   //   console.log(response);
   // };
-
+  //width:"100%"
   return (
     <SafeAreaView
       style={
@@ -249,7 +277,6 @@ HomeScreen.navigationOptions = {
       style={[styles.icon, { tintColor: tintColor }]}
     />
   ),
-  //drawerLabel: () => "Home",
 };
 
 function DevelopmentModeNotice() {
@@ -322,92 +349,3 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
 });
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff"
-//   },
-//   developmentModeText: {
-//     marginBottom: 20,
-//     color: "rgba(0,0,0,0.4)",
-//     fontSize: 14,
-//     lineHeight: 19,
-//     textAlign: "center"
-//   },
-//   contentContainer: {
-//     paddingTop: 30
-//   },
-//   welcomeContainer: {
-//     alignItems: "center",
-//     marginTop: 10,
-//     marginBottom: 20
-//   },
-//   welcomeImage: {
-//     width: 100,
-//     height: 80,
-//     resizeMode: "contain",
-//     marginTop: 3,
-//     marginLeft: -10
-//   },
-//   getStartedContainer: {
-//     alignItems: "center",
-//     marginHorizontal: 50
-//   },
-//   homeScreenFilename: {
-//     marginVertical: 7
-//   },
-//   codeHighlightText: {
-//     color: "rgba(96,100,109, 0.8)"
-//   },
-//   codeHighlightContainer: {
-//     backgroundColor: "rgba(0,0,0,0.05)",
-//     borderRadius: 3,
-//     paddingHorizontal: 4
-//   },
-//   getStartedText: {
-//     fontSize: 24,
-//     color: "rgba(96,100,109, 1)",
-//     lineHeight: 24,
-//     textAlign: "center"
-//   },
-//   tabBarInfoContainer: {
-//     position: "absolute",
-//     bottom: 0,
-//     left: 0,
-//     right: 0,
-//     ...Platform.select({
-//       ios: {
-//         shadowColor: "black",
-//         shadowOffset: { width: 0, height: -3 },
-//         shadowOpacity: 0.1,
-//         shadowRadius: 3
-//       },
-//       android: {
-//         elevation: 20
-//       }
-//     }),
-//     alignItems: "center",
-//     backgroundColor: "#fbfbfb",
-//     paddingVertical: 20
-//   },
-//   tabBarInfoText: {
-//     fontSize: 17,
-//     color: "rgba(96,100,109, 1)",
-//     textAlign: "center"
-//   },
-//   navigationFilename: {
-//     marginTop: 5
-//   },
-//   helpContainer: {
-//     marginTop: 15,
-//     alignItems: "center"
-//   },
-//   helpLink: {
-//     paddingVertical: 15
-//   },
-//   helpLinkText: {
-//     fontSize: 14,
-//     color: "#2e78b7"
-//   }
-// });

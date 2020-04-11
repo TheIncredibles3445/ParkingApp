@@ -109,6 +109,9 @@ export default function App(props) {
   const [user, setUser] = useState(null);
   const email = useRef();
   const password = useRef();
+  const emailR = useRef();
+  const passwordR = useRef();
+  const phone = useRef();
   const [isReady, setIsReady] = useState(false);
   const userToken = useRef();
 
@@ -217,13 +220,13 @@ export default function App(props) {
   }, []);
 
   const handleRegister = async () => {
-    if (email.current !== undefined && password.current !== undefined) {
+    if (emailR.current && passwordR.current && phone.current ) {
       await firebase
         .auth()
-        .createUserWithEmailAndPassword(email.current, password.current);
+        .createUserWithEmailAndPassword(emailR.current, passwordR.current);
       const response = await fetch(
         `https://us-central1-parking-assistant-d2d25.cloudfunctions.net/initUser?uid=${
-          firebase.auth().currentUser.uid
+        firebase.auth().currentUser.uid
         }&email=${email.current}`
       );
       setUpUser();
@@ -236,11 +239,21 @@ export default function App(props) {
     db.collection("users").doc(firebase.auth().currentUser.uid).set({
       lastLogin: new Date(),
       token: userToken.current,
+      email : emailR.current,
+      role :"user",
+      pendingAmount: 0,
+      advPendingAmount: 0,
+      points: 0,
+      displayName: emailR.current,
+      photoURL: "",
+      phoneNumber : phone.current,
+      photoURL:
+        "https://image.shutterstock.com/image-vector/blank-avatar-photo-place-holder-260nw-1114445501.jpg",
     });
   };
 
   const handleLogin = async () => {
-    if (email.current !== undefined && password.current !== undefined) {
+    if (email.current  && password.current ) {
       await firebase
         .auth()
         .signInWithEmailAndPassword(email.current, password.current);
@@ -256,12 +269,24 @@ export default function App(props) {
     });
   };
 
+
   const handleEmail = (text) => {
     email.current = text;
   };
 
   const handlePassword = (text) => {
     password.current = text;
+  };
+
+  const handlePasswordR = (text) => {
+    passwordR.current = text;
+  };
+  const handleEmailR = (text) => {
+    emailR.current = text;
+  };
+
+  const handlePhone = (text) => {
+    phone.current = text;
   };
 
   if (!isLoadingComplete && !props.skipLoadingScreen && !isReady) {
@@ -341,24 +366,60 @@ export default function App(props) {
                 </Animated.Text>
               </Animated.View>
             </TapGestureHandler>
+            <View style={{ flexDirection: "row"  }}>
+              {/**login */}
+              <View>
+                <TextInput
+                  keyboardType="email-address"
+                  placeholderTextColor="black"
+                  value={email}
+                  placeholder="EMAIL"
+                  onChangeText={(text) => handleEmail(text)}
+                  style={styles.input}
+                />
 
-            <TextInput
-              keyboardType="email-address"
-              placeholderTextColor="black"
-              value={email}
-              placeholder="EMAIL"
-              onChangeText={(text) => handleEmail(text)}
-              style={styles.input}
-            />
+                <TextInput
+                  value={password}
+                  placeholder="PASSWORD"
+                  placeholderTextColor="black"
+                  onChangeText={(text) => handlePassword(text)}
+                  secureTextEntry={true}
+                  style={styles.input}
+                />
 
-            <TextInput
-              value={password}
-              placeholder="PASSWORD"
-              placeholderTextColor="black"
-              onChangeText={(text) => handlePassword(text)}
-              secureTextEntry={true}
-              style={styles.input}
-            />
+              </View>
+              <View style={{borderLeftWidth:0.5}}></View>
+
+              {/**register */}
+              <View>
+                <TextInput
+                  keyboardType="email-address"
+                  placeholderTextColor="black"
+                  value={emailR}
+                  placeholder="EMAIL"
+                  onChangeText={(text) => handleEmailR(text)}
+                  style={styles.input}
+                />
+
+                <TextInput
+                  value={passwordR}
+                  placeholder="PASSWORD"
+                  placeholderTextColor="black"
+                  onChangeText={(text) => handlePasswordR(text)}
+                  secureTextEntry={true}
+                  style={styles.input}
+                />
+                <TextInput
+                  value={phone}
+                  placeholder="PHONE NUMBER"
+                  placeholderTextColor="black"
+                  onChangeText={(text) => handlePhone(text)}
+                  keyboardType="numeric"
+                  style={styles.input}
+                />
+              </View>
+            </View>
+
             <Animated.View
               style={{ flexDirection: "row", justifyContent: "space-evenly" }}
             >
@@ -460,13 +521,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
   },
   input: {
-    marginTop: "2%",
+    margin: "1%",
     height: 50,
     borderRadius: 25,
     borderWidth: 0.5,
-    marginHorizontal: 20,
+    //marginHorizontal: 20,
     paddingLeft: 10,
-    marginVertical: 5,
+    //marginVertical: 5,
     borderColor: "rgba(0,0,0,0.2)",
+    width:200
   },
 });

@@ -42,15 +42,13 @@ export default function ParkingBooking(props) {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Friends")
+      .where("booking", "==", true)
       .onSnapshot((querySnapShot) => {
         let friends = [];
         querySnapShot.forEach((doc) => {
           friends.push({ id: doc.id, ...doc.data() });
         });
-
-        //console.log("one and only", friends.id);
         setFriendsList(friends);
-        console.log("my frienxxdss", friendsList);
       });
   }, []);
 
@@ -137,35 +135,14 @@ export default function ParkingBooking(props) {
   };
 
   const handleBooking = () => {
-    if (startTime === "00:00") {
-      alert("Select Start Time");
-    } else if (
-      startTime === "08:00 pm" ||
-      startTime === "09:00 pm" ||
-      startTime === "10:00 pm" ||
-      startTime === "11:00 pm"
-    ) {
-      alert("IT IS TOO LATE TO BOOK");
-    } else if (
-      startTime === "01:00 am" ||
-      startTime === "02:00 am" ||
-      startTime === "04:00 am" ||
-      startTime === "03:00 am" ||
-      startTime === "05:00 am"
-    ) {
-      alert("IT IS TOO EARLY TO BOOK");
-    } else if (selectedBlock === null) {
-      alert("Select a block");
-    } else {
-      const data = {
-        startTime: startTime,
-        endTime: endTime,
-        selectedBlock: selectedBlock,
-      };
+    const data = {
+      startTime: startTime,
+      endTime: endTime,
+      selectedBlock: selectedBlock,
+    };
 
-      props.navigation.navigate("Parking", { data: data, friend: friend });
-      setIsVisible(false);
-    }
+    props.navigation.navigate("Parking", { data: data, friend: friend });
+    setIsVisible(false);
   };
 
   return (
@@ -277,7 +254,6 @@ export default function ParkingBooking(props) {
               <Row size={10} style={{ justifyContent: "center" }}>
                 <Text style={{ fontSize: 20 }}>Select Block</Text>
               </Row>
-              {Platform.OS === "android"}
               <Row
                 size={80}
                 style={{
