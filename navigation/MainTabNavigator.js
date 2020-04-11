@@ -87,7 +87,8 @@ const HomeStack = createStackNavigator(
     Payment: Payment,
     ReportScreen: ReportScreen,
     Direction: Direction,
-    FindParking: FindParking
+    FindParking: FindParking,
+    RewardScreen:RewardScreen
   },
   config
 );
@@ -152,18 +153,18 @@ firebase.auth().onAuthStateChanged((user) =>{
   console.log("-----------------------------------------------------------user",user)
 })
 
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  SettingsStack,
-  //AdminStack
-},
-  {tabBarOptions: {
-    style: {
-      backgroundColor: "#5a91bf"
-    }
-  }
-}
-  ,);
+// const tabNavigator = createBottomTabNavigator({
+//   HomeStack,
+//   SettingsStack,
+//   //AdminStack
+// },
+//   {tabBarOptions: {
+//     style: {
+//       backgroundColor: "#5a91bf"
+//     }
+//   }
+// }
+//   ,);
 
 const ProfileStack = createStackNavigator({
   ProfileScreen: ProfileScreen,
@@ -184,7 +185,7 @@ const tabNavigator = createBottomTabNavigator(
   {
     HomeStack: HomeStack,
     SettingsStack: SettingsStack,
-    AdminStack: AdminStack,
+    // AdminStack: AdminStack,
   },
   {
     navigationOptions: ({ navigation }) => {
@@ -194,7 +195,10 @@ const tabNavigator = createBottomTabNavigator(
       return {
         header: null,
         headerTitle: routeName,
-      };
+        style: {
+          backgroundColor: "#5a91bf"
+        }
+      }
     },
   }
 );

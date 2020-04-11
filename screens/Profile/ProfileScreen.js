@@ -37,7 +37,6 @@ export default function ProfileScreen(props) {
   useEffect(() => {}, [update]);
 
   useEffect(() => {
-    console.log(firebase.auth().currentUser.uid);
     handleSet();
     getUser();
     askPermission();

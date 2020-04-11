@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db";
-
+import {Icon} from "react-native-elements"
 import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
 import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
@@ -133,10 +133,7 @@ const AdminStack = createStackNavigator({
 AdminStack.navigationOptions = {
   tabBarLabel: "Admin Panel",
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-    />
+    <Icon name="settings" type="octicon" color={focused ? "#edf3f8" : "white"} />
   )
 };
 AdminStack.path = "";
@@ -210,10 +207,7 @@ const SettingsStack = createStackNavigator(
 SettingsStack.navigationOptions = {
   tabBarLabel: "Profile",
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-options" : "md-options"}
-    />
+    <Icon name="md-person" type="ionicon" color={focused ? "#edf3f8" : "white"}/>
   )
 };
 

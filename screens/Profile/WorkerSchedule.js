@@ -29,6 +29,7 @@ export default function WorkerSchedule(props) {
     const historySchedule = useRef()
     const todaySchedule = useRef()
     const [ update , setUpdate] = useState(false)
+    const [rating,setRating] = useState(0)
     const service = useRef()
     useEffect(() => {
         getSchedule()
@@ -38,6 +39,33 @@ export default function WorkerSchedule(props) {
     useEffect(()=>{
 
     },[update])
+
+    useEffect(() => {
+        db.collection("booking").where("type","==","Service").onSnapshot(query => {
+            let total = 0;
+            let average = 0;
+            let index = 0;
+            for(let booking of query.docs) {
+                db.collection("booking").doc(booking.id)
+                .collection("service_booking")
+                .where("worker","==",firebase.auth().currentUser.uid)
+                .onSnapshot(querySnap =>{
+                    let services =  querySnap.docs
+                    for(let i = 0; i < services.length; i++) {
+                        let data = services[i].data()
+                        total += data.rating;
+                        console.log("total ======>  ",total)
+                        console.log("index ======>  ",index)
+                        if(index === querySnap.docs.length ) {
+                            average = total / querySnap.docs.length;
+                            setRating(average)
+                        }
+                        index++
+                    }
+                }) 
+            }
+        })
+    },[])
     
 
     useEffect(()=>{
@@ -100,7 +128,7 @@ export default function WorkerSchedule(props) {
             </View>
             <View style={styles.box}>
                 <Text style={{width:"50%",fontSize:15 , fontWeight:"bold", color:"#396a93"}}>Rating</Text>
-                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold"}}>4</Text>
+                <Text style={{width:"50%",fontSize:15 , fontWeight:"bold"}}>{rating} / 5</Text>
             </View>
             </View>
 

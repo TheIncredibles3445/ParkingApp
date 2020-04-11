@@ -24,7 +24,7 @@ export default function RewardScreen(props) {
   const [update, setUpdate] = useState(false);
   const [animationState, setAnimationState] = useState("rest");
   // const [usageCount, setUsageCount] = useState(0);
-
+  const [usedDiscount , setUsedDiscount] = useState()
   const [discount, setDiscount] = useState([]);
 
   const handleUser = async () => {
@@ -33,6 +33,13 @@ export default function RewardScreen(props) {
       .doc(firebase.auth().currentUser.uid)
       .get();
     let tempUser = userData.data();
+
+    if( userData.data().discount && userData.data().discount != ""){
+      let dis = await db.collection("discounts").doc(userData.data().discount).get()
+      setUsedDiscount(dis.data())
+    }
+    
+    
     setUser(tempUser);
   };
 
@@ -99,21 +106,16 @@ export default function RewardScreen(props) {
           >
             Your Total Points
           </Text>
-          {/* <Animatable.View
-            animation="flash"
-            direction="alternate"
-            iterationCount={"infinite"}
-          > */}
           <Text
             style={{
               // marginLeft: "45%",
-              fontSize: 25,
+              fontSize: 20,
               // marginTop: "5%",
               color: "#263c5a",
               fontWeight: "bold",
             }}
           >
-            {user.points}
+            {user.points} Points
             <FontAwesome5 name="coins" size={30} color="gold" />
 
             {/* <Image
@@ -127,6 +129,19 @@ export default function RewardScreen(props) {
               source={require(`../../assets/images/coins.png`)}
             /> */}
           </Text>
+          { usedDiscount ?<Text style={{
+              // paddingTop: "1%",
+              // marginLeft: "22%",
+              fontSize: 20,
+              color: "#263c5a",
+              fontWeight: "bold",
+            }}> Currently Using: {usedDiscount.name}</Text>: null}
+          {/* <Animatable.View
+            animation="flash"
+            direction="alternate"
+            iterationCount={"infinite"}
+          > */}
+        
           {/* </Animatable.View> */}
           {/* </MakeItRain> */}
         </View>

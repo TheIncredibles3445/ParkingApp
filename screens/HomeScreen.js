@@ -140,6 +140,7 @@ export default function HomeScreen(props) {
         <TouchableOpacity style={styles.btns}>
           <Text
             style={{ marginLeft: "auto", marginRight: "auto", color: "white", fontSize: 15 }}
+            onPress={()=>props.navigation.navigate("RewardScreen")}
           >Get Discounts</Text>
         </TouchableOpacity>
 
