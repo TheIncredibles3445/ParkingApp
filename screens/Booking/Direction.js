@@ -114,7 +114,7 @@ Direction.navigationOptions = (props) => ({
   headerTitle: "Direction",
   headerTintColor: "white",
   headerStyle: {
-    backgroundColor: "#005992",
+    backgroundColor: "#5a91bf",
   },
   //   headerRight: () => <Button title="Home" type="clear" />
 });
