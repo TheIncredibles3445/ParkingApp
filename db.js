@@ -10,7 +10,7 @@ firebase.initializeApp({
   storageBucket: "parking-assistant-d2d25.appspot.com",
   messagingSenderId: "312947533833",
   appId: "1:312947533833:web:850e4a0de0950af12830d8",
-  measurementId: "G-7ZEZD60X58"
+  measurementId: "G-7ZEZD60X58",
 });
 //firebase.functions()
 export default firebase.firestore();

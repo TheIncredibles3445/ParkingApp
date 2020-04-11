@@ -5,8 +5,9 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Keyboard,
-  Platform
+  Platform,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -16,11 +17,16 @@ import { Input, Text, Divider, Button } from "react-native-elements";
 
 export default function Profile(props) {
   const user = props.navigation.getParam("user", "No params");
+  //this state for the user name
   const [displayName, setDisplayName] = useState("");
+  //for user first name
   const [firstName, setFirstName] = useState("");
+  //for user last name
   const [lastName, setLastName] = useState("");
+  //for user phone number
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  // in this useeffect it will run one time calling the function handleUser once the app is rendered
   useEffect(() => {
     handleUser();
   }, []);
@@ -37,15 +43,16 @@ export default function Profile(props) {
     setPhoneNumber(firebase.auth().currentUser.phoneNumber);
   };
 
+  //async: means this function will return a promises always
+  // in here when the user click on save button the user information will be changed so o used the update function to update/edit
+  // the user first name, last name and phone number and chmged to the one they entered
   const handleSave = async () => {
-    await db
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        firstName: firstName,
-        lastName: lastName,
-        phoneNumer: phoneNumber
-      });
+    await db.collection("users").doc(firebase.auth().currentUser.uid).update({
+      firstName: firstName,
+      lastName: lastName,
+      displayName: displayName,
+      phoneNumer: phoneNumber,
+    });
 
     const currentUser = firebase.auth().currentUser;
     console.log("current user from profile", currentUser);
@@ -54,7 +61,7 @@ export default function Profile(props) {
       const response2 = await updateUser({
         uid: currentUser.uid,
         displayName: displayName,
-        phoneNumber: `+974${phoneNumber}`
+        phoneNumber: `+974${phoneNumber}`,
       });
     } else {
       const updateDisplayName = firebase
@@ -62,61 +69,86 @@ export default function Profile(props) {
         .httpsCallable("updateDisplayName");
       const response2 = await updateDisplayName({
         uid: currentUser.uid,
-        displayName: displayName
+        displayName: displayName,
       });
     }
-
     props.navigation.goBack();
   };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : null}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#F0F8FF" }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView>
           <View style={{ flex: 1, alignItems: "center", marginTop: 20 }}>
             <Text h4>Edit Profile</Text>
           </View>
-          <Divider style={{ marginTop: 20 }} />
-          <View style={{ marginTop: 20 }}>
-            <Input
-              label="Email"
-              placeholder="Email"
-              disabled
-              value={user.email}
-            />
+          <View
+            style={{
+              marginTop: 40,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            <Input label="Email" disabled value={user.email} />
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              marginTop: 20,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Input
               label="Display Name / Username"
               placeholder="Display Name / Username"
-              onChangeText={text => setDisplayName(text)}
+              onChangeText={(text) => setDisplayName(text)}
               value={displayName}
             />
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              marginTop: 20,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Input
               label="First Name"
-              placeholder="First Name"
               value={firstName}
-              onChangeText={text => setFirstName(text)}
+              onChangeText={(text) => setFirstName(text)}
             />
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              marginTop: 20,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Input
               label="Last Name"
-              placeholder="Last Name"
               value={lastName}
-              onChangeText={text => setLastName(text)}
+              onChangeText={(text) => setLastName(text)}
             />
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              marginTop: 20,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Input
               label="Phone"
               value={phoneNumber}
-              placeholder="Phone"
               value={phoneNumber}
               keyboardType="phone-pad"
               disabled={
@@ -125,16 +157,29 @@ export default function Profile(props) {
                   ? false
                   : true
               }
-              onChangeText={text => setPhoneNumber(text)}
+              onChangeText={(text) => setPhoneNumber(text)}
             />
           </View>
           <View style={{ marginTop: 20, alignItems: "center" }}>
-            <Button
-              onPress={handleSave}
-              title="SAVE"
-              buttonStyle={{ paddingEnd: 50, paddingStart: 50 }}
-              titleStyle={{ alignItems: "center" }}
-            />
+            <TouchableOpacity
+              onPress={() => handleLogout()}
+              style={{
+                backgroundColor: "#005992",
+                height: 50,
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  letterSpacing: 5,
+                }}
+              >
+                LOGOUT
+              </Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
@@ -143,5 +188,9 @@ export default function Profile(props) {
 }
 
 Profile.navigationOptions = {
-  title: "My Profile"
+  title: "My Profile",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#005992",
+  },
 };

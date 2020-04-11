@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -20,7 +20,6 @@ import moment from "moment";
 import { AsyncStorage } from "react-native";
 
 export default function Payment(props) {
-
   const bookingId = props.navigation.getParam("id", "some default value");
   const total = props.navigation.getParam("total", "some default value");
   const [cardNumber, setCardNumber] = useState();
@@ -79,9 +78,9 @@ export default function Payment(props) {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Cards")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const userCards = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           userCards.push({ id: doc.id, ...doc.data() });
         });
         setUserCards([...userCards]);
@@ -153,7 +152,7 @@ export default function Payment(props) {
         "Save Credit Card Information?",
         [
           { text: "Yes?", onPress: () => saveCreditCard() },
-          { text: "No", onPress: () => handleNavigationAlert() }
+          { text: "No", onPress: () => handleNavigationAlert() },
         ],
         { cancelable: false }
       );
@@ -203,7 +202,7 @@ export default function Payment(props) {
         expiry,
         securityCode,
         amount: 1000,
-        provider
+        provider,
       });
     handleNavigationAlert();
   };
@@ -225,10 +224,10 @@ export default function Payment(props) {
             marginRight: "auto",
             marginLeft: "auto",
           }}
-          onValueChange={itemValue => setSelectedCard(itemValue)}
+          onValueChange={(itemValue) => setSelectedCard(itemValue)}
         >
           <Picker.Item label={"Select A Card"} value={""} disabled />
-          {userCards.map(a => (
+          {userCards.map((a) => (
             <Picker.Item label={a.number} value={a} />
           ))}
         </Picker>

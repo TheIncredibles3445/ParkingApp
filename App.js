@@ -4,7 +4,8 @@ import * as Font from "expo-font";
 import React, { useState, useEffect, useRef } from "react";
 // import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Input, Icon, Button, Text, Overlay } from "react-native-elements";
-
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
 import {
   Platform,
   StatusBar,
@@ -112,6 +113,40 @@ export default function App(props) {
   const passwordR = useRef();
   const phone = useRef();
   const [isReady, setIsReady] = useState(false);
+  const userToken = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+  }, []);
+
+  const registerForPushNotificationsAsync = async () => {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+    console.log(existingStatus);
+    if (existingStatus === "undetermined") {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    const token = await Notifications.getExpoPushTokenAsync();
+    console.log(token);
+    userToken.current = token;
+    // this.setState({ expoPushToken: token });
+
+    if (Platform.OS === "android") {
+      Notifications.createChannelAndroidAsync("default", {
+        name: "default",
+        sound: true,
+        priority: "max",
+        vibrate: [0, 250, 250, 250],
+      });
+    }
+  };
 
   const buttonOpacity = new Value(1);
 
@@ -223,14 +258,17 @@ export default function App(props) {
   const setUpUser = () => {
     db.collection("users").doc(firebase.auth().currentUser.uid).set({
       lastLogin: new Date(),
+      token: userToken.current,
       email : emailR.current,
       role :"user",
       pendingAmount: 0,
       advPendingAmount: 0,
       points: 0,
-      displayName: "",
+      displayName: emailR.current,
       photoURL: "",
-      phoneNumber : phone.current
+      phoneNumber : phone.current,
+      photoURL:
+        "https://image.shutterstock.com/image-vector/blank-avatar-photo-place-holder-260nw-1114445501.jpg",
     });
   };  
 
@@ -473,7 +511,6 @@ function handleLoadingError(error) {
 function handleFinishLoading(setLoadingComplete) {
   setLoadingComplete(true);
 }
-
 
 const styles = StyleSheet.create({
   container: {

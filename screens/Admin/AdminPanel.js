@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, Button, View, Text , TouchableOpacity } from "react-native";
 import { ExpoLinksView } from "@expo/samples";
+import { Divider } from "react-native-elements";
 
 export default function AdminPanel(props) {
   return (
@@ -36,9 +37,9 @@ export default function AdminPanel(props) {
           <Text style={styles.text}>Discounts</Text>
           </TouchableOpacity>
 
-        {/* <TouchableOpacity style={{ marginBottom: 10, backgroungColor:"#B0C4DE" }}>
-          <Text style={{color:"#263c5a" , fontSize:15}}></Text>
-          </TouchableOpacity> */}
+        <TouchableOpacity style={styles.btns} onPress={() => props.navigation.navigate("WorkersRating")}>
+          <Text style={styles.text}>Workers Rating</Text>
+          </TouchableOpacity>
 
       
     

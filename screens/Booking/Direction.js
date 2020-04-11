@@ -32,12 +32,12 @@ export default function Direction(props) {
     }
 
     let location = await Location.getCurrentPositionAsync({
-      enableHighAccuracy: false
+      enableHighAccuracy: false,
     });
     console.log("location, ", location);
     const userLocation = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude
+      longitude: location.coords.longitude,
     };
 
     const parkingLocation = (
@@ -59,9 +59,9 @@ export default function Direction(props) {
     console.log("coordinates", coordinate);
   };
 
-  const convertArrayToObject = coordinates => {
+  const convertArrayToObject = (coordinates) => {
     const result = [];
-    coordinates.map(item => {
+    coordinates.map((item) => {
       // item.map(dir => {
       //   const direct = { latitude: dir[0], longitude: dir[1] };
       //   console.log(direct);
@@ -80,7 +80,7 @@ export default function Direction(props) {
         latitude: 25.286106,
         longitude: 51.534817,
         latitudeDelta: 0.08,
-        longitudeDelta: 0.08
+        longitudeDelta: 0.08,
       }}
       provider={PROVIDER_GOOGLE}
       style={styles.map}
@@ -106,11 +106,15 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
-  }
+    bottom: 0,
+  },
 });
 
-Direction.navigationOptions = props => ({
-  headerTitle: "Direction"
+Direction.navigationOptions = (props) => ({
+  headerTitle: "Direction",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#5a91bf",
+  },
   //   headerRight: () => <Button title="Home" type="clear" />
 });

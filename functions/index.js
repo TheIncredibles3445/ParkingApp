@@ -82,7 +82,7 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
   console.log("request", request.query.email);
 
   const result = await admin.auth().updateUser(request.query.uid, {
-    displayName: email,
+    displayName: request.query.email,
     photoURL:
       "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
   });

@@ -55,67 +55,26 @@ export default function SettingsScreen(props) {
     setUpate(!update) 
   }
 
-  const handleSet = () => {
-    const user = firebase.auth().currentUser;
-    // setDisplayName(user.displayName);
-    setPhotoURL(user.photoURL);
-    // setPhone(user.phoneNumber);
-  };
 
-  
-  const handleLogout = () => {
-    firebase.auth().signOut();
-
-  };
+  const CardStack = createStackNavigator({
+    Payment: PaymentCard,
+    AddCard: AddCard,
+  });
 
 
+  const MyDrawerNavigator = createDrawerNavigator({
+    Home: ProfileScreen,
+    Vehicle: VehicleStack,
+    Friends: LinksScreen,
+    Cards: CardStack,
+    PartialPayment: PartialPayment,
 
-  useEffect(() => {
-    
-  }, [loggedInUser.current ]);
+    // AddVehicle: AddVehicle,
+  });
 
-  useEffect(() => { }, [photoURL]);
+  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "MY POINTS"];
+  const files = ["Profile", "Payment", "Vehicle", "Friends", "Reward"];
 
-  const handleSave = async uri => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const putResult = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .put(blob);
-    const url = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .getDownloadURL();
-    const updateUser = firebase.functions().httpsCallable("updatePhoto");
-    const response2 = await updateUser({
-      uid: firebase.auth().currentUser.uid,
-      photoURL: url
-    });
-    setPhotoURL(url);
-  };
-
-
-  const handlePickImage = async () => {
-    // show camera roll, allow user to select
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1
-    });
-
-    if (!result.cancelled) {
-      console.log("not cancelled", result.uri);
-      handleSave(result.uri);
-      //setPhotoURL(result.uri);
-    }
-  };
-
-  const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "My BOOKINGS", "Pay"];
-  const files = ["Profile", "Payment", "Vehicle", "Friends", "AllBookings","PartialPayment"];
   return (
     <ScrollView style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>
@@ -124,12 +83,12 @@ export default function SettingsScreen(props) {
           rounded
           size={100}
           source={{
-            uri: photoURL
+            uri: photoURL,
           }}
           overlayContainerStyle={{ backgroundColor: "white" }}
           showEditButton
           onEditPress={handlePickImage}
-        // editButton={<Icon type="feather" name="edit-2" color="red" />}
+          // editButton={<Icon type="feather" name="edit-2" color="red" />}
         />
         <Text>You are logged in as</Text>
         <Text>{firebase.auth().currentUser.email}</Text>
@@ -143,53 +102,11 @@ export default function SettingsScreen(props) {
             rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
             onPress={() =>
               props.navigation.navigate(files[index], {
-                user: firebase.auth().currentUser
+                user: firebase.auth().currentUser,
               })
             }
           />
         ))}
-
-        
-        {
-
-          loggedInUser.current && loggedInUser.current.role === "worker" ?
-            <View style={{ flex: 4 }}>
-
-              <ListItem
-                title="Schedule"
-                bottomDivider
-                rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
-                onPress={() =>
-                  props.navigation.navigate("Schedule", {
-                    user: loggedInUser.current
-                  })
-                }
-              />
-            </View>
-            : 
-            null
-        }
-
-        {
-          ads.length > 0 ?
-          <View style={{ flex: 4 }}>
-
-              <ListItem
-                title="My Advertisements"
-                bottomDivider
-                rightIcon={<Icon type="ionicon" name="ios-arrow-forward" />}
-                onPress={() =>
-                  props.navigation.navigate("MyAdvertisement", {
-                    myAds: ads
-                  })
-                }
-              />
-            </View>
-          :
-
-          null
-        }
-
       </View>
 
 
@@ -202,56 +119,60 @@ export default function SettingsScreen(props) {
 }
 
 SettingsScreen.navigationOptions = {
-  title: "MY ACCOUNT"
+  title: "MY ACCOUNT",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#005992",
+  },
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: "center",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: "rgba(96,100,109, 0.8)",
   },
   codeHighlightContainer: {
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 24,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   tabBarInfoContainer: {
     position: "absolute",
@@ -263,33 +184,33 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: "center",
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
-  }
-});
+    color: "#2e78b7",
+  },
+})
