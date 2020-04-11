@@ -146,7 +146,7 @@ export default function ParkingBooking(props) {
   };
 
   return (
-    <Grid>
+    <Grid style={{ backgroundColor: "#F0F8FF" }}>
       <Row size={5} style={{ alignSelf: "center" }}>
         <Text style={{ fontSize: 20 }}>Book Your Desired Parking Spot!</Text>
       </Row>
@@ -290,7 +290,7 @@ export default function ParkingBooking(props) {
         <View style={styles.centeredView}>
           <View style={{ ...styles.modalView }}>
             <Header
-              backgroundColor="#005992"
+              backgroundColor="#5a91bf"
               centerComponent={
                 <Text
                   style={{
@@ -371,7 +371,7 @@ export default function ParkingBooking(props) {
                     <TouchableOpacity
                       onPress={() => handleBooking()}
                       style={{
-                        backgroundColor: "#005992",
+                        backgroundColor: "#263c5a",
                         height: 50,
                         width: 150,
                         borderRadius: 10,
@@ -403,7 +403,7 @@ ParkingBooking.navigationOptions = {
   title: "Parking Booking",
   headerTintColor: "white",
   headerStyle: {
-    backgroundColor: "#005992",
+    backgroundColor: "#5a91bf",
   },
 };
 
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     padding: "15%",
-    backgroundColor: "lightgreen",
+    backgroundColor: "#5a91bf",
   },
   notSelected: {
     borderColor: "black",
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     height: height / 1.9,
     width: width,
     // margin: 20,
-    backgroundColor: "white",
+    backgroundColor: "#F0F8FF",
     // borderRadius: 1,
     // padding: 35,
     alignItems: "center",

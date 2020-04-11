@@ -31,7 +31,7 @@ export default function Checkout(props) {
         let total = 0;
         querySnap.forEach((doc) => {
           let data = doc.data();
-          total += data.total_price;
+          total += parseInt(data.total_price);
         });
         setTotal(total);
       });
@@ -180,7 +180,8 @@ export default function Checkout(props) {
 
   return (
     <ScrollView
-    //contentContainerStyle={{ flex: 1, justifyContent: "space-around" }}
+      style={{ backgroundColor: "#F0F8FF" }}
+      //contentContainerStyle={{ flex: 1, justifyContent: "space-around" }}
     >
       <View style={{ flex: 1, alignItems: "center" }}>
         <Text h4>Checkout</Text>
@@ -281,8 +282,12 @@ export default function Checkout(props) {
         }}
       >
         <Button
-          icon={<Icon type="material" name="payment" size={25} color="white" />}
+          buttonStyle={{ backgroundColor: "#B0C4DE" }}
+          icon={
+            <Icon type="material" name="payment" size={25} color="#263c5a" />
+          }
           iconLeft
+          titleStyle={{ color: "#263c5a" }}
           title="Pay Now"
           onPress={() =>
             props.navigation.navigate("Payment", {
@@ -294,7 +299,11 @@ export default function Checkout(props) {
         />
 
         <Button
-          icon={<Icon type="material" name="payment" size={25} color="white" />}
+          buttonStyle={{ backgroundColor: "#B0C4DE" }}
+          titleStyle={{ color: "#263c5a" }}
+          icon={
+            <Icon type="material" name="payment" size={25} color="#263c5a" />
+          }
           iconLeft
           title="Pay Later"
           onPress={handlePayLater}
@@ -309,7 +318,7 @@ Checkout.navigationOptions = {
   title: "Checkout",
   headerTintColor: "white",
   headerStyle: {
-    backgroundColor: "#005992",
+    backgroundColor: "#5a91bf",
   },
 };
 

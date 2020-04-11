@@ -348,6 +348,10 @@ export default function Parking(props) {
 
 Parking.navigationOptions = {
   title: "Reserve Parking Spot",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#5a91bf",
+  },
 };
 
 const styles = StyleSheet.create({
