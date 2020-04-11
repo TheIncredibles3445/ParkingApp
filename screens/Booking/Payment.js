@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -20,7 +20,6 @@ import moment from "moment";
 import { AsyncStorage } from "react-native";
 
 export default function Payment(props) {
-  const booking = props.navigation.getParam("booking", "some default value");
   const bookingId = props.navigation.getParam("id", "some default value");
   const total = props.navigation.getParam("total", "some default value");
   const [cardNumber, setCardNumber] = useState();
@@ -44,9 +43,9 @@ export default function Payment(props) {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Cards")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const userCards = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           userCards.push({ id: doc.id, ...doc.data() });
         });
         setUserCards([...userCards]);
@@ -73,7 +72,7 @@ export default function Payment(props) {
         type: "credit card",
         amount: total,
         bookingId,
-        date
+        date,
       });
 
     let update = await db
@@ -91,7 +90,7 @@ export default function Payment(props) {
         "Save Credit Card Information?",
         [
           { text: "Yes?", onPress: () => saveCreditCard() },
-          { text: "No", onPress: () => handleNavigationAlert() }
+          { text: "No", onPress: () => handleNavigationAlert() },
         ],
         { cancelable: false }
       );
@@ -108,16 +107,16 @@ export default function Payment(props) {
         {
           text: "No",
           onPress: () => props.navigation.navigate("Home"),
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Yes",
           onPress: () =>
             props.navigation.navigate("Direction", {
               blockId: blockId,
-              parkingId: parkingId
-            })
-        }
+              parkingId: parkingId,
+            }),
+        },
       ],
       { cancelable: false }
     );
@@ -135,7 +134,7 @@ export default function Payment(props) {
         expiry,
         securityCode,
         amount: 1000,
-        provider
+        provider,
       });
     handleNavigationAlert();
   };
@@ -154,12 +153,12 @@ export default function Payment(props) {
             marginBottom: 4,
             marginTop: 4,
             marginRight: "auto",
-            marginLeft: "auto"
+            marginLeft: "auto",
           }}
-          onValueChange={itemValue => setSelectedCard(itemValue)}
+          onValueChange={(itemValue) => setSelectedCard(itemValue)}
         >
           <Picker.Item label={"Select A Card"} value={""} disabled />
-          {userCards.map(a => (
+          {userCards.map((a) => (
             <Picker.Item label={a.number} value={a} />
           ))}
         </Picker>
@@ -169,14 +168,14 @@ export default function Payment(props) {
       <Text>First Name</Text>
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setFirstName(text)}
+        onChangeText={(text) => setFirstName(text)}
         // placeholder="Cars Support"
         value={firstName}
       />
       <Text>Last Name</Text>
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setLastName(text)}
+        onChangeText={(text) => setLastName(text)}
         // placeholder="Cars Support"
         value={lastName}
       />
@@ -185,14 +184,14 @@ export default function Payment(props) {
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         keyboardType="numeric"
-        onChangeText={text => setCardNumber(text)}
+        onChangeText={(text) => setCardNumber(text)}
         //placeholder="Cars Support"
         value={cardNumber}
       />
       <Text>Provider</Text>
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setProvider(text)}
+        onChangeText={(text) => setProvider(text)}
         value={provider}
       />
       <Text>Expiry Date</Text>
@@ -202,9 +201,7 @@ export default function Payment(props) {
         mode="date"
         placeholder="select date"
         format="YYYY-MM"
-        minDate={moment()
-          .add(1, "M")
-          .format("YYYY-MM")}
+        minDate={moment().add(1, "M").format("YYYY-MM")}
         confirmBtnText="Confirm"
         cancelBtnText="Cancel"
         customStyles={{
@@ -212,18 +209,18 @@ export default function Payment(props) {
             position: "absolute",
             left: 0,
             top: 4,
-            marginLeft: 0
+            marginLeft: 0,
           },
           dateInput: {
-            marginLeft: 36
-          }
+            marginLeft: 36,
+          },
         }}
-        onDateChange={date => setExpiryDate(date)}
+        onDateChange={(date) => setExpiryDate(date)}
       />
       <Text>Security Code</Text>
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={text => setSecurityCode(text)}
+        onChangeText={(text) => setSecurityCode(text)}
         keyboardType="numeric"
         placeholder="0000"
         value={securityCode}
@@ -246,3 +243,11 @@ export default function Payment(props) {
     </View>
   );
 }
+
+Payment.navigationOptions = {
+  title: "Payment",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#005992",
+  },
+};

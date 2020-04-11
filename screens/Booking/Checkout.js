@@ -27,9 +27,9 @@ export default function Checkout(props) {
     db.collection("booking")
       .where("date", "==", moment().format("YYYY-MM-DD"))
       .where("userId", "==", firebase.auth().currentUser.uid)
-      .onSnapshot(querySnap => {
+      .onSnapshot((querySnap) => {
         let total = 0;
-        querySnap.forEach(doc => {
+        querySnap.forEach((doc) => {
           let data = doc.data();
           total += data.total_price;
         });
@@ -38,19 +38,19 @@ export default function Checkout(props) {
   };
 
   const getAllBlocks = async () => {
-    const blocks = await db.collection("Block").get();
+    const blocks = await db.collection("block").get();
     let parkings = [];
     for (let block of blocks.docs) {
       const parkingsLots = await db
-        .collection("Block")
+        .collection("block")
         .doc(block.id)
-        .collection("Parking")
+        .collection("parking")
         .get();
       for (let parking of parkingsLots.docs) {
         parkings.push({
           block: block.id,
           parkingId: parking.id,
-          ...parking.data()
+          ...parking.data(),
         });
       }
     }
@@ -62,19 +62,19 @@ export default function Checkout(props) {
       .where("userId", "==", firebase.auth().currentUser.uid)
       .where("date", "==", moment().format("YYYY-MM-DD"))
       .where("type", "==", "Parking")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         let parkingBooking = [];
         for (let book of querySnapshot.docs) {
           db.collection("booking")
             .doc(book.id)
             .collection("parking_booking")
-            .onSnapshot(query => {
+            .onSnapshot((query) => {
               for (let park of query.docs) {
                 parkingBooking.push({
                   id: park.id,
                   ...park.data(),
                   bookingId: book.id,
-                  price: book.data().total_price
+                  price: book.data().total_price,
                 });
               }
               if (parkingBooking.length === querySnapshot.docs.length) {
@@ -91,20 +91,17 @@ export default function Checkout(props) {
       .where("date", "==", moment().format("YYYY-MM-DD"))
       .where("userId", "==", firebase.auth().currentUser.uid)
       .where("type", "==", "Service")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         let allServiceBookings = [];
         for (let book of querySnapshot.docs) {
           db.collection("booking")
             .doc(book.id)
             .collection("service_booking")
-            .onSnapshot(async query => {
+            .onSnapshot(async (query) => {
               for (let serviceBook of query.docs) {
                 let serviceData = serviceBook.data();
                 let worker = (
-                  await db
-                    .collection("users")
-                    .doc(serviceData.worker)
-                    .get()
+                  await db.collection("users").doc(serviceData.worker).get()
                 ).data();
                 let serviceInfo = (
                   await db
@@ -122,7 +119,7 @@ export default function Checkout(props) {
                   ...serviceData,
                   price: book.data().total_price,
                   worker: worker.name,
-                  service: serviceInfo.Name
+                  service: serviceInfo.Name,
                 });
               }
               if (allServiceBookings.length === querySnapshot.docs.length) {
@@ -141,22 +138,19 @@ export default function Checkout(props) {
         {
           text: "Cancel",
           onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
+          style: "cancel",
         },
-        { text: "Confirm", onPress: () => handlePayLate() }
+        { text: "Confirm", onPress: () => handlePayLate() },
       ],
       { cancelable: false }
     );
   };
 
   const handlePayLate = async () => {
-    await db
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        points: 20,
-        pendingAmount: total
-      });
+    await db.collection("users").doc(firebase.auth().currentUser.uid).update({
+      points: 20,
+      pendingAmount: total,
+    });
 
     handleNavigationAlert();
   };
@@ -169,16 +163,16 @@ export default function Checkout(props) {
         {
           text: "No",
           onPress: () => props.navigation.navigate("Home"),
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Yes",
           onPress: () =>
             props.navigation.navigate("Direction", {
               blockId: blockId,
-              parkingId: parkingId
-            })
-        }
+              parkingId: parkingId,
+            }),
+        },
       ],
       { cancelable: false }
     );
@@ -220,7 +214,7 @@ export default function Checkout(props) {
               </Col>
             </Grid>
             {parkingBookings &&
-              parkingBookings.map(item => (
+              parkingBookings.map((item) => (
                 <Grid>
                   {/* <Col>
                   <Text style={{ textAlign: "center" }}>{item.parking}</Text>
@@ -259,7 +253,7 @@ export default function Checkout(props) {
             </Grid>
 
             {serviceBookings &&
-              serviceBookings.map(item => (
+              serviceBookings.map((item) => (
                 <Grid>
                   <Col>
                     <Text style={{ textAlign: "center" }}>{item.service}</Text>
@@ -283,7 +277,7 @@ export default function Checkout(props) {
           marginTop: 20,
           flex: 1,
           flexDirection: "row",
-          justifyContent: "space-evenly"
+          justifyContent: "space-evenly",
         }}
       >
         <Button
@@ -293,7 +287,7 @@ export default function Checkout(props) {
           onPress={() =>
             props.navigation.navigate("Payment", {
               blockId: blockId,
-              parkingId: parkingId
+              parkingId: parkingId,
             })
           }
           //buttonStyle={{ width: "30%" }}
@@ -312,19 +306,23 @@ export default function Checkout(props) {
 }
 
 Checkout.navigationOptions = {
-  title: "Checkout"
+  title: "Checkout",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#005992",
+  },
 };
 
 const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     fontSize: 15,
-    opacity: 0.7
+    opacity: 0.7,
   },
   text2: {
     fontWeight: "bold",
     fontSize: 15,
     opacity: 0.7,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });

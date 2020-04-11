@@ -11,68 +11,79 @@ import {
   TouchableHighlight,
   SafeAreaView,
   ScrollView,
-  Image
+  Image,
+  Switch,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { SearchBar, Badge, Divider, Avatar } from "react-native-elements";
 import db from "../../db.js";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-// import { ScrollView } from "react-native-gesture-handler";
+import { Card } from "react-native-shadow-cards";
+import * as Animatable from "react-native-animatable";
+import { Snackbar } from "react-native-paper";
 
-const LinksScreen = props => {
+const LinksScreen = (props) => {
+  const data = props.navigation.getParam("data", "No params");
   const [users, setUsers] = useState([]);
+  const [name, setName] = useState("");
+
+  const [v, setV] = useState(false);
   const [text, setText] = useState("");
+  const [enableFriends, setEnableFriends] = useState(true);
   const [arrayholder, setArrayHolder] = useState([]);
+
   const [modalVisible, setmodalVisible] = useState(false);
   const [modalVisible2, setmodalVisible2] = useState(false);
+
   const [myfriends, setMyfriends] = useState([]);
+
   const [countReq, setCountReq] = useState(0);
   const [friendsRequestList, setFriendRequestList] = useState([]);
+
   const [myfriendList, setMyfriendList] = useState([]);
-  //modal part ----------------------------------------------------------
-  const ssetModalVisible = visible => {
+  const [visible, setVisible] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(true);
+
+  const toggleSwitch = (item, isEnabled) => {
+    setIsEnabled(!isEnabled);
+    db.collection("users")
+      .doc(item.id)
+      .collection("Friends")
+      .doc(firebase.auth().currentUser.uid)
+      .update({ booking: isEnabled });
+
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Friends")
+      .doc(item.id)
+      .update({ booking: isEnabled });
+  };
+  const ssetModalVisible = (visible) => {
     setmodalVisible(visible);
   };
-  const ssetModalVisible2 = visible => {
+  const ssetModalVisible2 = (visible) => {
     setmodalVisible2(visible);
   };
-
-  //list all the users except my friends ---------------------------------
   const handleUsers = async () => {
-    db.collection("users").onSnapshot(querySnapshot => {
+    db.collection("users").onSnapshot((querySnapshot) => {
       const users = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         //mapping
         users.push({ id: doc.id, ...doc.data() });
       });
-      console.log("handleUsers user[]", users);
-      const allExceptFriends = [];
-      for (let n = 0; n < users.length; n++) {
-        if (myfriends.length > 0) {
-          for (let i = 0; i < myfriends.length; i++) {
-            if (users[n].id !== myfriends[i].id) {
-              allExceptFriends.push(users[n]);
-            }
-          }
-          console.log("handleUsers allexcept[]", allExceptFriends);
 
-          setUsers([...allExceptFriends]);
-        } else {
-          setUsers([...users]);
-        }
-      }
+      setUsers([...users]);
       setArrayHolder(users);
     });
   };
-
-  const getMyFriends = () => {
+  const getMyFriends = async () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("MyRequest")
-      .onSnapshot(querySnapShot => {
+      .onSnapshot((querySnapShot) => {
         let friends = [];
-        querySnapShot.forEach(doc => {
+        querySnapShot.forEach((doc) => {
           friends.push(doc.id);
         });
         console.log("my friends", friends);
@@ -81,17 +92,17 @@ const LinksScreen = props => {
   };
 
   useEffect(() => {}, [myfriendList]);
+  useEffect(() => {}, [myfriends]);
 
   useEffect(() => {
+    getFriends();
     handleUsers();
     getMyFriends();
     showRequest();
-    getFriends();
   }, []);
 
-  //search bar -----------------------------------------------
-  const searchFunction = text => {
-    const newData = arrayholder.filter(function(item) {
+  const searchFunction = (text) => {
+    const newData = arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
       const itemData = item.displayName
         ? item.displayName.toUpperCase()
@@ -103,8 +114,7 @@ const LinksScreen = props => {
     setText(text);
   };
 
-  //follow button function part ------------------------------------------
-  const handleFollow = async item => {
+  const handleFollow = async (item) => {
     await db
       .collection("users")
       .doc(item)
@@ -122,22 +132,17 @@ const LinksScreen = props => {
     getMyFriends();
   };
 
-  const findUserById = async id => {
-    const userRef = await db
-      .collection("users")
-      .doc(id)
-      .get();
+  const findUserById = async (id) => {
+    const userRef = await db.collection("users").doc(id).get();
     return userRef.data();
   };
-
-  //list the follow requests part / change the status to  --------------
   const showRequest = async () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Request")
-      .onSnapshot(querySnap => {
+      .onSnapshot((querySnap) => {
         let request = [];
-        querySnap.forEach(async doc => {
+        querySnap.forEach(async (doc) => {
           const userData = await findUserById(doc.id);
           request.push({ id: doc.id, ...userData });
           console.log("requests", request);
@@ -147,29 +152,21 @@ const LinksScreen = props => {
       });
   };
 
-  //unfollow button function
-  const handleUnFollow = async item => {
-    await db
-      .collection("users")
+  const handleUnFollow = async (item) => {
+    db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .collection("Friends")
-      .onSnapshot(querySnapshot => {
-        const users = [];
-        querySnapshot.forEach(doc => {
-          //mapping
-          users.push({ id: doc.id, ...doc.data() });
-        });
-        for (let i = 0; i < users.length; i++) {
-          let b = users[i].status;
-          if (b === 1) {
-            DeleteRequest(item);
-          }
-        }
-      });
+      .collection("MyRequest")
+      .doc(item)
+      .delete();
+
+    db.collection("users")
+      .doc(item)
+      .collection("Request")
+      .doc(firebase.auth().currentUser.uid)
+      .delete();
   };
 
-  const declineRequest = async item => {
-    //delete record from my request amd his requst
+  const declineRequest = async (item) => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Request")
@@ -182,14 +179,17 @@ const LinksScreen = props => {
       .doc(firebase.auth().currentUser.uid)
       .delete();
     setmodalVisible(!modalVisible);
+    setCountReq(friendsRequestList.length - 1);
+    console.log("friendsRequestList.length", friendsRequestList.length);
   };
+
   const getFriends = async () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Friends")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         let friends = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           friends.push({ id: doc.id, ...doc.data() });
         });
         console.log("my friends", friends);
@@ -197,20 +197,23 @@ const LinksScreen = props => {
       });
   };
 
-  //accept button function / change status to 3 ----------------------
-  const handleAccept = async item => {
+  const handleAccept = async (item) => {
+    //console.log("Error removing document-----: ", item.id)
     const currentUser = firebase.auth().currentUser;
-    const userRef = await db
-      .collection("users")
-      .doc(currentUser.uid)
-      .get();
+    const userRef = await db.collection("users").doc(currentUser.uid).get();
     const userData = userRef.data();
     //console.log("line 344", item);
     db.collection("users")
       .doc(item.id)
       .collection("Friends")
       .doc(currentUser.uid)
-      .set(userData);
+      .set({
+        displayName: userData.displayName,
+        email: userData.email,
+        photoURL: userData.photoURL,
+        booking: true,
+        bookingRequest: true,
+      });
 
     db.collection("users")
       .doc(currentUser.uid)
@@ -218,41 +221,42 @@ const LinksScreen = props => {
       .doc(item.id)
       .set({
         displayName: item.displayName,
-        phone: item.phone,
+        email: item.email,
         photoURL: item.photoURL,
-        points: item.points
+        uid: item.id,
+        booking: true,
+        bookingRequest: true,
       });
 
     db.collection("users")
       .doc(item.id)
       .collection("MyRequest")
       .doc(firebase.auth().currentUser.uid)
-      .delete()
-      .then(function() {
-        console.log("Document successfully deleted!");
-      })
-      .catch(function(error) {
-        console.error("Error removing document: ", error);
-      });
+      .delete();
 
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Request")
       .doc(item.id)
-      .delete()
-      .then(function() {
-        console.log("Document successfully deleted!");
-      })
-      .catch(function(error) {
-        console.error("Error removing document: ", error);
-      });
+      .delete();
+
     getMyFriends();
     getFriends();
-    //setCountReq(myfriends.length)
+    setCountReq(friendsRequestList.length - 1);
     setmodalVisible(!modalVisible);
   };
 
-  const handleRemoveFriend = async item => {
+  const checkFriend = (id) => {
+    let friendsId = [];
+    for (let i = 0; i < myfriends.length; i++) {
+      friendsId.push(myfriends[i].id);
+    }
+    return friendsId.includes(id)
+  };
+
+  //async: means this function will return a promises always
+  // it will remove the user b from user a “Friends” sub collection and same for user b
+  const handleRemoveFriend = async (item) => {
     await db
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
@@ -266,16 +270,24 @@ const LinksScreen = props => {
       .collection("Friends")
       .doc(firebase.auth().currentUser.uid)
       .delete();
-    setmodalVisible(!modalVisible);
+    // setmodalVisible(!modalVisible);
   };
+
+  // const checkFriend = (id) => {
+  //   // console.log("checkFriend ", typeof id) WTF
+  //   myfriends.map((item) => {
+  //     return item.id === id
+  //   });
+  //   return false;
+  // };
 
   return (
-    <View>
+    <View style={{ backgroundColor: "#F0F8FF", flex: 1 }}>
       <SearchBar
         placeholder="Type Here..."
         lightTheme
         round
-        onChangeText={Text => searchFunction(Text)}
+        onChangeText={(Text) => searchFunction(Text)}
         autoCorrect={false}
         value={text}
       />
@@ -284,12 +296,11 @@ const LinksScreen = props => {
           <Ionicons
             name="md-person-add"
             size={21}
-            style={{ marginRight: 10, marginTop: 9 }}
+            style={{ marginRight: 10, marginTop: 9, marginLeft: 7 }}
           />
           <Text style={{ fontSize: 20, marginRight: "47%", marginTop: 6 }}>
             Follow Requests
           </Text>
-
           <Badge
             value={countReq}
             status="primary"
@@ -298,14 +309,12 @@ const LinksScreen = props => {
           <Ionicons
             name="ios-arrow-forward"
             size={20}
-            style={{ marginLeft: 5, marginTop: 10 }}
+            style={{ marginLeft: 7, marginTop: 10 }}
           />
         </View>
       </TouchableOpacity>
 
-      <Divider
-        style={{ marginTop: 20, backgroundColor: "lightgray", height: 1 }}
-      />
+      <Divider style={{ marginTop: 20, backgroundColor: "gray", height: 1 }} />
 
       <Modal
         animationType="slide"
@@ -315,73 +324,106 @@ const LinksScreen = props => {
           Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{ marginTop: 22 }}>
+        <View style={{ marginTop: 22, backgroundColor: "#E7EAEB", flex: 1 }}>
           <View>
             <Text
               style={{
                 marginTop: "10%",
                 marginLeft: "auto",
                 marginRight: "auto",
-                fontSize: 25
+                fontSize: 25,
               }}
             >
               Follow Requests
             </Text>
-            <View style={styles.viewStyle}>
-              <FlatList
-                data={friendsRequestList}
-                //Item Separator View
-                renderItem={({ item }) => {
-                  return (
-                    <View key={item.id}>
-                      <View style={{ flexDirection: "row" }}>
-                        <Avatar
-                          rounded
-                          source={{ uri: item.photoURL }}
-                          size={70}
-                        />
-                        <Text style={{ marginTop: 30, marginLeft: 10 }}>
-                          {item.displayName}
-                        </Text>
+            <ScrollView>
+              <View style={styles.viewStyle}>
+                {/* this is a friendsRequestList array I am using it to display the follow requests that the current user have */}
+                <FlatList
+                  data={friendsRequestList}
+                  //Item Separator View
+                  renderItem={({ item }) => {
+                    return (
+                      <View key={item.id}>
+                        <Card
+                          style={{
+                            height: "100%",
+                            width: "95%",
+                            margin: 4,
+                            marginRight: "auto",
+                            marginLeft: "auto",
+                          }}
+                        >
+                          <View style={{ marginLeft: 15, marginTop: 10 }}>
+                            <Avatar
+                              rounded
+                              source={{ uri: item.photoURL }}
+                              size={70}
+                            />
+                            <Text style={{ marginTop: 10, marginLeft: 10 }}>
+                              {item.displayName}
+
+                              {console.log(
+                                "item.displayName",
+                                item.displayName
+                              )}
+                            </Text>
+                          </View>
+
+                          <View style={{ flexDirection: "row" }}>
+                            <View
+                              style={{
+                                marginLeft: "60%",
+                                marginRight: 8,
+                                backgroundColor: "#B0C4DE",
+                              }}
+                            >
+                              {/* this button will call the function handleAccpet with the user id as a parameter */}
+                              <Button
+                                color={"#263c5a"}
+                                title="Accept"
+                                onPress={() => handleAccept(item)}
+                              ></Button>
+                              {console.log(
+                                "Error removing document-----: ",
+                                item.id
+                              )}
+                            </View>
+                            <View style={{ backgroundColor: "#B0C4DE" }}>
+                              {/* this button will call the function declineRequest with the user id as a parameter */}
+                              <Button
+                                color={"#263c5a"}
+                                title="Decline"
+                                onPress={() => declineRequest(item.id)}
+                              ></Button>
+                            </View>
+                          </View>
+                        </Card>
                       </View>
-                      <View style={{ flexDirection: "row" }}>
-                        <View style={{ marginLeft: "60%", marginRight: 8 }}>
-                          <Button
-                            title="Accept"
-                            onPress={() => handleAccept(item)}
-                          ></Button>
-                        </View>
-                        <View>
-                          <Button
-                            title="Decline"
-                            onPress={() => declineRequest(item.id)}
-                          ></Button>
-                        </View>
-                      </View>
-                    </View>
-                  );
-                }}
-                enableEmptySections={true}
-                style={{ marginTop: 10 }}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </View>
-            <TouchableHighlight
-              onPress={() => {
-                ssetModalVisible(!modalVisible);
-              }}
-            >
-              <Text
-                style={{
-                  marginTop: 50,
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  fontSize: 25
+                    );
+                  }}
+                  enableEmptySections={true}
+                  style={{ marginTop: 10 }}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+              <TouchableHighlight
+                onPress={() => {
+                  ssetModalVisible(!modalVisible);
                 }}
               >
-                <Ionicons name="ios-exit" size={50} />
-              </Text>
-            </TouchableHighlight>
+                <Text
+                  style={{
+                    marginTop: 50,
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontSize: 25,
+                  }}
+                >
+                  <Ionicons name="ios-exit" size={50} />
+                </Text>
+              </TouchableHighlight>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -391,7 +433,7 @@ const LinksScreen = props => {
           <AntDesign
             name="addusergroup"
             size={21}
-            style={{ marginRight: 10, marginTop: 12 }}
+            style={{ marginLeft: 7, marginRight: 10, marginTop: 12 }}
           />
           <Text style={{ fontSize: 20, marginTop: 10, marginRight: "62%" }}>
             My Friends{" "}
@@ -399,105 +441,138 @@ const LinksScreen = props => {
           <Ionicons
             name="ios-arrow-forward"
             size={20}
-            style={{ marginLeft: 5, marginTop: 15 }}
+            style={{ marginLeft: 2, marginTop: 15 }}
           />
         </View>
       </TouchableOpacity>
 
       <Divider
         style={{
-          backgroundColor: "lightgray",
+          backgroundColor: "gray",
           height: 1,
           marginTop: 12,
-          marginBottom: 12
+          marginBottom: 12,
         }}
       />
 
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible2}
-        // onRequestClose={() => {
-        //   Alert.alert("Modal has been closed.");
-        // }}
-      >
-        <View style={{ marginTop: 22 }}>
+      <Modal animationType="slide" transparent={false} visible={modalVisible2}>
+        <View style={{ marginTop: 22, backgroundColor: "#E7EAEB", flex: 1 }}>
           <View>
             <Text
               style={{
                 marginTop: "10%",
                 marginLeft: "auto",
                 marginRight: "auto",
-                fontSize: 25
+                fontSize: 25,
               }}
             >
               Friends List
             </Text>
-            <View style={styles.viewStyle}>
-              {myfriends && (
-                <FlatList
-                  data={myfriends}
-                  renderItem={({ item }) => {
-                    return (
-                      <View key={item.id}>
-                        {console.log("userssssssssssssss:,", item.id, item)}
-                        <View>
-                          <Avatar
-                            rounded
-                            source={{ uri: item.photoURL }}
-                            size={70}
-                          />
-                          <Text style={{ marginTop: 30, marginLeft: 10 }}>
-                            {item.displayName}
-
-                            {console.log("item.displayName", item.displayName)}
-                          </Text>
-                        </View>
-                        <View>
-                          <View style={{ flexDirection: "row" }}>
-                            <View style={{ marginLeft: "47%", marginRight: 8 }}>
-                              <Button
-                                style={{ color: "red" }}
-                                title="Share Location"
-                                onPress={() => handleShareLocation(item.id)}
+            <ScrollView>
+              <View style={styles.viewStyle}>
+                {/* this is a map that will go through the user friends */}
+                {myfriends && (
+                  <FlatList
+                    data={myfriends}
+                    renderItem={({ item }, index) => {
+                      return (
+                        <View key={item.id}>
+                          {/* style={{ width: "95%", margin: 4 , marginRight:"auto", marginLeft:"auto"}} */}
+                          <Card
+                            style={{
+                              height: "100%",
+                              width: "95%",
+                              margin: 4,
+                              marginRight: "auto",
+                              marginLeft: "auto",
+                            }}
+                          >
+                            {console.log("userssssssssssssss:,", item.id, item)}
+                            <View style={{ marginLeft: 15, marginTop: 10 }}>
+                              <Avatar
+                                rounded
+                                source={{ uri: item.photoURL }}
+                                size={70}
                               />
+                              <Text style={{ marginTop: 10, marginLeft: 10 }}>
+                                {item.displayName}
+
+                                {console.log(
+                                  "item.displayName",
+                                  item.displayName
+                                )}
+                                {setName(item.displayName)}
+                              </Text>
                             </View>
                             <View>
-                              <Button
-                                title="Remove"
-                                onPress={() => handleRemoveFriend(item.id)}
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    );
-                  }}
-                  enableEmptySections={true}
-                  style={{ marginTop: 10 }}
-                  keyExtractor={(item, index) => index.toString()}
-                />
-              )}
-            </View>
+                              <View style={{ flexDirection: "row" }}>
+                                <Switch
+                                  trackColor={{
+                                    false: "#767577",
+                                    true: "#81b0ff",
+                                  }}
+                                  thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                                  ios_backgroundColor="#3e3e3e"
+                                  onValueChange={() =>
+                                    toggleSwitch(item, isEnabled)
+                                  }
+                                  value={item.booking}
+                                />
 
-            <TouchableHighlight
-              onPress={() => {
-                ssetModalVisible2(!modalVisible2);
-              }}
-            >
-              <Text
-                style={{
-                  marginTop: 50,
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  fontSize: 25
+                                <View
+                                  style={{
+                                    marginLeft: "59%",
+                                    marginRight: 8,
+                                    width: 120,
+                                    backgroundColor: "#B0C4DE",
+                                  }}
+                                >
+                                  <Button
+                                    color={"#263c5a"}
+                                    title="Remove"
+                                    onPress={() =>
+                                      handleRemoveFriend(item.id) && setV(!v)
+                                    }
+                                  >
+                                    {v ? "Hide" : "Show"}
+                                  </Button>
+                                </View>
+                              </View>
+                            </View>
+                          </Card>
+                        </View>
+                      );
+                    }}
+                    enableEmptySections={true}
+                    style={{ marginTop: 10 }}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                )}
+              </View>
+
+              <TouchableHighlight
+                onPress={() => {
+                  ssetModalVisible2(!modalVisible2);
                 }}
               >
-                <Ionicons name="ios-exit" size={50} />
-              </Text>
-            </TouchableHighlight>
+                <Text
+                  style={{
+                    marginTop: 50,
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    fontSize: 25,
+                  }}
+                >
+                  <Ionicons name="ios-exit" size={50} />
+                </Text>
+              </TouchableHighlight>
+            </ScrollView>
           </View>
         </View>
+        <Snackbar visible={v} onDismiss={() => setV(false)} duration={4000}>
+          You removed <Text style={{ fontWeight: "bold" }}>{name} </Text>from
+          your friend list!
+        </Snackbar>
       </Modal>
 
       <Text
@@ -505,85 +580,136 @@ const LinksScreen = props => {
           marginLeft: "auto",
           marginRight: "auto",
           fontSize: 20,
-          marginBottom: 12
+          marginBottom: 12,
         }}
       >
         {" "}
         Discover People
       </Text>
-      <FlatList
-        data={users}
-        //Item Separator View
-        renderItem={({ item }) => {
-          return item.id !== firebase.auth().currentUser.uid &&
-            item.id !== myfriends.includes(item.id) ? (
-            <View>
-              <View key={item.id} style={{ flexDirection: "row" }}>
-                <Image
-                  style={{
-                    width: 100,
-                    height: 80
-                  }}
-                  source={{ uri: item.photoURL }}
-                />
-
-                <View
-                  style={
-                    myfriendList.includes(item.id) ? styles.num2 : styles.num
-                  }
-                >
-                  <Button
-                    onPress={
-                      myfriendList.includes(item.id)
-                        ? () => handleUnFollow(item.id)
-                        : () => handleFollow(item.id)
-                    }
-                    title={
-                      myfriendList.includes(item.id) ? "Requested" : "Follow"
-                    }
-                  />
-                </View>
-              </View>
-              <Text style={{ marginTop: 2, marginLeft: 10, marginBottom: 20 }}>
-                {item.displayName}
-              </Text>
-            </View>
-          ) : null;
-        }}
-        enableEmptySections={true}
-        style={{ marginTop: 10 }}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      <ScrollView>
+        <View>
+          {/* <Button title="hi" disabled={user.points>=d.requiredPoints ? false:true}/> */}
+          {/* this is a map that will go through all the users from the db  */}
+          <FlatList
+            data={users}
+            //Item Separator View
+            renderItem={({ item }) => {
+              return item.id !== firebase.auth().currentUser.uid ? (
+                !checkFriend(item.id) ? (
+                  <View>
+                    {/* {console.log("my friendss", item.id)} */}
+                    <Card
+                      style={{
+                        width: "95%",
+                        margin: 4,
+                        marginRight: "auto",
+                        marginLeft: "auto",
+                      }}
+                    >
+                      <View key={item.id} style={{ flexDirection: "row" }}>
+                        <Animatable.View animation="zoomIn" iterationCount={1}>
+                          <Image
+                            style={{
+                              width: 100,
+                              height: 80,
+                              marginLeft: 15,
+                              marginTop: 10,
+                            }}
+                            source={{ uri: item.photoURL }}
+                          />
+                        </Animatable.View>
+                        <View
+                          style={
+                            myfriendList.includes(item.id)
+                              ? styles.num2
+                              : styles.num
+                          }
+                        >
+                          {/* in here i checked if the current user friend list include the user id that he/she just followed
+                        if yes show requested if no show follow  as a title for the button */}
+                          <Button
+                            color={
+                              myfriendList.includes(item.id)
+                                ? "white"
+                                : "#263c5a"
+                            }
+                            onPress={
+                              myfriendList.includes(item.id)
+                                ? () => handleUnFollow(item.id)
+                                : () => handleFollow(item.id)
+                            }
+                            title={
+                              myfriendList.includes(item.id)
+                                ? "Requested"
+                                : "Follow"
+                            }
+                          />
+                        </View>
+                      </View>
+                      <Text
+                        style={{
+                          marginTop: 2,
+                          marginLeft: 30,
+                          marginBottom: 20,
+                        }}
+                      >
+                        {item.displayName}
+                      </Text>
+                    </Card>
+                  </View>
+                ) : null
+              ) : null;
+            }}
+            enableEmptySections={true}
+            style={{ marginTop: 10 }}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
 
 LinksScreen.navigationOptions = {
-  title: "Friends"
+  title: "Friends",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#5a91bf",
+  },
 };
 
 const styles = StyleSheet.create({
+  view: {
+    backgroundColor: "#F0F8FF",
+    flex: 1,
+  },
+  view2: {
+    backgroundColor: "#243447",
+    flex: 1,
+    color: "white",
+  },
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   num: {
     width: 100,
     height: 35,
-    marginLeft: "46%",
-
-    marginTop: 30,
-    backgroundColor: "#0084ff",
-    color: "white"
+    marginLeft: "42%",
+    borderWidth: 1,
+    borderColor: "#B0C4DE",
+    marginTop: 47,
+    backgroundColor: "#B0C4DE",
+    // color: "white",
   },
   num2: {
     width: 100,
     height: 35,
-    marginLeft: "46%",
-    marginTop: 30,
-    backgroundColor: "#0084ff",
-    color: "white"
-  }
+    marginLeft: "42%",
+    marginTop: 47,
+    backgroundColor: "gray",
+    //color: "#263c5a",
+  },
 });
 export default LinksScreen;

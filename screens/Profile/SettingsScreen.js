@@ -1,88 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Button, SafeAreaView } from "react-native";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/storage";
-import "firebase/functions";
-import * as ImagePicker from "expo-image-picker";
-import { Avatar, ListItem, Icon, Text } from "react-native-elements";
-// import { Ionicons } from "@expo/vector-icons";
-// import { Text } from "react-native-animatable";
-// import { ScrollView } from "react-native-gesture-handler";
+import React from "react";
+import { StyleSheet } from "react-native";
+
+import { createDrawerNavigator } from "react-navigation-drawer";
+import { createAppContainer } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
+import PaymentCard from "./Payment";
+import AddVehicle from "./AddVehicle";
+import ProfileScreen from "./ProfileScreen.js";
+import Vehicle from "./Vehicle";
+import AddCard from "./AddCard";
+import LinksScreen from "./LinksScreen";
+import PartialPayment from "../../screens/PartialPayment";
+
+const VehicleStack = createStackNavigator(
+  {
+    Vehicle: Vehicle,
+    AddVehicle: AddVehicle,
+  },
+  {
+    headerMode: "none",
+  }
+);
+
+const CardStack = createStackNavigator({
+  Payment: PaymentCard,
+  AddCard: AddCard,
+});
 
 export default function SettingsScreen(props) {
-  const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
-  // const [displayName, setDisplayName] = useState("");
-  // const [uri, setUri] = useState("");
-  const [photoURL, setPhotoURL] = useState("");
-  // const [phone, setPhone] = useState("");
+  const MyDrawerNavigator = createDrawerNavigator({
+    Home: ProfileScreen,
+    Vehicle: VehicleStack,
+    Friends: LinksScreen,
+    Cards: CardStack,
+    PartialPayment: PartialPayment,
 
-  const askPermission = async () => {
-    const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-    setHasCameraRollPermission(status === "granted");
-  };
-
-  useEffect(() => {
-    // console.log(firebase.auth().currentUser);
-    askPermission();
-  }, []);
-
-  const handleSet = () => {
-    const user = firebase.auth().currentUser;
-    // setDisplayName(user.displayName);
-    setPhotoURL(user.photoURL);
-    // setPhone(user.phoneNumber);
-  };
-
-  const handleLogout = () => {
-    firebase.auth().signOut();
-  };
-
-  useEffect(() => {
-    handleSet();
-  }, []);
-
-  useEffect(() => {}, [photoURL]);
-
-  const handleSave = async (uri) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const putResult = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .put(blob);
-    const url = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .getDownloadURL();
-    const updateUser = firebase.functions().httpsCallable("updatePhoto");
-    const response2 = await updateUser({
-      uid: firebase.auth().currentUser.uid,
-      photoURL: url,
-    });
-    setPhotoURL(url);
-  };
-
-  const handlePickImage = async () => {
-    // show camera roll, allow user to select
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      console.log("not cancelled", result.uri);
-      handleSave(result.uri);
-      //setPhotoURL(result.uri);
-    }
-  };
+    // AddVehicle: AddVehicle,
+  });
 
   const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "MY POINTS"];
   const files = ["Profile", "Payment", "Vehicle", "Friends", "Reward"];
+
   return (
     <View style={styles.container}>
       <View style={{ flex: 2, alignItems: "center" }}>
@@ -115,42 +73,17 @@ export default function SettingsScreen(props) {
             }
           />
         ))}
-        {/* <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24
-          }}
-          onChangeText={setDisplayName}
-          placeholder="Display Name"
-          value={displayName}
-        /> */}
-        {/* <Input
-          placeholder="Name"
-          label="Name"
-          onChangeText={setDisplayName}
-          value={displayName}
-        />
-        <Input
-          placeholder="Phone"
-          label="Phone"
-          onChangeText={setDisplayName}
-          value={phone}
-        /> */}
       </View>
-
-      {/* {photoURL !== "" && (
-        <Image style={{ width: 100, height: 100 }} source={{ uri: photoURL }} />
-      )} */}
-      {/* <Button title="Pick Image" onPress={handlePickImage} /> */}
-      <Button title="Log Out" onPress={handleLogout} />
     </View>
   );
 }
 
 SettingsScreen.navigationOptions = {
   title: "MY ACCOUNT",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#005992",
+  },
 };
 
 const styles = StyleSheet.create({

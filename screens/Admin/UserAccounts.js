@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Image,
   Platform,
@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,
 } from "react-native";
 
 import "firebase/auth";
@@ -21,27 +21,29 @@ import {
   Rows,
   Col,
   Cols,
-  Cell
+  Cell,
 } from "react-native-table-component";
+import * as Animatable from "react-native-animatable";
 
 export default function UserAccounts(props) {
-  const [services, setServices] = useState([]);
   const [show, setShow] = useState("All");
   const [search, setSearch] = useState();
-  const [users, setUsers] = useState([]);
-  const [email, setEmail] = useState();
-  const [role, setRole] = useState();
+  const [Allusers, setAllUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const email = useRef();
+  const role = useRef();
 
   useEffect(() => {
-    db.collection("users").onSnapshot(querySnapshot => {
+    db.collection("users").onSnapshot((querySnapshot) => {
       const users = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         users.push({ id: doc.id, ...doc.data() });
-        console.log("current users", users);
+        //console.log("current users", users)
       });
-      setUsers([...users]);
+      setAllUsers([...users]);
+      setFilteredUsers([...users]);
     });
-    console.log("users", users);
+    //console.log("users", users)
   }, []);
 
   useEffect(() => {
@@ -63,7 +65,33 @@ export default function UserAccounts(props) {
     }
   }, [role]);
 
-  const filter = () => {};
+  const filter = () => {
+    let temp = Allusers;
+    if (email.current) {
+      console.log("the email ------>>", email.current);
+      temp = temp.filter((u) => u.email === email.current);
+      //console.log("email changed",temp)
+    }
+    if (role.current) {
+      console.log("changing role", role.current);
+      temp = temp.filter((u) => u.role === role.current);
+    }
+
+    setFilteredUsers(temp);
+    // console.log("final result", filteredUsers)
+  };
+
+  const updateEmail = (updatedEmail) => {
+    console.log("------------------------------------", updatedEmail);
+    email.current = updatedEmail;
+    filter();
+  };
+
+  const updateRole = (updatedRole) => {
+    console.log("------------------------------------", updatedRole);
+    role.current = updatedRole;
+    filter();
+  };
 
   return (
     <View style={styles.container}>
@@ -73,114 +101,86 @@ export default function UserAccounts(props) {
       <View style={styles.box}>
         <TextInput
           style={styles.search}
-          onChangeText={text => setEmail(text)}
+          onChangeText={(text) => updateEmail(text)}
           placeholder="email@example.com"
           value={email}
         />
 
+        {/* <View>
+           <Button title="search" onPress={()=>filter()}/> 
+           </View> */}
         <Picker
           selectedValue={role}
+          itemStyle={{ height: 60 }}
           style={styles.search}
-          onValueChange={itemValue => setRole(itemValue)}
+          onValueChange={(itemValue) => updateRole(itemValue)}
         >
-          <Picker.Item label="ROLE" value="" />
-          <Picker.Item label="Admin" value="" />
-          <Picker.Item label="User" value="" />
-          <Picker.Item label="Worker" value="" />
-          <Picker.Item label="Advertiser" value="" />
+          <Picker.Item style={{ height: "1%" }} label="ROLE" value="" />
+          <Picker.Item style={{ height: "5%" }} label="Admin" value="Admin" />
+          <Picker.Item style={{ height: "5%" }} label="User" value="user" />
+          <Picker.Item style={{ height: "5%" }} label="Worker" value="worker" />
+          <Picker.Item
+            style={{ height: "5%" }}
+            label="Advertiser"
+            value="Advertiser"
+          />
         </Picker>
-        <View>
-          <Button title="search" onPress={() => filter()} />
-        </View>
       </View>
 
-      {users.length > 0 ? (
-        users.map(u => (
-          <View style={styles.box}>
-            <View style={styles.user}>
-              <Text style={{ fontSize: 20 }}>{u.displayName}</Text>
-              <Text>email@email.com</Text>
-            </View>
-            <View style={styles.user}>
-              <Text style={{ fontSize: 20 }}>{u.role}</Text>
-            </View>
-          </View>
-        ))
-      ) : (
-        <Text>No Users Found</Text>
-      )}
-
-      {/* {
-                show == "All" ?
-                    <View style={{ marginLeft:"auto", marginRight:"auto"}}>
-                        {services.map((s, index) =>
-                            <TouchableOpacity key={index} onPress={()=> setSelectedService(s) || props.navigation.navigate("ServiceDetails" , {service: s})} >
-                                <Text style={{width: 250 ,fontSize: 20 , borderBottomColor: "#DCDCDC" , borderBottomWidth: 1 , marginBottom:10}}>  {s.Name} </Text>
-                            </TouchableOpacity>
-                        )}
-                        <Button title="Add Service" onPress={() => setShow("Add")} />
-                    </View>
-                  
-                        : show == "Add" ?
-
-                            <View style={{ width: "80%", marginLeft:"auto", marginRight:"auto"}}>
-                                <Text>Name</Text>
-
-                                <TextInput
-                                    style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-
-                                    onChangeText={setName}
-                                    placeholder="Cars Support"
-                                    value={name}
-                                />
-                                <Text>Price</Text>
-                                <TextInput
-                                    style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                    keyboardType='numeric'
-                                    onChangeText={setPrice}
-                                    placeholder="000"
-                                    value={price}
-                                    maxLength={4}
-                                />
-                                <Text>Description</Text>
-                                <TextInput
-                                    style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                                    onChangeText={setDescription}
-                                    placeholder="..."
-                                    value={description}
-                                />
-                                <Text>{error ? error : null}</Text>
-                                <View style={{ marginLeft:"auto", marginRight:"auto", width: 250}}>
-                                <Button title="Save" onPress={() => save("Insert")} />
-                                <Text style={{ marginBottom:10}}></Text>
-                                <Button title="Cancel" onPress={() => setShow("All")} />
-                                </View>
-                            </View>
-                            :
-                            null
-            } */}
+      <ScrollView>
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((u, index) => (
+            <Animatable.View animation="fadeInRight" delay={index + 150}>
+              <TouchableOpacity
+                style={styles.box}
+                onPress={() =>
+                  props.navigation.navigate("ChangeRole", { user: u })
+                }
+              >
+                <View style={styles.user}>
+                  <Text style={{ fontSize: 20 }}>{u.displayName}</Text>
+                  <Text>{u.email}</Text>
+                </View>
+                <View style={styles.user}>
+                  <Text style={{ fontSize: 20 }}>{u.role}</Text>
+                </View>
+              </TouchableOpacity>
+            </Animatable.View>
+          ))
+        ) : (
+          <Text>No Users Found</Text>
+        )}
+      </ScrollView>
     </View>
   );
 }
 UserAccounts.navigationOptions = {
-  title: "User Accounts"
+  title: "User Accounts",
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
-  head: { height: 40, backgroundColor: "#f1f8ff" },
+  container: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: "#fbfdfb",
+  },
+  head: { height: 40, backgroundColor: "#fbfdfb" },
   text: { margin: 6 },
-  box: { backgroundColor: "#FFFAFA", padding: 5, flexDirection: "row" },
+  box: { backgroundColor: "#fbfdfb", padding: 5, flexDirection: "row" },
   user: {
-    backgroundColor: "#F0FFF0",
+    borderColor: "#D3D3D3",
+    borderBottomWidth: 3,
     padding: 5,
     width: "50%",
-    alignItems: "center"
+    alignItems: "center",
   },
   search: {
     backgroundColor: "#DCDCDC",
     padding: 5,
     width: "50%",
-    alignItems: "center"
-  }
+    height: "100%",
+    margin: 3,
+  },
+  //search2:{ padding:5 , width:"50%", height:"10%"  }
 });
