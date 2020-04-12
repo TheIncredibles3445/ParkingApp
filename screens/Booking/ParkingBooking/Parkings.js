@@ -226,14 +226,14 @@ export default function Parking(props) {
     if (!item.isParked) {
       if (cars.length !== 0) {
         if (!item.isBooked) {
-          if (friend != null) {
+          if (friend !== null) {
             db.collection("booking")
               .add({
                 date: date,
                 total_price: item.price,
                 type: "Parking",
                 blockId: data.selectedBlock.id,
-                userId: friend,
+                userId: friend.id,
               })
               .then((docRef) => {
                 db.collection("booking")

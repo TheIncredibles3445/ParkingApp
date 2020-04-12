@@ -174,7 +174,7 @@ export default function ParkingBooking(props) {
       selectedBlock: selectedBlock,
     };
 
-    props.navigation.navigate("Parking", { data: data, friend: friend.id });
+    props.navigation.navigate("Parking", { data: data, friend: friend });
     setIsVisible(false);
   };
 
