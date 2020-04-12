@@ -86,33 +86,32 @@ export default function WorkersManagementScreen(props) {
     }
 
     return (
-        <View>
-            <Text>Available Workers</Text>
+        <ScrollView syle={{backgroundColor: '#F0F8FF'}}>
+            <Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#284057", marginBottom: "5%"  }}>Available Workers</Text>
             {
 
                 filterServiceWorkers() && availableWorkers.current ?
                     availableWorkers.current.map((w, index) =>
 
 
-                        <View key={index}>
-                            <Text>{w.id} </Text>
-                            <Button title={"Assign"} onPress={() => assign(w)} />
-
-                        </View>
+                    <View key={index} style={{ marginLeft: "auto", marginRight: "auto",flexDirection:"row", borderWidth:1 , borderColor:"#284057", padding:10 , width:"95%"}}>
+                    <Text style={{ width:"70%"}}>{w.name}{"\n"}{w.id}</Text>
+                    <View style={{ width:"20%", marginBottom:9 , borderWidth: 1 , borderBottomColor:"#fbfdfb"}}><Button title={"Assign"} onPress={() => assign(w)} /></View>
+                </View>
 
 
                     )
                     :
                     <Text>No Available Workers</Text>
             }
-            <Text>Assigned Workers</Text>
+            <Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#284057", marginBottom: "5%"  }}>Assigned Workers</Text>
             {
                 filterServiceWorkers() && serviceWorkers.current ?
                     serviceWorkers.current.map((w, index) =>
 
-                        <View key={index}>
-                            <Text>{w.id} </Text>
-                            <Button title={"Remove"} onPress={() => unAssign(w)} />
+                        <View key={index} style={{marginLeft: "auto", marginRight: "auto", flexDirection:"row", borderWidth:1 , borderColor:"#284057", padding:10 , width:"95%"}}>
+                            <Text style={{ width:"70%"}}>{w.name}  {"\n"}{w.id}</Text>
+                            <View style={{ width:"20%", marginBottom:9 , borderWidth: 1 , borderBottomColor:"#fbfdfb"}}><Button title={"Remove"} onPress={() => unAssign(w)} /></View>
                         </View>
 
                     )
@@ -121,7 +120,7 @@ export default function WorkersManagementScreen(props) {
             }
 
 
-        </View>
+        </ScrollView>
     )
 
 
@@ -129,4 +128,8 @@ export default function WorkersManagementScreen(props) {
 
 WorkersManagementScreen.navigationOptions = {
     title: ' Workers Management',
-};
+    headerStyle: { backgroundColor: "#5a91bf" },
+    headerTitleStyle: {
+      color: "white"
+    }
+  };

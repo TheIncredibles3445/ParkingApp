@@ -22,9 +22,7 @@ export default function ProfileScreen(props) {
     firebase.auth().currentUser.displayName
   );
   // const [uri, setUri] = useState("");
-  const [photoURL, setPhotoURL] = useState(
-    firebase.auth().currentUser.photoURL
-  );
+  const [photoURL, setPhotoURL] = useState("");
   const loggedInUser = useRef();
   const [update, setUpate] = useState(false);
   const [ads, setAds] = useState([]);
@@ -65,10 +63,13 @@ export default function ProfileScreen(props) {
   };
 
   const handleSet = () => {
-    const user = firebase.auth().currentUser;
-    setDisplayName(user.displayName);
-    setPhotoURL(user.photoURL);
-    // setPhone(user.phoneNumber);
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .onSnapshot((query) => {
+        const data = query.data();
+        setDisplayName(data.displayName);
+        setPhotoURL(data.photoURL);
+      });
   };
 
   const handleLogout = () => {
@@ -92,8 +93,8 @@ export default function ProfileScreen(props) {
       .ref()
       .child(firebase.auth().currentUser.uid)
       .getDownloadURL();
-    const updateUser = firebase.functions().httpsCallable("updatePhoto");
-    const response2 = await updateUser({
+    const updatePhoto = firebase.functions().httpsCallable("updatePhoto");
+    const response2 = await updatePhoto({
       uid: firebase.auth().currentUser.uid,
       photoURL: url,
     });
@@ -121,7 +122,7 @@ export default function ProfileScreen(props) {
   return (
     <View style={styles.container}>
       <View
-        style={{ flex: 2, alignItems: "center", backgroundColor: "#005992" }}
+        style={{ flex: 2, alignItems: "center", backgroundColor: "#5a91bf" }}
       >
         {photoURL && (
           <Avatar
@@ -131,16 +132,16 @@ export default function ProfileScreen(props) {
             source={{
               uri: photoURL,
             }}
-            overlayContainerStyle={{ backgroundColor: "white" }}
+            overlayContainerStyle={{ backgroundColor: "#B0C4DE" }}
             showEditButton
             onEditPress={handlePickImage}
             // editButton={<Icon type="feather" name="edit-2" color="red" />}
           />
         )}
-        <Text style={{ color: "white", fontWeight: "bold", fontSize: 15 }}>
+        <Text style={{ color: "#263c5a", fontWeight: "bold", fontSize: 15 }}>
           You are logged in as
         </Text>
-        <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
+        <Text style={{ color: "#263c5a", fontWeight: "bold", fontSize: 18 }}>
           {firebase.auth().currentUser.displayName !== null
             ? firebase.auth().currentUser.displayName
             : firebase.auth().currentUser.email}
@@ -197,12 +198,12 @@ export default function ProfileScreen(props) {
         style={
           Platform.OS === "android"
             ? {
-                backgroundColor: "#005992",
+                backgroundColor: "#B0C4DE",
                 height: 30,
                 justifyContent: "center",
               }
             : {
-                backgroundColor: "#005992",
+                backgroundColor: "#B0C4DE",
                 height: 25,
                 justifyContent: "center",
               }
@@ -210,7 +211,7 @@ export default function ProfileScreen(props) {
       >
         <Text
           style={{
-            color: "white",
+            color: "#263c5a",
             textAlign: "center",
             fontWeight: "bold",
             letterSpacing: 5,
@@ -224,11 +225,9 @@ export default function ProfileScreen(props) {
 }
 
 ProfileScreen.navigationOptions = {
-  title: "MY ACCOUNT",
+  title: "My Account",
+  headerStyle: { backgroundColor: "#5a91bf" },
   headerTintColor: "white",
-  headerStyle: {
-    backgroundColor: "#005992",
-  },
   drawerLabel: "Profile",
   drawerIcon: ({ tintColor }) => (
     <Image
@@ -241,7 +240,7 @@ ProfileScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E7EAEB",
+    backgroundColor: "#F0F8FF",
   },
   icon: {
     width: 24,

@@ -8,13 +8,15 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ScrollViewBase
 } from "react-native";
 
 import "firebase/auth";
 import db from "../../../db.js";
 import FlashMessage from "react-native-flash-message";
 import { showMessage, hideMessage } from "react-native-flash-message";
+import * as Animatable from 'react-native-animatable';
 
 export default function ServicesScreen(props) {
   const [services, setServices] = useState([]);
@@ -71,11 +73,15 @@ export default function ServicesScreen(props) {
   };
 
   return (
-    <View>
-
+    <View style={{backgroundColor: "#F0F8FF" , height:"100%"}}>
 
       {show == "All" ? (
         <View style={{ marginTop: "5%", marginLeft: "5%" }}>
+          <Animatable.Text animation="fadeInRight" delay={3} style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#284057", marginBottom: "10%"  }}>CNA-Q Cars Services</Animatable.Text>
+          <Animatable.View animation="fadeInRight" delay={10}>
+          <ScrollView style={{marginLeft: "4%" , height:"auto",
+          borderColor: "#284057", borderWidth: 2 ,marginRight:"5%" ,
+           width:"90%", padding:10 , backgroundColor:"white"}}>
           {services.map((s, index) => (
             <TouchableOpacity
               key={index}
@@ -86,11 +92,11 @@ export default function ServicesScreen(props) {
             >
               <Text
                 style={{
-                  width: "60%",
+                  width: "80%",
                   fontSize: 20,
-                  borderBottomColor: "#DCDCDC",
-                  borderBottomWidth: 4,
-                  marginBottom: 10
+                  borderBottomColor: "#284057",
+                  borderBottomWidth: 2,
+                  marginBottom: 10, marginRight:"auto" , marginLeft:"auto"
                 }}
               >
                 {" "}
@@ -98,15 +104,21 @@ export default function ServicesScreen(props) {
               </Text>
             </TouchableOpacity>
           ))}
-          <TouchableOpacity style={styles.btn} onPress={() => setShow("Add")}>
-            <Text style={{ fontSize: 20, color: "white" }}>Add Service</Text>
-          </TouchableOpacity>
+          </ScrollView>
+          </Animatable.View>
 
+          <Animatable.View animation="fadeInRight" delay={10}>
+          <TouchableOpacity style={{ marginTop: "10%", marginLeft: "10%",backgroundColor: "#B0C4DE", width: "40%", alignItems: "center", height: 40, padding: 2, borderRadius: 4 }} onPress={() => setShow("Add")}>
+            <Text style={{ fontSize: 20, color: "white"}}>Add Service</Text>
+          </TouchableOpacity>
+          </Animatable.View>
         </View>
       ) : show == "Add" ? (
-        <View style={{ width: "80%", marginLeft: "auto", marginRight: "auto" ,marginTop:"5%"}}>
-<Text style={{ fontSize:30 , marginBottom:"5%", marginLeft: "auto", marginRight: "auto", color:"#708090"}}>Add New Service</Text>
-          <View style={styles.box}>
+        
+        <Animatable.View animation="fadeInUp" delay={10} style={{ width: "95%", marginLeft: "auto", marginRight: "auto" ,marginTop:"5%"}}>
+<Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#284057", marginBottom: "10%"  }}>Add New Service</Text>
+<View style={{borderColor: "#284057", borderWidth: 2 , width:"100%" , padding:10 , backgroundColor:"white"}}>
+<View style={styles.box}>
             <Text style={styles.label}>Name</Text>
 
             <TextInput
@@ -147,20 +159,27 @@ export default function ServicesScreen(props) {
             <TouchableOpacity style={styles.btn} onPress={() => save("Insert")} ><Text style={{ fontSize: 20, color: "white" }}>Save</Text></TouchableOpacity>
             <TouchableOpacity style={styles.btn} onPress={() => setShow("All")} ><Text style={{ fontSize: 20, color: "white" }}>Cancel</Text></TouchableOpacity>
           </View>
-        </View>
+  
+</View>
+          
+        </Animatable.View>
       ) : null}
-       <FlashMessage position="bottom" animationDuration={300} duration={50000} />
+       <FlashMessage position="bottom" animationDuration={300} duration={9000} />
     </View>
   );
 }
 ServicesScreen.navigationOptions = {
-  title: "Services Management"
+  title: "Services Management",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTitleStyle: {
+    color: "white"
+  }
 };
 
 
 const styles = StyleSheet.create({
-  btn: { backgroundColor: "#00BFFF", width: "40%", alignItems: "center", height: 40, padding: 2, borderRadius: 4 },
-  input: { height: 40, borderColor: "#DCDCDC", borderWidth: 3,width:"70%", borderRadius: 4 },
-  label:{ fontSize:15 , width :"20%" , marginRight:"5%"},
+  btn: { backgroundColor: "#B0C4DE", width: "40%", alignItems: "center", height: 40, padding: 2, borderRadius: 4 },
+  input: { height: 40, borderColor: "#C0C0C0", borderWidth: 2,width:"70%", borderRadius: 4 , padding:10 , backgroundColor:"white"},
+  label:{ fontSize:15 , width :"20%" , marginRight:"5%" , fontWeight:"bold"},
   box:{flexDirection: "row" ,width:"100%" , margin:5}
 })

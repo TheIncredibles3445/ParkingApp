@@ -17,7 +17,7 @@ export default function ServiceBookingDetails(props) {
   const [workers, setWorkers] = useState([]);
   const [servitemid, setServItemId] = useState([]);
   const [serviceName, setServiceName] = useState([]);
-
+  
   const BookingsDetailsDB = async () => {
     db.collection("booking")
       .doc(itemId)

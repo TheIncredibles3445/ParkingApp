@@ -98,7 +98,7 @@ export default function ParcialPayment(props) {
 
             db.collection("users")
                 .doc(firebase.auth().currentUser.uid)
-                .update({ advPendingAmount: update.data().pendingAmount - amount });
+                .update({ advPendingAmount: update.data().advPendingAmount - amount });
         }
         else {
             db.collection("users")
@@ -196,14 +196,14 @@ export default function ParcialPayment(props) {
                         marginBottom: 4,
                         marginTop: 4,
                         marginRight: "auto",
-                        marginLeft: "auto"
+                        marginLeft: "auto" 
                     }}
                     onValueChange={itemValue => setSelectedPayment(itemValue)}
                 >
                     <Picker.Item label={"Payment For"} value={""} disabled />
 
-                    {user && parseInt(user.pendingAmount) > 0 ? <Picker.Item label={"Bookings"} value={"Bookings"} /> : null}
-                    {user && parseInt(user.AdvPendingAmount) > 0 ? <Picker.Item label={"Advertisement"} value={"Advertisement"} /> : null}
+                    {user && user.pendingAmount > 0? <Picker.Item label={"Bookings"} value={"Bookings"} /> : null}
+                    {user && user.advPendingAmount > 0 ? <Picker.Item label={"Advertisement"} value={"Advertisement"} /> : null}
 
                 </Picker>
 
@@ -314,6 +314,7 @@ export default function ParcialPayment(props) {
       disabled={
         firstName &&
           provider &&
+          amount &&
           lastName &&
           cardNumber &&
           expiry &&
@@ -347,4 +348,4 @@ ParcialPayment.navigationOptions = {
   const styles = StyleSheet.create({
     input: { height: 40, borderColor:"#284057", borderWidth: 1, width: "60%" ,backgroundColor:"white", paddingLeft: 7},
     label: { fontSize: 15, color: "#284057", width: "30%",fontWeight:"bold" }
-  }) //backgroundColor:"white" fontWieght:"bold" , paddingLeft: 5
+  })

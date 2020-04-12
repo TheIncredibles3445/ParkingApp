@@ -37,17 +37,17 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
-import ChangeRole from "../screens/Admin/ChangeRole"
-import WorkerSchedule from "../screens/Profile/WorkerSchedule"
-import ScheduleDetails from "../screens/Profile/ScheuduleDetails"
-import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails"
-import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
-import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
-import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
-import AdvertisementList from "../screens/Admin/AdvertisementsList"
-import PartialPayment from "../screens/PartialPayment"
-import Statistics from "../screens/Admin/Statistics"
-import FindParking from "../screens/Booking/FindParkings"
+import ChangeRole from "../screens/Admin/ChangeRole";
+import WorkerSchedule from "../screens/Profile/WorkerSchedule";
+import ScheduleDetails from "../screens/Profile/ScheuduleDetails";
+import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails";
+import MyAdvertisement from "../screens/Adverisement/MyAdvertisements";
+import AdminAdvertisements from "../screens/Admin/AdminAdvertisements";
+import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails";
+import AdvertisementList from "../screens/Admin/AdvertisementsList";
+import PartialPayment from "../screens/PartialPayment";
+import Statistics from "../screens/Admin/Statistics";
+import FindParking from "../screens/Booking/FindParkings";
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/Profile/LinksScreen";
@@ -88,7 +88,7 @@ const HomeStack = createStackNavigator(
     ReportScreen: ReportScreen,
     Direction: Direction,
     FindParking: FindParking,
-    RewardScreen:RewardScreen
+    RewardScreen: RewardScreen,
   },
   config
 );
@@ -109,7 +109,7 @@ const SettingsStack = createStackNavigator(
   {
     Settings: ProfileScreen,
     // Profile: ProfileScreen,
-    EditProfile: Profile,
+    Profile: Profile,
     Card: PaymentCard,
     Vehicle: Vehicle,
     AddVehicle: AddVehicle,
@@ -131,7 +131,11 @@ const SettingsStack = createStackNavigator(
 SettingsStack.navigationOptions = {
   tabBarLabel: "Profile",
   tabBarIcon: ({ focused }) => (
-    <Icon name="md-person" type="ionicon" color={focused ? "#edf3f8" : "white"}/>
+    <Icon
+      name="md-person"
+      type="ionicon"
+      color={focused ? "#edf3f8" : "white"}
+    />
   ),
 };
 
@@ -148,10 +152,13 @@ SettingsStack.path = "";
 //     console.log("the userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",user)
 //   }
 // }
-const user = null
-firebase.auth().onAuthStateChanged((user) =>{
-  console.log("-----------------------------------------------------------user",user)
-})
+const user = null;
+firebase.auth().onAuthStateChanged((user) => {
+  console.log(
+    "-----------------------------------------------------------user",
+    user
+  );
+});
 
 // const tabNavigator = createBottomTabNavigator({
 //   HomeStack,
@@ -195,16 +202,15 @@ const tabNavigator = createBottomTabNavigator(
       return {
         header: null,
         headerTitle: routeName,
-        
-      }
+      };
     },
     tabBarOptions: {
-      activeTintColor:"#edf3f8",
+      activeTintColor: "#edf3f8",
       inactiveTintColor: "white",
       style: {
-        backgroundColor: "#5a91bf"
-      }
-    }
+        backgroundColor: "#5a91bf",
+      },
+    },
   }
 );
 
@@ -322,9 +328,6 @@ const AppDrawerNavigator = createDrawerNavigator(
   },
   {
     drawerBackgroundColor: "#F0F8FF",
-    navigationOptions: {
-      backgroundColor: "red",
-    },
     contentOptions: {
       activeTintColor: "black",
       inactiveTintColor: "black",
@@ -339,14 +342,23 @@ const AppDrawerNavigator = createDrawerNavigator(
           }}
         >
           {loggedInUser && (
-            <SafeAreaView style={{ marginTop: "20 %" }}>
+            <SafeAreaView style={{ marginTop: "19%" }}>
               <Avatar
                 source={{ uri: loggedInUser.photoURL }}
                 size="large"
                 rounded
+                overlayContainerStyle={{
+                  backgroundColor: "#F0F8FF",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               />
-              <View style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 20 }}>{loggedInUser.displayName}</Text>
+              <View style={{ justifyContent: "center" }}>
+                <Text style={{ fontSize: 20 }}>
+                  {loggedInUser.displayName
+                    ? loggedInUser.displayName
+                    : loggedInUser.email}
+                </Text>
               </View>
             </SafeAreaView>
           )}
