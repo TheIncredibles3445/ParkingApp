@@ -36,7 +36,7 @@ export default function ChangeRole(props) {
         checkIfWorker()
         db.collection("users").doc(user.id).update({ role : role.current})
         if( role.current == "worker"){
-            db.collection("worker").doc(user.id).set({ schedule: [] , services: [] , disable: false})
+            db.collection("worker").doc(user.id).set({ schedule: [] , services: [] , disable: false , name:user.displayName})
         }
         role.current = ""
         setShow(!show)
@@ -64,7 +64,10 @@ export default function ChangeRole(props) {
 
     return (
         <View style={styles.container}>
-           <View style={styles.box}>
+            <View style={{padding:10,borderColor:"#B0C4DE",borderWidth:3 , 
+            backgroundColor:"white" , width:"80%" ,
+            marginRight:"auto", marginLeft:"auto" , height:"40%"}}>
+            <View style={styles.box}>
             <Text style={styles.user}>User</Text>
             <Text style={styles.user}>{user.displayName}</Text>
             </View>
@@ -74,31 +77,47 @@ export default function ChangeRole(props) {
             </View>
             <View style={styles.box}>
             <Text style={styles.user}>Phone</Text>
-            <Text style={styles.user}>{}</Text>
+            <Text style={styles.user}>{user.phone}</Text>
             </View>
             <View style={styles.box}>
             <Text style={styles.user}>Points</Text>
-            <Text style={styles.user}>{}</Text>
+            <Text style={styles.user}>{user.points}</Text>
             </View>
+
+
+            </View>
+           
 
             <View style={styles.box}>
             
                 <Picker
                         selectedValue={role.current}
-                        style={styles.search}
+                        itemStyle={{ height: 60 }}
+            style={{
+              height: 50,
+              width: 150,
+              fontSize: 20,
+              backgroundColor: "#DCDCDC",
+              marginBottom: 4,
+              marginTop: 4,
+              marginRight: "auto",
+              marginLeft: "auto"
+            }}
                         onValueChange={itemValue => updateRole(itemValue)
                         }>
                         <Picker.Item label="ROLE" value="" />
                         <Picker.Item label="Admin" value="Admin"/>
                         <Picker.Item label="User" value="user" />
                         <Picker.Item label="Worker" value="worker" />
-                        <Picker.Item label="Advertiser" value="Advertiser" />  
+                         
                           
                 </Picker>
 
-                <View style={{padding:5 , width:"50%" ,  alignItems:"center"}}>
-                    <Button color="#00BFFF"  title="Update Role" onPress={()=> updateDB()} disabled={!role.current}/>
-                    </View>
+               
+                    <TouchableOpacity 
+                    style={{padding:8 , width:"40%" , height: "80%",  alignItems:"center", backgroundColor:"#3691b0", margin:6}} 
+                    onPress={()=> updateDB()} disabled={!role.current} ><Text style={{color:"white" , fontSize:20}}>Update Role</Text></TouchableOpacity>
+                    
    
             </View>
            
@@ -110,15 +129,18 @@ export default function ChangeRole(props) {
 }
 ChangeRole.navigationOptions = {
     title: 'Change Role',
-};
-
+    headerStyle: { backgroundColor: "#5a91bf" },
+    headerTitleStyle: {
+      color: "white"
+    }
+  };
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#F5F5F5' },
+    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#F0F8FF' },
     head: { height: 40, backgroundColor: '#fbfdfb' },
     text: { margin: 6 },
     user:{borderColor: "#D3D3D3",borderBottomWidth:3 , padding:5 , width:"50%" ,  alignItems:"center" },
 
-    box:{backgroundColor:"#F5F5F5" , padding:5 , flexDirection:"row"},
+    box:{ padding:5 , flexDirection:"row"},
     search:{backgroundColor: "#DCDCDC" , padding:5 , width:"50%" ,  alignItems:"center" }
 });
 

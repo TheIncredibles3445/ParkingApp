@@ -112,7 +112,16 @@ export default function UserAccounts(props) {
         <Picker
           selectedValue={role}
           itemStyle={{ height: 60 }}
-          style={styles.search}
+            style={{
+              height: "100%",
+              width: "50%",
+              fontSize: 20,
+              backgroundColor: "#DCDCDC",
+              marginBottom: 4,
+              marginTop: 4,
+              marginRight: "auto",
+              marginLeft: "auto"
+            }}
           onValueChange={(itemValue) => updateRole(itemValue)}
         >
           <Picker.Item style={{ height: "1%" }} label="ROLE" value="" />
@@ -156,7 +165,12 @@ export default function UserAccounts(props) {
 }
 UserAccounts.navigationOptions = {
   title: "User Accounts",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTitleStyle: {
+    color: "white"
+  }
 };
+
 
 const styles = StyleSheet.create({
   container: {

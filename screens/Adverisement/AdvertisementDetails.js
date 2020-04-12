@@ -44,45 +44,56 @@ export default function AdvertisementDetails(props) {
   }
 
   return (
-    <View>
-      <Text>Advertisement Details </Text>
-
-      <Text style={item.adStatus == "Pending" ? styles.pending : item.adStatus == "Declined" ? styles.declined : item.adStatus == "Approved" ? styles.approved : null}>
-        Status: {item.adStatus}
+    <ScrollView>
+    
+<View style={{padding:10,borderColor:"#B0C4DE",borderWidth:3 , 
+            backgroundColor:"white" , width:"80%" ,
+            marginRight:"auto", marginLeft:"auto" , height:350 , marginTop:"5%" , marginBottom:"5%"}}>
+<Text style={{borderColor:"#B0C4DE",borderBottomWidth:1 ,fontSize:15 , fontWeight:"bold", marginLeft: 10, marginRight: 30 , marginBottom:10}}>Status: {item.adStatus}
       </Text>
-      <Text style={{ marginLeft: 10, marginRight: 30 }}>
+      <Text style={{ borderColor:"#B0C4DE",borderBottomWidth:1 ,fontSize:15 , fontWeight:"bold",marginLeft: 10, marginRight: 30 , marginBottom:10}}>
         Title: {item.title}
       </Text>
-      <Text style={{ marginLeft: 10, marginRight: 30 }}>
+      <Text style={{borderColor:"#B0C4DE",borderBottomWidth:1 , fontSize:15 , fontWeight:"bold", marginLeft: 10, marginRight: 30 , marginBottom:10}}>
         Description: {item.description}
       </Text>
-      <Text style={{ marginLeft: 10, marginRight: 30 }}>
+      <Text style={{ borderColor:"#B0C4DE",borderBottomWidth:1 ,fontSize:15 , fontWeight:"bold",marginLeft: 10, marginRight: 30 , marginBottom:10}}>
         Link: {item.link}
       </Text>
-      <Text style={{ marginLeft: 10, marginRight: 30 }}>
+      <Text style={{ borderColor:"#B0C4DE",borderBottomWidth:1 ,fontSize:15 , fontWeight:"bold",marginLeft: 10, marginRight: 30, marginBottom:10 }}>
         Image: 
       </Text>
       <Image
-          style={{ width: 150, height: 150 }}
+          style={{ width: 150, height: 150,marginLeft: "auto", marginRight: "auto" }}
           source={{ uri: item.photoURL }}
         />
 
+              
+            </View>
+      
+
       <View>
+        <Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 30, color: "#284057", marginBottom: "5%"  }}>Offers</Text>
         {
           offers.length > 0 ?
-            <View>
+            <View style={{ marginLeft: "auto", marginRight:"auto"}}>
               {offers.map((o, index) =>
-              <View>
-                <Text>{index + 1}) {o.startDate} {o.endDate} {o.offeredAmount} {o.date}</Text>
-              <Text>{o.feedback}</Text>
+              <View style={{borderColor:"#B0C4DE",borderWidth:2 , width:"90%"}}>
+                <Text style={{ borderColor:"#B0C4DE",borderBottomWidth:1 ,fontSize:15 , fontWeight:"bold",marginLeft: 10, marginRight: 30 , marginBottom:10}}>From: {o.startDate}, To: {o.endDate} 
+                {"\n"}Offered Amount: {o.offeredAmount} QR{"\n"}Last Update: {o.date}</Text>
+              <Text style={{ borderColor:"#B0C4DE",borderBottomWidth:1 ,fontSize:15 , fontWeight:"bold",marginLeft: 10, marginRight: 30 , marginBottom:10}}>Admin Feedback: {o.feedback}</Text>
                 </View>
               )}
 
               {
                 offers[offers.length - 1].feedback && item.adStatus !== "Approved" && item.adStatus !== "Declined" ?
-                <View>
-                  <View>
-                    <Text>
+                <View style={{padding:10,borderColor:"#B0C4DE",borderWidth:3 , 
+                backgroundColor:"white" , width:"100%" ,
+               height:250 , marginTop:"5%" , marginBottom:"5%"}}>
+
+                  <Text style={{ marginLeft: "auto", marginRight: "auto", fontSize: 20, color: "#284057", marginBottom: "5%"  }}>Update Offers</Text>
+                  <View style={{flexDirection:"row", marginBottom:9}}>
+                    <Text  style={{width:"40%",fontSize: 15, color: "#284057"}}>
                 Start Date
               </Text>
               <DatePicker date={startDate}  mode="date"  placeholder="Select Start Date" format="YYYY-MM-DD"  minDate={date}
@@ -100,8 +111,8 @@ export default function AdvertisementDetails(props) {
                 onDateChange={startDate => setStartDate(startDate)} disabled={!disableAll}  />
             </View>
 
-            <View style={{ flexDirection: "row" }}>
-              <Text>
+            <View style={{ flexDirection: "row" , marginBottom:9}}>
+              <Text style={{width:"40%",fontSize: 15, color: "#284057"}}>
                 End Date
               </Text>
               <DatePicker date={endDate} mode="date"  placeholder="Select End Date"  format="YYYY-MM-DD" minDate={moment(startDate).add(7, "day")}
@@ -116,15 +127,17 @@ export default function AdvertisementDetails(props) {
                     marginLeft: 36
                   }
                 }}
+                
                 onDateChange={endDate => setEndDate(endDate)}
                 disabled={!startDate} />
             </View>
 
-            <View style={{ flexDirection: "row" }}>
-              <Text>
+            <View style={{ flexDirection: "row" , marginBottom:9}}>
+              <Text  style={{width:"40%",fontSize: 15, color: "#284057"}}>
                 Offered Amount
               </Text>
               <TextInput
+              style={{borderColor:"grey", borderWidth:1 , height:40 , marginLeft:"14%"}}
                 require
                 onChangeText={text => setOfferedAmount(text)}
                 placeholder="Offered Amount"
@@ -144,12 +157,20 @@ export default function AdvertisementDetails(props) {
         }
 
       </View>
+      
+      
 
-    </View>
+    </ScrollView>
   );
 }
 
-
+AdvertisementDetails.navigationOptions = {
+  title: 'Advertisements',
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTitleStyle: {
+    color: "white"
+  }
+};
 const styles = StyleSheet.create({
   pending: {
     height: 50,

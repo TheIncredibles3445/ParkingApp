@@ -115,13 +115,13 @@ export default function Payment(props) {
       //**
       let user = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
       let newUsage = await db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).get()
-      let num = parseInt(newUsage.data().usage) + 1
+      let num = parseInt(newUsage.data().usageCount) + 1
       if (num == parseInt(discount.usage)) {
         db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).delete()
         db.collection("users").doc(firebase.auth().currentUser.uid).update({ discount: "" })
       }
       else {
-        db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).update({ usage: num })
+        db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).update({ usageCount: num })
       }
 
     }
@@ -214,16 +214,17 @@ export default function Payment(props) {
       {userCards ? (
         <Picker
           selectedValue={selectedCard}
-          style={{
-            height: 50,
-            width: 200,
-            fontSize: 20,
-            backgroundColor: "#DCDCDC",
-            marginBottom: 4,
-            marginTop: 4,
-            marginRight: "auto",
-            marginLeft: "auto",
-          }}
+          itemStyle={{ height: 60 }}
+            style={{
+              height: 50,
+              width: 200,
+              fontSize: 20,
+              backgroundColor: "#DCDCDC",
+              marginBottom: 4,
+              marginTop: 4,
+              marginRight: "auto",
+              marginLeft: "auto"
+            }}
           onValueChange={(itemValue) => setSelectedCard(itemValue)}
         >
           <Picker.Item label={"Select A Card"} value={""} disabled />

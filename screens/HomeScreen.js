@@ -13,7 +13,8 @@ import {
   SafeAreaView,
   StyleSheet,
 } from "react-native";
-import { Card, Text, Button, Icon } from "react-native-elements";
+import { Avatar, Icon } from "react-native-elements";
+import { Card, Text, Button } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
 import TimedSlideshow from "react-native-timed-slideshow";
@@ -161,29 +162,17 @@ export default function HomeScreen(props) {
           }
         >
           <Text
-            style={{
-              marginLeft: "auto",
-              marginRight: "auto",
-              color: "#F0F8FF",
-              fontSize: 15,
-            }}
-          >
-            My Points {user ? user.points : null}
-          </Text>
+            style={{ marginLeft: "10%", color: "#F0F8FF", fontSize: 15 , fontWeight:"bold" }}
+      >My Points {user ? user.points : null}  </Text>
+       <Icon name="star-outlined" type="entypo" color={"white"} style={{marginRight:"auto"}}/>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btns}>
           <Text
-            style={{
-              marginLeft: "auto",
-              marginRight: "auto",
-              color: "white",
-              fontSize: 15,
-            }}
-            onPress={() => props.navigation.navigate("RewardScreen")}
-          >
-            Get Discounts
-          </Text>
+            style={{ marginLeft: "10%", color: "white", fontSize: 15, fontWeight:"bold"  }}
+            onPress={()=>props.navigation.navigate("RewardScreen")}
+          >Get Discounts  </Text>
+          <Icon name="sale" type="material-community" color={"white"} style={{marginRight:"auto"}}/> 
         </TouchableOpacity>
       </View>
 
@@ -377,11 +366,14 @@ const styles = StyleSheet.create({
   },
   btns: {
     backgroundColor: "#B0C4DE",
-    width: "45%",
+    width: "48%",
     height: "70%",
     marginLeft: "auto",
     marginRight: "auto",
     borderRadius: 5,
+    flexDirection:"row",
     justifyContent: "center",
-  },
+
+  }
+
 });

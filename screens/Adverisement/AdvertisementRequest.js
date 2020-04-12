@@ -11,7 +11,7 @@ import {
   TouchableHighlight,
   Modal,
   Image,
-  FlatList, Alert
+  FlatList, Alert, KeyboardAvoidingView
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -136,6 +136,7 @@ export default function AdvertismentRequest(props) {
   },[startDate , endDate, description , link , uri , link , displayName , offeredAmount])
 
   return (
+    
     <View style={{ paddingTop:20}}>
     
            

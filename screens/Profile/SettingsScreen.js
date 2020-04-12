@@ -137,7 +137,7 @@ export default function SettingsScreen(props) {
       <View
         style={{ flex: 2, alignItems: "center", backgroundColor: "#5a91bf" }}
       >
-        {photoURL && (
+        {photoURL != null && (
           <Avatar
             containerStyle={{ marginTop: 10 }}
             rounded
@@ -341,4 +341,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#2e78b7",
   },
-});
+})
