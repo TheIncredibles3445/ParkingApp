@@ -115,13 +115,13 @@ export default function Payment(props) {
       //**
       let user = await db.collection("users").doc(firebase.auth().currentUser.uid).get()
       let newUsage = await db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).get()
-      let num = parseInt(newUsage.data().usage) + 1
+      let num = parseInt(newUsage.data().usageCount) + 1
       if (num == parseInt(discount.usage)) {
         db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).delete()
         db.collection("users").doc(firebase.auth().currentUser.uid).update({ discount: "" })
       }
       else {
-        db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).update({ usage: num })
+        db.collection("discounts").doc(user.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).update({ usageCount: num })
       }
 
     }
