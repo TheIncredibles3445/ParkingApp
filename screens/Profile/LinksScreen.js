@@ -633,10 +633,14 @@ const LinksScreen = (props) => {
                           {/* in here i checked if the current user friend list include the user id that he/she just followed
                         if yes show requested if no show follow  as a title for the button */}
                           <Button
+                            // titleStyle={{
+                            //   alignItems: "center",
+                            //   color: "#263c5a",
+                            // }}
                             color={
                               myfriendList.includes(item.id)
                                 ? "white"
-                                : "#263c5a"
+                                : "#243447"
                             }
                             onPress={
                               myfriendList.includes(item.id)
@@ -701,7 +705,7 @@ const styles = StyleSheet.create({
   num: {
     width: 100,
     height: 35,
-    marginLeft: "42%",
+    marginLeft: "35%",
     borderWidth: 1,
     borderColor: "#B0C4DE",
     marginTop: 47,
@@ -711,7 +715,7 @@ const styles = StyleSheet.create({
   num2: {
     width: 100,
     height: 35,
-    marginLeft: "42%",
+    marginLeft: "35%",
     marginTop: 47,
     backgroundColor: "gray",
     //color: "#263c5a",

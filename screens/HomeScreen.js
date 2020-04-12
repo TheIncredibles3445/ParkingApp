@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     marginTop: "5%",
   },
   labels: {
-    fontSize: 21,
+    fontSize: 19,
     color: "#284057",
     marginLeft: "auto",
     marginRight: "auto",

@@ -139,7 +139,7 @@ export default AllReportsScreen = (props) => {
     console.log(user);
     if (isAvailable) {
       const { result } = await SMS.sendSMSAsync(
-        [`${user.phone}`],
+        [`${user.phoneNumber}`],
         "Hello, you parked wrong!! please go and fix it!"
       );
       console.log(result);
