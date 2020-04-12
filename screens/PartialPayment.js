@@ -98,7 +98,7 @@ export default function ParcialPayment(props) {
 
             db.collection("users")
                 .doc(firebase.auth().currentUser.uid)
-                .update({ advPendingAmount: update.data().pendingAmount - amount });
+                .update({ advPendingAmount: update.data().advPendingAmount - amount });
         }
         else {
             db.collection("users")
