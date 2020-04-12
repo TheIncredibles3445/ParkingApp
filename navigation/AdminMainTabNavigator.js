@@ -10,6 +10,7 @@ import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
 import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
 import FriendScreen from "../screens/Profile/FriendsScreen";
+import WorkersRating from "../screens/Admin/WorkersRating";
 
 //Lamees's imports
 import ReportScreen from "../screens/ReportScreen";
@@ -127,8 +128,11 @@ const AdminStack = createStackNavigator({
   Statistics: {
     screen: Statistics,
   },
+  WorkersRating: {
+    screen: WorkersRating,
+  },
 });
-//the simulator wont work >>. i have to shut down the pc it always happen
+
 AdminStack.navigationOptions = {
   tabBarLabel: "Admin Panel",
   tabBarIcon: ({ focused }) => (

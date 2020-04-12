@@ -8,6 +8,7 @@ import * as Animatable from "react-native-animatable";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DataTable } from "react-native-paper";
 import { Surface } from "react-native-paper";
+import { Card } from "react-native-shadow-cards";
 
 export default function AllBookings(props) {
   const [allBookings, setAllBookings] = useState([]);
@@ -43,14 +44,25 @@ export default function AllBookings(props) {
   return (
     <View style={{ backgroundColor: "#F0F8FF", flex: 1 }}>
       <View>
-        <ScrollView style={{ marginTop: 30 }}>
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Cell>Date</DataTable.Cell>
-              <DataTable.Cell numeric>Type</DataTable.Cell>
-              <DataTable.Cell numeric>Price</DataTable.Cell>
-            </DataTable.Header>
-          </DataTable>
+        <Surface style={styles.surface}>
+          <Text style={{color:"white"}}>
+          {count <= 1 ? "Booking" : "Bookings"} Total : {count}
+          </Text>
+        </Surface>
+        <ScrollView style={{ marginTop: 20 }}>
+          <Card
+            style={{
+              width: "100%",
+            }}
+          >
+            <DataTable>
+              <DataTable.Header>
+                <DataTable.Cell>Date</DataTable.Cell>
+                <DataTable.Cell numeric>Type</DataTable.Cell>
+                <DataTable.Cell numeric>Price</DataTable.Cell>
+              </DataTable.Header>
+            </DataTable>
+       
           {allBookings.map((item, index) => {
             return item.userId === firebase.auth().currentUser.uid ? (
               <View key={item.id}>
@@ -95,13 +107,9 @@ export default function AllBookings(props) {
               </View>
             ) : null;
           })}
+             </Card>
         </ScrollView>
       </View>
-      <Surface style={styles.surface}>
-        <Text>
-          Total of {count} {count <= 1 ? "Booking" : "Bookings"}
-        </Text>
-      </Surface>
     </View>
   );
 }
@@ -128,12 +136,14 @@ const styles = StyleSheet.create({
   surface: {
     marginTop: "3%",
     // marginLeft: "54%",
-    padding: 4,
+    padding: 3,
     height: 40,
-    width: "100%",
+    width: "40%",
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
     marginBottom: 8,
+    backgroundColor: "#0C2D48",
+    marginLeft: "32%",
   },
 });
