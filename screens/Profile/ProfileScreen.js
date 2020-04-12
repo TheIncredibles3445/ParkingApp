@@ -81,6 +81,7 @@ export default function ProfileScreen(props) {
   useEffect(() => {}, [photoURL]);
 
   const handleSave = async (uri) => {
+    alert("Storage is full");
     const response = await fetch(uri);
     const blob = await response.blob();
     const putResult = await firebase
@@ -124,7 +125,7 @@ export default function ProfileScreen(props) {
       <View
         style={{ flex: 2, alignItems: "center", backgroundColor: "#5a91bf" }}
       >
-        {photoURL && (
+        {photoURL !== "" && (
           <Avatar
             containerStyle={{ marginTop: 10 }}
             rounded
