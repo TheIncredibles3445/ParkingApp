@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Picker,
   ScrollView,
-  Platform
+  Platform,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -32,7 +32,7 @@ export default function AddVehicle(props) {
         type: type,
         make: make,
         model: model,
-        number: number
+        number: number,
       });
       props.navigation.goBack();
     } else alert("Please Enter All The Fields");
@@ -43,27 +43,42 @@ export default function AddVehicle(props) {
   return (
     <ScrollView
       behavior={Platform.OS === "ios" ? "padding" : null}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#F0F8FF" }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView>
-          <Text h3>Add Vehicle</Text>
-          <Divider style={{ marginTop: 20 }} />
-          <View style={{ marginTop: 20 }}>
+          <View style={{ flex: 1, alignItems: "center", marginTop: 20 }}>
+            <Text h4>Add Vehicles</Text>
+          </View>
+          <View
+            style={{
+              marginTop: 40,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Input
               label="Car Maker / Company"
               placeholder="Car Maker / Company"
-              onChangeText={text => setMake(text)}
+              onChangeText={(text) => setMake(text)}
             />
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              marginTop: 40,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Text
               style={{
                 marginLeft: 10,
                 color: "gray",
                 fontWeight: "bold",
                 fontSize: 16,
-                opacity: 0.7
+                opacity: 0.7,
               }}
             >
               Car Type
@@ -71,7 +86,7 @@ export default function AddVehicle(props) {
             {Platform.OS === "android" ? (
               <Picker
                 selectedValue={type}
-                onValueChange={carType => setType(carType)}
+                onValueChange={(carType) => setType(carType)}
               >
                 <Picker.Item label="Select Type" value="" />
                 <Picker.Item label="Hatchback" value="Hatchback" />
@@ -80,11 +95,17 @@ export default function AddVehicle(props) {
                 <Picker.Item label="Convertible" value="Convertible" />
               </Picker>
             ) : (
-              <View>
+              <View
+                style={{
+                  marginTop: 40,
+                  width: "90%",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              >
                 <TouchableOpacity
                   style={{
-                    paddingTop: 15,
-                    marginLeft: 10
+                    marginLeft: 10,
                   }}
                   onPress={() => {
                     pickerRef.show();
@@ -93,7 +114,7 @@ export default function AddVehicle(props) {
                   <Text>{type === "" ? "Select Type" : type}</Text>
                 </TouchableOpacity>
                 <ReactNativePickerModule
-                  pickerRef={e => (pickerRef = e)}
+                  pickerRef={(e) => (pickerRef = e)}
                   selectedValue={type}
                   title={"Select Car Type"}
                   items={["Hatchback", "SUV", "Convertible", "Sedan"]}
@@ -111,18 +132,32 @@ export default function AddVehicle(props) {
               </View>
             )}
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              marginTop: 40,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Input
               label="Car Model"
               placeholder="Car Model"
-              onChangeText={text => setModel(text)}
+              onChangeText={(text) => setModel(text)}
             />
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              marginTop: 40,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
             <Input
               label="Plate Number"
               placeholder="Plate Number"
-              onChangeText={text => setNumber(text)}
+              onChangeText={(text) => setNumber(text)}
             />
           </View>
           {/* <View style={{ marginTop: 20 }}>
@@ -131,13 +166,33 @@ export default function AddVehicle(props) {
               hideSliders={false}
             />
           </View> */}
-          <View style={{ marginTop: 20, alignItems: "center" }}>
-            <Button
-              onPress={handleSave}
-              title="SAVE"
-              buttonStyle={{ paddingEnd: 50, paddingStart: 50 }}
-              titleStyle={{ alignItems: "center" }}
-            />
+          <View
+            style={{
+              marginTop: 40,
+              width: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => handleSave()}
+              style={{
+                backgroundColor: "#B0C4DE",
+                height: 50,
+                justifyContent: "center",
+                borderRadius: 10,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#263c5a",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Submit
+              </Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
@@ -146,5 +201,7 @@ export default function AddVehicle(props) {
 }
 
 AddVehicle.navigationOptions = {
-  title: "Add a Vehicle"
+  title: "Add a Vehicle",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTintColor: "white",
 };

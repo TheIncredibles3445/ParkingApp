@@ -251,7 +251,7 @@ const LinksScreen = (props) => {
     for (let i = 0; i < myfriends.length; i++) {
       friendsId.push(myfriends[i].id);
     }
-    return friendsId.includes(id)
+    return friendsId.includes(id);
   };
 
   //async: means this function will return a promises always
@@ -476,7 +476,7 @@ const LinksScreen = (props) => {
                     data={myfriends}
                     renderItem={({ item }, index) => {
                       return (
-                        <View key={item.id}>
+                        <ScrollView key={item.id}>
                           {/* style={{ width: "95%", margin: 4 , marginRight:"auto", marginLeft:"auto"}} */}
                           <Card
                             style={{
@@ -540,7 +540,7 @@ const LinksScreen = (props) => {
                               </View>
                             </View>
                           </Card>
-                        </View>
+                        </ScrollView>
                       );
                     }}
                     enableEmptySections={true}

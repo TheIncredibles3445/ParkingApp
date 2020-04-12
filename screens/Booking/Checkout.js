@@ -21,15 +21,15 @@ export default function Checkout(props) {
     getParkingBookings();
     getTotalAmount();
     getServiceBookings();
-    track()
+    track();
   }, []);
 
-  const track = async()=>{
-    let old = await db.collection("tracking").doc("track").get()
-    let newTrack = parseInt(old.data().parking) - 1
-    db.collection("tracking").doc("track").update({ parking: newTrack})
+  const track = async () => {
+    let old = await db.collection("tracking").doc("track").get();
+    let newTrack = parseInt(old.data().parking) - 1;
+    db.collection("tracking").doc("track").update({ parking: newTrack });
     AsyncStorage.setItem("parking", "no");
-  }
+  };
 
   const getTotalAmount = () => {
     db.collection("booking")
@@ -91,8 +91,6 @@ export default function Checkout(props) {
             });
         }
       });
-
-     
   };
 
   const getServiceBookings = async () => {
@@ -158,14 +156,14 @@ export default function Checkout(props) {
 
   const handlePayLate = async () => {
     let user = await db
-    .collection("users")
-    .doc(firebase.auth().currentUser.uid)
-    .get();
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get();
 
-    let newPoints = 20 + parseInt(user.data().points)
+    let newPoints = 20 + parseInt(user.data().points);
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .update({ points: newPoints});
+      .update({ points: newPoints });
 
     handleNavigationAlert();
   };
@@ -306,6 +304,7 @@ export default function Checkout(props) {
           title="Pay Now"
           onPress={() =>
             props.navigation.navigate("Payment", {
+              total: total,
               blockId: blockId,
               parkingId: parkingId,
             })

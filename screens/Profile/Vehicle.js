@@ -31,8 +31,15 @@ export default function Vehicle(props) {
   }, []);
 
   return userVehicles.length === 0 ? (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Icon type="font-awesome" name="car" size={80} color="blue" />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#F0F8FF",
+      }}
+    >
+      <Icon type="font-awesome" name="car" size={80} color="#5a91bf" />
       <Text style={{ fontSize: 20 }}>You have no cars registered</Text>
       {/* <Button title="+" buttonStyle={{ borderRadius: 100 }} /> */}
       <TouchableOpacity onPress={() => props.navigation.navigate("AddVehicle")}>
@@ -40,12 +47,12 @@ export default function Vehicle(props) {
           type="ionicon"
           name="ios-add-circle-outline"
           size={30}
-          color="blue"
+          color="#5a91bf"
         />
       </TouchableOpacity>
     </View>
   ) : (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: "#F0F8FF" }}>
       <View style={{ flex: 1, alignItems: "center", marginTop: 20 }}>
         <Text h4>My Vehicles</Text>
       </View>
@@ -105,7 +112,7 @@ export default function Vehicle(props) {
             type="ionicon"
             name="ios-add-circle-outline"
             size={30}
-            color="blue"
+            color="#5a91bf"
           />
         </TouchableOpacity>
       </View>
@@ -114,7 +121,9 @@ export default function Vehicle(props) {
 }
 
 Vehicle.navigationOptions = {
-  title: "My Vehicles"
+  title: "My Vehicles",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTintColor: "white",
   // drawerIcon: ({ tintColor }) => (
   //   <Image
   //     source={require("../../assets/images/profile.png")}

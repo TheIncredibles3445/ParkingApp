@@ -205,7 +205,7 @@ export default function App(props) {
       const response = await fetch(
         `https://us-central1-parking-assistant-d2d25.cloudfunctions.net/initUser?uid=${
         firebase.auth().currentUser.uid
-        }&email=${email.current}`
+        }&email=${emailR.current}&phoneNumber=${phone.current}`
       );
       setUpUser();
     } else {
