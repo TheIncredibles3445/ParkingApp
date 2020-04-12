@@ -12,6 +12,12 @@ exports.updateUser = functions.https.onCall(async (data, context) => {
     displayName: data.displayName,
     phoneNumber: data.phoneNumber,
   });
+
+  await db
+    .collection("users")
+    .doc(data.uid)
+    .update({ displayName: data.displayName, phoneNumber: data.phoneNumber });
+
   console.log("after set", result);
 });
 
@@ -20,6 +26,11 @@ exports.updateDisplayName = functions.https.onCall(async (data, context) => {
   const result = await admin.auth().updateUser(data.uid, {
     displayName: data.displayName,
   });
+
+  await db
+    .collection("users")
+    .doc(data.uid)
+    .update({ displayName: data.displayName });
   console.log("after set", result);
 });
 
@@ -29,6 +40,11 @@ exports.updatePhoto = functions.https.onCall(async (data, context) => {
     // displayName: data.displayName,
     photoURL: data.photoURL,
   });
+
+  await db
+    .collection("users")
+    .doc(data.uid)
+    .update({ photoURL: data.photoURL });
   console.log("after set", result);
 });
 
@@ -78,13 +94,15 @@ exports.addCard = functions.https.onCall(async (data, context) => {
 // });
 
 exports.initUser = functions.https.onRequest(async (request, response) => {
-  console.log("request", request.query.uid);
-  console.log("request", request.query.email);
+  console.log("id ", request.query.uid);
+  console.log("email ", request.query.email);
+  console.log("phone ", request.query.phoneNumber);
 
   const result = await admin.auth().updateUser(request.query.uid, {
     displayName: request.query.email,
     photoURL:
       "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
+    phoneNumber: `+974${request.query.phoneNumber}`,
   });
   console.log("after set", result);
 

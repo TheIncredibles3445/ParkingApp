@@ -22,10 +22,11 @@ import * as Animatable from 'react-native-animatable';
 import FlashMessage from "react-native-flash-message";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
+const useForceUpdate = () => useState()[1];
 export default function ServiceBookingScreen(props) {
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState("");
-
+  const forceUpdate = useForceUpdate();
   const [block, setBlock] = useState([]);
   const [selectedBlock, setSelectedBlock] = useState();
 
@@ -40,7 +41,7 @@ export default function ServiceBookingScreen(props) {
   const sBlock = useRef();
   const sService = useRef();
   const [showTime, setShowTime] = useState(false);
-
+  
   
   useEffect(() => {
     manageTimeRange();
@@ -84,6 +85,7 @@ export default function ServiceBookingScreen(props) {
   };
 
   useEffect(() => {
+    console.log("selected1111111111")
     if (selectedBlock) {
       console.log(selectedBlock.id)
       db.collection("block")
@@ -121,48 +123,48 @@ export default function ServiceBookingScreen(props) {
     let first = moment("7:00 AM").format("h:mm A")
     let second = moment("2:30 AM").format("h:mm A")
     console.log("timesssssssssssssssssssssssssssssssssss", now)
-    // if( parseInt(now.split(":")[0]) >= 3 && parseInt(now.split(":")[0]) <= 11 && now.split(":")[1].split(" ")[1] == "PM"){
-    //   Alert.alert(
-    //     "Sorry!",
-    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
-    //     [
-    //       {
-    //         text: "OK",
-    //         onPress: () => props.navigation.navigate("Home"),
-    //         style: "cancel"
-    //       }
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-    // else if(parseInt(now.split(":")[0]) >= 1 && parseInt(now.split(":")[0]) < 7 && now.split(":")[1].split(" ")[1] == "AM"){
-    //   Alert.alert(
-    //     "Sorry!",
-    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
-    //     [
-    //       {
-    //         text: "OK",
-    //         onPress: () => props.navigation.navigate("Home"),
-    //         style: "cancel"
-    //       }
-    //     ],
-    //     { cancelable: false }
-    //   ); 
-    // }
-    // else if(parseInt(now.split(":")[0]) == 12 && now.split(":")[1].split(" ")[1] == "AM"){
-    //   Alert.alert(
-    //     "Sorry!",
-    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
-    //     [
-    //       {
-    //         text: "OK",
-    //         onPress: () => props.navigation.navigate("Home"),
-    //         style: "cancel"
-    //       }
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
+    if( parseInt(now.split(":")[0]) >= 3 && parseInt(now.split(":")[0]) <= 11 && now.split(":")[1].split(" ")[1] == "PM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    else if(parseInt(now.split(":")[0]) >= 1 && parseInt(now.split(":")[0]) < 7 && now.split(":")[1].split(" ")[1] == "AM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      ); 
+    }
+    else if(parseInt(now.split(":")[0]) == 12 && now.split(":")[1].split(" ")[1] == "AM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
 
     let startTime = "";
     let hour = moment()
@@ -178,7 +180,7 @@ export default function ServiceBookingScreen(props) {
       `8:00 AM ${moment().format("YYYY-MM-DD")}`,
       `8:30 AM ${moment().format("YYYY-MM-DD")}`,
       `9:00 AM ${moment().format("YYYY-MM-DD")}`,
-      `9:30 AM ${moment().format("YYYY-MM-DD")}`,
+     `9:30 AM ${moment().format("YYYY-MM-DD")}`,
       `10:00 AM ${moment().format("YYYY-MM-DD")}`,
       `10:30 AM ${moment().format("YYYY-MM-DD")}`,
       `11:00 AM ${moment().format("YYYY-MM-DD")}`,
@@ -191,7 +193,7 @@ export default function ServiceBookingScreen(props) {
       `2:30 PM ${moment().format("YYYY-MM-DD")}`,
       `3:00 PM ${moment().format("YYYY-MM-DD")}`,
       `3:30 PM ${moment().format("YYYY-MM-DD")}`,
-      // `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
+       //`4:00 PM ${moment().format("YYYY-MM-DD")}`, 
       // `7:30 PM ${moment().format("YYYY-MM-DD")}`,
       // `8:00 PM ${moment().format("YYYY-MM-DD")}`,
       // `8:30 PM ${moment().format("YYYY-MM-DD")}`,
@@ -331,14 +333,17 @@ export default function ServiceBookingScreen(props) {
     })
 
   }
+  //,paddingTop:20
 
   return (
-    <ScrollView style={{ width: "100%", backgroundColor:'#F0F8FF', height:"100%" }}>
+    <ScrollView style={{ width: "100%", backgroundColor:'#F0F8FF', height:"100%",paddingTop:20 }}>
 
       <Animatable.View animation="fadeInRight" delay={2}>
         {services.length !== 0 ? (
           <Picker
+          mode="dropdown"
             selectedValue={selectedService}
+            itemStyle={{ height: 60 }}
             style={{
               height: 50,
               width: 200,
@@ -349,19 +354,20 @@ export default function ServiceBookingScreen(props) {
               marginRight: "auto",
               marginLeft: "auto"
             }}
-            onValueChange={itemValue => setSelectedService(itemValue)}
+            onValueChange={(itemValue) => setSelectedService(itemValue) || forceUpdate()}
           >
-            <Picker.Item label="SERVICES" value="" />
+            <Picker.Item label={selectedService? selectedService.Name : "Service"} value="" />
             {services.map(s => (
               <Picker.Item label={s.Name} value={s} />
             ))}
-          </Picker>
+          </Picker> 
         ) : null}
       </Animatable.View>
       <Animatable.View animation="fadeInRight" delay={3}>
         {block.length !== 0 ? (
           <Picker
             selectedValue={selectedBlock}
+            itemStyle={{ height: 60 }}
             style={{
               height: 50,
               width: 200,
@@ -372,9 +378,9 @@ export default function ServiceBookingScreen(props) {
               marginRight: "auto",
               marginLeft: "auto"
             }}
-            onValueChange={itemValue => setSelectedBlock(itemValue)}
+            onValueChange={itemValue => setSelectedBlock(itemValue)|| console.log("service-------------------",selectedService)}
           >
-            <Picker.Item label={"BLOCK"} value={""} disabled />
+            <Picker.Item label={selectedBlock? selectedBlock.name : "Block"} value={""} disabled />
             {block.map(s => (
               <Picker.Item label={s.name} value={s} />
             ))}
@@ -385,6 +391,7 @@ export default function ServiceBookingScreen(props) {
         {parking.length !== 0 ? (
           <Picker
             selectedValue={selectedParking}
+            itemStyle={{ height: 60 }}
             style={{
               height: 50,
               width: 200,
@@ -397,7 +404,7 @@ export default function ServiceBookingScreen(props) {
             }}
             onValueChange={itemValue => setSelectedParking(itemValue)}
           >
-            <Picker.Item label={"PARKING"} value={""} disabled />
+            <Picker.Item label={selectedParking ? selectedParking.name:"PARKING"} value={""} disabled />
             {parking.map(a => (
               <Picker.Item label={a.name + ""} value={a} />
             ))}
@@ -407,6 +414,7 @@ export default function ServiceBookingScreen(props) {
       {showTime ? (
         <Picker
           selectedValue={selectedTime}
+          itemStyle={{ height: 60 }}
           style={{
             height: 50,
             width: 200,
@@ -419,7 +427,7 @@ export default function ServiceBookingScreen(props) {
           }}
           onValueChange={itemValue => setSelectedTime(itemValue)}
         >
-          <Picker.Item label={"Available Times"} value={""} disabled />
+          <Picker.Item label={selectedTime ? selectedTime.split(" ")[0] + " " + selectedTime.split(" ")[1]:"Available Times"} value={""} disabled />
           {finalTimingList.current.map(a => (
             <Picker.Item
               label={a.split(" ")[0] + " " + a.split(" ")[1]}
@@ -490,9 +498,10 @@ export default function ServiceBookingScreen(props) {
        
       </Animatable.View>
       {userBookings.length !== 0 ? (
-        <TouchableOpacity style={{ backgroundColor: "#5a91bf", padding: 5, width: "40%", height: 50, alignItems: "center",marginBottom: "5%",marginLeft: "20%",  }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
+        <TouchableOpacity style={{ backgroundColor: "#5a91bf", padding: 5, width: "45%", height: 50, alignItems: "center",marginBottom: "5%",marginLeft: "20%",  }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
       ) : null}
       <FlashMessage position="bottom" animationDuration={300} duration={3000} />
+     
     </ScrollView>
   );
 }

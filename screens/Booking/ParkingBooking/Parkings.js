@@ -226,14 +226,14 @@ export default function Parking(props) {
     if (!item.isParked) {
       if (cars.length !== 0) {
         if (!item.isBooked) {
-          if (friend != null) {
+          if (friend !== null) {
             db.collection("booking")
               .add({
                 date: date,
                 total_price: item.price,
                 type: "Parking",
                 blockId: data.selectedBlock.id,
-                userId: friend,
+                userId: friend.id,
               })
               .then((docRef) => {
                 db.collection("booking")
@@ -253,7 +253,20 @@ export default function Parking(props) {
             db.collection("users")
               .doc(friend)
               .update({ pendingAmount: dbpendingAmount });
-            props.navigation.navigate("HomeScreen");
+
+            await db
+              .collection("block")
+              .doc(data.selectedBlock.id)
+              .collection("parking")
+              .doc(item.id)
+              .update({
+                isBooked: true,
+                location: item.location,
+                price: item.price,
+                type: item.type,
+              });
+
+            props.navigation.navigate("Home");
           } else {
             db.collection("booking")
               .add({

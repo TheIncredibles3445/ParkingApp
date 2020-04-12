@@ -17,6 +17,7 @@ import ReportScreen from "../screens/ReportScreen";
 import AllReportsScreen from "../screens/Admin/AllReportsScreen";
 import DiscountsScreen from "../screens/Admin/DiscountsScreen";
 import AdminScreen from "../screens/Admin/AdminScreen";
+import RewardScreen from "../screens/Profile/RewardScreen";
 
 //Amal's Imports
 import AdminPanel from "../screens/Admin/AdminPanel";
@@ -205,6 +206,7 @@ const SettingsStack = createStackNavigator(
     AllBookings: AllBookings,
     ParkingBookingsDetails: ParkingBookingsDetails,
     ServiceBookingDetails: ServiceBookingDetails,
+    Reward: RewardScreen,
   },
   config
 );

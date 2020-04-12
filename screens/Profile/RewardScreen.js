@@ -26,6 +26,7 @@ export default function RewardScreen(props) {
   // const [usageCount, setUsageCount] = useState(0);
   const [usedDiscount , setUsedDiscount] = useState()
   const [discount, setDiscount] = useState([]);
+  const [used , setUsed] = useState()
 
   const handleUser = async () => {
     const userData = await db
@@ -36,7 +37,10 @@ export default function RewardScreen(props) {
 
     if( userData.data().discount && userData.data().discount != ""){
       let dis = await db.collection("discounts").doc(userData.data().discount).get()
+      let use = await db.collection("discounts").doc(userData.data().discount).collection("discount_users").doc(firebase.auth().currentUser.uid).get()
       setUsedDiscount(dis.data())
+      setUsed(use.data())
+      console.log("------------------",use.data())
     }
     
     
@@ -129,13 +133,13 @@ export default function RewardScreen(props) {
               source={require(`../../assets/images/coins.png`)}
             /> */}
           </Text>
-          { usedDiscount ?<Text style={{
+          { usedDiscount && used ?<Text style={{
               // paddingTop: "1%",
               // marginLeft: "22%",
-              fontSize: 20,
+              fontSize: 15,
               color: "#263c5a",
               fontWeight: "bold",
-            }}> Currently Using: {usedDiscount.name}</Text>: null}
+          }}> Currently Using: {usedDiscount.name}, Used: {used.usageCount}  Out Of:{usedDiscount.usage}</Text>: null} 
           {/* <Animatable.View
             animation="flash"
             direction="alternate"
@@ -146,7 +150,7 @@ export default function RewardScreen(props) {
           {/* </MakeItRain> */}
         </View>
 
-        {discount.map((d, i) => {
+        {discount.map((d, i) => { 
           return (
             <View key={i}>
               <View>
@@ -155,7 +159,7 @@ export default function RewardScreen(props) {
                     borderColor: "#263c5a",
                   }}
                 >
-                  <View style={{ marginTop: 20 }}>
+                  <View style={{ marginTop: 20 , flexDirection:"row" , justifyContent:"space-evenly" }}>
                     <Text
                       style={{
                         fontSize: 18,
@@ -168,27 +172,10 @@ export default function RewardScreen(props) {
                         // marginTop: "10%",
                       }}
                     >
-                      {d.name}
+                      {d.name} {"\n"}USAGE: {d.usage} Times.{"\n"}REQUIRED: {d.requiredPoints}
                     </Text>
-                    <Text
-                      style={{
-                        fontSize: 13,
-                        fontWeight: "bold",
-                        marginLeft: "69%",
-                        //backgroundColor: "red",
-                        // marginBottom: "3%",
-                      }}
-                    >
-                      for {d.requiredPoints} points
-                    </Text>
+
                     <View
-                      style={{
-                        alignItems: "flex-end",
-                        paddingVertical: 15,
-                        marginTop: 10,
-                      }}
-                    >
-                      <View
                         style={{
                           width: "30%",
                           height: 20,
@@ -211,7 +198,7 @@ export default function RewardScreen(props) {
                         />
                       </View>
                     </View>
-                  </View>
+                  
                 </Card>
               </View>
             </View>
@@ -222,7 +209,7 @@ export default function RewardScreen(props) {
   );
 }
 RewardScreen.navigationOptions = {
-  title: "Reward Points",
+  title: "Rewards",
   headerTintColor: "white",
   headerStyle: { backgroundColor: "#5a91bf" },
 };

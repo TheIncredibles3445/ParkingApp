@@ -51,7 +51,7 @@ export default function Profile(props) {
       firstName: firstName,
       lastName: lastName,
       displayName: displayName,
-      phoneNumer: phoneNumber,
+      phoneNumber: phoneNumber,
     });
 
     const currentUser = firebase.auth().currentUser;
@@ -72,7 +72,7 @@ export default function Profile(props) {
         displayName: displayName,
       });
     }
-    props.navigation.goBack();
+    props.navigation.navigate("Settings");
   };
 
   return (
@@ -160,13 +160,33 @@ export default function Profile(props) {
               onChangeText={(text) => setPhoneNumber(text)}
             />
           </View>
-          <View style={{ marginTop: 20, alignItems: "center" }}>
-            <Button
-              onPress={handleSave}
-              title="SAVE"
-              buttonStyle={{ paddingEnd: 50, paddingStart: 50 }}
-              titleStyle={{ alignItems: "center" }}
-            />
+          <View
+            style={{
+              marginTop: 20,
+              width: "90%",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => handleSave()}
+              style={{
+                backgroundColor: "#B0C4DE",
+                height: 50,
+                width: 160,
+                justifyContent: "center",
+                borderRadius: 10,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#263c5a",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Submit
+              </Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
@@ -178,6 +198,6 @@ Profile.navigationOptions = {
   title: "My Profile",
   headerTintColor: "white",
   headerStyle: {
-    backgroundColor: "#005992",
+    backgroundColor: "#5a91bf",
   },
 };
