@@ -5,11 +5,12 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db";
-import {Icon} from "react-native-elements"
+import { Icon } from "react-native-elements";
 import TabBarIcon from "../components/TabBarIcon";
 //Asgad's Imports
 import AdvertisementRequest from "../screens/Adverisement/AdvertisementRequest";
 import FriendScreen from "../screens/Profile/FriendsScreen";
+import WorkersRating from "../screens/Admin/WorkersRating";
 
 //Lamees's imports
 import ReportScreen from "../screens/ReportScreen";
@@ -26,17 +27,17 @@ import ServiceDetailsScreen from "../screens/Booking/Services/ServiceDetailsScre
 import ServiceBookingScreen from "../screens/Booking/ServiceBooking/ServiceBookingScreen";
 import ConfirmServiceBookingScreen from "../screens/Booking/ServiceBooking/ConfirmServiceBookingScreen";
 import Payment from "../screens/Booking/Payment";
-import ChangeRole from "../screens/Admin/ChangeRole"
-import WorkerSchedule from "../screens/Profile/WorkerSchedule"
-import ScheduleDetails from "../screens/Profile/ScheuduleDetails"
-import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails"
-import MyAdvertisement from "../screens/Adverisement/MyAdvertisements"
-import AdminAdvertisements from "../screens/Admin/AdminAdvertisements"
-import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails"
-import AdvertisementList from "../screens/Admin/AdvertisementsList"
-import PartialPayment from "../screens/PartialPayment"
-import Statistics from "../screens/Admin/Statistics"
-import FindParking from "../screens/Booking/FindParkings"
+import ChangeRole from "../screens/Admin/ChangeRole";
+import WorkerSchedule from "../screens/Profile/WorkerSchedule";
+import ScheduleDetails from "../screens/Profile/ScheuduleDetails";
+import AdvertisementDetails from "../screens/Adverisement/AdvertisementDetails";
+import MyAdvertisement from "../screens/Adverisement/MyAdvertisements";
+import AdminAdvertisements from "../screens/Admin/AdminAdvertisements";
+import AdminAdvDetails from "../screens/Admin/AdminAdvertisementDetails";
+import AdvertisementList from "../screens/Admin/AdvertisementsList";
+import PartialPayment from "../screens/PartialPayment";
+import Statistics from "../screens/Admin/Statistics";
+import FindParking from "../screens/Booking/FindParkings";
 //Wasim's Import
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/Profile/LinksScreen";
@@ -55,11 +56,9 @@ import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
 
-
-
 const config = Platform.select({
   web: { headerMode: "screen" },
-  default: {}
+  default: {},
 });
 
 const HomeStack = createStackNavigator(
@@ -74,7 +73,7 @@ const HomeStack = createStackNavigator(
     Payment: Payment,
     ReportScreen: ReportScreen,
     Direction: Direction,
-    FindParking: FindParking
+    FindParking: FindParking,
   },
   config
 );
@@ -86,56 +85,62 @@ HomeStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? `md-home` : "md-home"}
     />
-  )
+  ),
 };
 
 HomeStack.path = "";
 
 const AdminStack = createStackNavigator({
   Main: {
-    screen: AdminPanel
+    screen: AdminPanel,
   },
   Services: {
-    screen: ServicesScreen
+    screen: ServicesScreen,
   },
   WorkersManagement: {
-    screen: WorkersManagementScreen
+    screen: WorkersManagementScreen,
   },
   ServiceDetails: {
-    screen: ServiceDetailsScreen
+    screen: ServiceDetailsScreen,
   },
   UserAccounts: {
-    screen: UserAccountsScreen
+    screen: UserAccountsScreen,
   },
   AllReport: {
-    screen: AllReportsScreen
+    screen: AllReportsScreen,
   },
   Adv: {
-    screen: AdminAdvertisements
+    screen: AdminAdvertisements,
   },
   AdminAdvDetails: {
-    screen: AdminAdvDetails
+    screen: AdminAdvDetails,
   },
   AdvertisementList: {
-    screen: AdvertisementList
+    screen: AdvertisementList,
   },
   Discounts: {
-    screen: DiscountsScreen
+    screen: DiscountsScreen,
   },
   ChangeRole: {
-    screen: ChangeRole
+    screen: ChangeRole,
   },
   Statistics: {
-    screen: Statistics
-  }
-
+    screen: Statistics,
+  },
+  WorkersRating: {
+    screen: WorkersRating,
+  },
 });
-//the simulator wont work >>. i have to shut down the pc it always happen
+
 AdminStack.navigationOptions = {
   tabBarLabel: "Admin Panel",
   tabBarIcon: ({ focused }) => (
-    <Icon name="settings" type="octicon" color={focused ? "#edf3f8" : "white"} />
-  )
+    <Icon
+      name="settings"
+      type="octicon"
+      color={focused ? "#edf3f8" : "white"}
+    />
+  ),
 };
 AdminStack.path = "";
 
@@ -168,7 +173,7 @@ AdminStack.path = "";
 
 const TestStack = createStackNavigator(
   {
-    Test: Direction
+    Test: Direction,
   },
   config
 );
@@ -180,9 +185,8 @@ TestStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-link" : "md-link"}
     />
-  )
+  ),
 };
-
 
 const SettingsStack = createStackNavigator(
   {
@@ -200,7 +204,7 @@ const SettingsStack = createStackNavigator(
     PartialPayment: PartialPayment,
     AllBookings: AllBookings,
     ParkingBookingsDetails: ParkingBookingsDetails,
-    ServiceBookingDetails: ServiceBookingDetails
+    ServiceBookingDetails: ServiceBookingDetails,
   },
   config
 );
@@ -208,8 +212,12 @@ const SettingsStack = createStackNavigator(
 SettingsStack.navigationOptions = {
   tabBarLabel: "Profile",
   tabBarIcon: ({ focused }) => (
-    <Icon name="md-person" type="ionicon" color={focused ? "#edf3f8" : "white"}/>
-  )
+    <Icon
+      name="md-person"
+      type="ionicon"
+      color={focused ? "#edf3f8" : "white"}
+    />
+  ),
 };
 
 SettingsStack.path = "";
@@ -230,16 +238,16 @@ const tabNavigator = createBottomTabNavigator(
   {
     HomeStack,
     SettingsStack,
-    AdminStack
+    AdminStack,
   },
   {
     tabBarOptions: {
-      activeTintColor:"#edf3f8",
+      activeTintColor: "#edf3f8",
       inactiveTintColor: "white",
       style: {
-        backgroundColor: "#5a91bf"
-      }
-    }
+        backgroundColor: "#5a91bf",
+      },
+    },
   }
 );
 
