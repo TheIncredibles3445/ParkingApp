@@ -84,6 +84,7 @@ export default function ServiceBookingScreen(props) {
   };
 
   useEffect(() => {
+    console.log("selected1111111111")
     if (selectedBlock) {
       console.log(selectedBlock.id)
       db.collection("block")
@@ -339,7 +340,8 @@ export default function ServiceBookingScreen(props) {
       <Animatable.View animation="fadeInRight" delay={2}>
         {services.length !== 0 ? (
           <Picker
-            selectedValue={selectedService}
+          mode="dropdown"
+            selectedValue={selectedService.Name}
             itemStyle={{ height: 60 }}
             style={{
               height: 50,
@@ -351,13 +353,13 @@ export default function ServiceBookingScreen(props) {
               marginRight: "auto",
               marginLeft: "auto"
             }}
-            onValueChange={itemValue => setSelectedService(itemValue)}
+            onValueChange={(itemValue) => setSelectedService(itemValue) || console.log("service-------------------",selectedService)}
           >
             <Picker.Item label="SERVICES" value="" />
             {services.map(s => (
               <Picker.Item label={s.Name} value={s} />
             ))}
-          </Picker>
+          </Picker> 
         ) : null}
       </Animatable.View>
       <Animatable.View animation="fadeInRight" delay={3}>
@@ -375,7 +377,7 @@ export default function ServiceBookingScreen(props) {
               marginRight: "auto",
               marginLeft: "auto"
             }}
-            onValueChange={itemValue => setSelectedBlock(itemValue)}
+            onValueChange={itemValue => setSelectedBlock(itemValue)|| console.log("service-------------------",selectedService)}
           >
             <Picker.Item label={"BLOCK"} value={""} disabled />
             {block.map(s => (
