@@ -20,6 +20,7 @@ import * as ImagePicker from "expo-image-picker";
 import DatePicker from "react-native-datepicker";
 import * as Location from "expo-location";
 import { Button } from "react-native-elements";
+import * as Animatable from "react-native-animatable";
 
 export default function ReportScreen(props) {
   // here im using react hooks as useState which used to store the data
@@ -49,10 +50,9 @@ export default function ReportScreen(props) {
       longitude: location.coords.longitude,
     };
 
-   
-
-     let reqId = 0
-     let adv = await db.collection("Reports")
+    let reqId = 0;
+    let adv = await db
+      .collection("Reports")
       // .doc(firebase.auth().currentUser.uid)
       .add({
         userId: firebase.auth().currentUser.uid,
@@ -63,25 +63,26 @@ export default function ReportScreen(props) {
         location: loc,
         plateNumber: plateNumber,
         status: status,
-      }).then(function(docRef) {
-        reqId =  docRef.id;
+      })
+      .then(function (docRef) {
+        reqId = docRef.id;
       });
-      console.log("req id ------------------------------", reqId)
+    console.log("req id ------------------------------", reqId);
 
-      const response = await fetch(image);
-      const blob = await response.blob();
-      const putResult = await firebase
-        .storage()
-        .ref()
-        .child(`/reports/${firebase.auth().currentUser.uid}${reqId}`)
-        .put(blob);
-      const url = await firebase
-        .storage()
-        .ref()
-        .child(`/reports/${firebase.auth().currentUser.uid}${reqId}`)
-        .getDownloadURL();
+    const response = await fetch(image);
+    const blob = await response.blob();
+    const putResult = await firebase
+      .storage()
+      .ref()
+      .child(`/reports/${firebase.auth().currentUser.uid}${reqId}`)
+      .put(blob);
+    const url = await firebase
+      .storage()
+      .ref()
+      .child(`/reports/${firebase.auth().currentUser.uid}${reqId}`)
+      .getDownloadURL();
 
-        db.collection("Reports").doc(reqId).update({ image : url})
+    db.collection("Reports").doc(reqId).update({ image: url });
     // gives points to the user
     const userRef = await db
       .collection("users")
@@ -91,7 +92,7 @@ export default function ReportScreen(props) {
     let userPoint = user.points + 50;
     user.points = userPoint;
     db.collection("users").doc(firebase.auth().currentUser.uid).update(user);
-    props.navigation.navigate("Home") 
+    props.navigation.navigate("Home");
   };
 
   const _pickImage = async () => {
@@ -156,10 +157,15 @@ export default function ReportScreen(props) {
           >
             Problems Report Form
           </Text>
-          <Text style={{ marginBottom: "7%", fontSize: 15, marginTop: "5%" }}>
-            Please fill the following fields to report a problem:
-          </Text>
-
+          <Animatable.View
+            animation="flash"
+            direction="alternate"
+            iterationCount={3}
+          >
+            <Text style={{ marginBottom: "7%", fontSize: 15, marginTop: "5%" }}>
+              Please fill the following fields to report a problem:
+            </Text>
+          </Animatable.View>
           <View style={{ flexDirection: "row" }}>
             <Text
               style={{
@@ -171,8 +177,6 @@ export default function ReportScreen(props) {
             >
               Reporter Name:
             </Text>
-            {/* I used here TextInput from react native elements that will allow the user here to fill his/her name easily and then store it in database by 
-            setting the ReporterName in onChangeText. also, the placeholder will display a text in the input field.  */}
             <TextInput
               style={{
                 width: "60.5%",
@@ -279,7 +283,7 @@ export default function ReportScreen(props) {
                 marginTop: "2%",
               }}
               keyboardType={"numeric"}
-                numeric
+              numeric
               value={plateNumber}
               onChangeText={(last) => setPlateNumber(last)}
               placeholder="plateNumber"
