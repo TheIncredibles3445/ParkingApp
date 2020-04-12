@@ -253,7 +253,20 @@ export default function Parking(props) {
             db.collection("users")
               .doc(friend)
               .update({ pendingAmount: dbpendingAmount });
-            props.navigation.navigate("HomeScreen");
+
+            await db
+              .collection("block")
+              .doc(data.selectedBlock.id)
+              .collection("parking")
+              .doc(item.id)
+              .update({
+                isBooked: true,
+                location: item.location,
+                price: item.price,
+                type: item.type,
+              });
+
+            props.navigation.navigate("Home");
           } else {
             db.collection("booking")
               .add({

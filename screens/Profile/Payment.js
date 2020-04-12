@@ -4,7 +4,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { Card } from "react-native-shadow-cards";
 
@@ -19,19 +19,26 @@ export default function PaymentCard(props) {
   useEffect(() => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
-      .collection("cards")
-      .onSnapshot(querySnapshot => {
+      .collection("Cards")
+      .onSnapshot((querySnapshot) => {
         let cards = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           cards.push({ id: doc.id, ...doc.data() });
         });
-        setUserCards(cards);
+        setUserCards([...cards]);
       });
   }, []);
 
   return userCards.length === 0 ? (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Icon type="font-awesome" name="credit-card" size={80} color="blue" />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#F0F8FF",
+      }}
+    >
+      <Icon type="font-awesome" name="credit-card" size={80} color="#5a91bf" />
       <Text style={{ fontSize: 20 }}>You have no cards registered</Text>
       {/* <Button title="+" buttonStyle={{ borderRadius: 100 }} /> */}
       <TouchableOpacity onPress={() => props.navigation.navigate("AddCard")}>
@@ -39,12 +46,13 @@ export default function PaymentCard(props) {
           type="ionicon"
           name="ios-add-circle-outline"
           size={30}
-          color="blue"
+          color="#5a91bf"
         />
       </TouchableOpacity>
     </View>
   ) : (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: "#F0F8FF" }}>
+      {console.log("user Cards ----> ", userCards)}
       <View style={{ flex: 1, alignItems: "center", marginTop: 20 }}>
         <Text h4>My Cards</Text>
       </View>
@@ -57,7 +65,7 @@ export default function PaymentCard(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Card Provider: <Text>{item.provider}</Text>
@@ -66,7 +74,7 @@ export default function PaymentCard(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Card Type: <Text>{item.type}</Text>
@@ -76,7 +84,7 @@ export default function PaymentCard(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Card Number: <Text>{item.number}</Text>
@@ -85,20 +93,12 @@ export default function PaymentCard(props) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 16,
-                    opacity: 0.7
+                    opacity: 0.7,
                   }}
                 >
                   Card Expiry Date: <Text>{item.expiry}</Text>
                 </Text>
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 16,
-                    opacity: 0.7
-                  }}
-                >
-                  Amount: <Text>QR {item.amount}</Text>
-                </Text>
+
               </Card>
             </View>
           )
@@ -111,7 +111,7 @@ export default function PaymentCard(props) {
             type="ionicon"
             name="ios-add-circle-outline"
             size={30}
-            color="blue"
+            color="#5a91bf"
           />
         </TouchableOpacity>
       </View>
@@ -120,16 +120,18 @@ export default function PaymentCard(props) {
 }
 
 PaymentCard.navigationOptions = {
-  title: "My Cards"
+  title: "My Cards",
+  headerStyle: { backgroundColor: "#5a91bf" },
+  headerTintColor: "white",
 };
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    flex: 1
+    flex: 1,
   },
   backTextWhite: {
-    color: "#FFF"
+    color: "#FFF",
   },
   rowFront: {
     alignItems: "center",
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "black",
     borderBottomWidth: 1,
     justifyContent: "center",
-    height: 50
+    height: 50,
   },
   rowBack: {
     alignItems: "center",
@@ -145,7 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   backRightBtn: {
     alignItems: "center",
@@ -153,10 +155,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "absolute",
     top: 0,
-    width: 75
+    width: 75,
   },
   backRightBtnRight: {
     backgroundColor: "red",
-    right: 0
-  }
+    right: 0,
+  },
 });

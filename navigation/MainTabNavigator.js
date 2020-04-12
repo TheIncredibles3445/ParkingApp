@@ -328,9 +328,6 @@ const AppDrawerNavigator = createDrawerNavigator(
   },
   {
     drawerBackgroundColor: "#F0F8FF",
-    navigationOptions: {
-      backgroundColor: "red",
-    },
     contentOptions: {
       activeTintColor: "black",
       inactiveTintColor: "black",
@@ -345,14 +342,23 @@ const AppDrawerNavigator = createDrawerNavigator(
           }}
         >
           {loggedInUser && (
-            <SafeAreaView style={{ marginTop: "20 %" }}>
+            <SafeAreaView style={{ marginTop: "19%" }}>
               <Avatar
                 source={{ uri: loggedInUser.photoURL }}
                 size="large"
                 rounded
+                overlayContainerStyle={{
+                  backgroundColor: "#F0F8FF",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               />
-              <View style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 20 }}>{loggedInUser.displayName}</Text>
+              <View style={{ justifyContent: "center" }}>
+                <Text style={{ fontSize: 20 }}>
+                  {loggedInUser.displayName
+                    ? loggedInUser.displayName
+                    : loggedInUser.email}
+                </Text>
               </View>
             </SafeAreaView>
           )}

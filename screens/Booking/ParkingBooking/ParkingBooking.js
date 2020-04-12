@@ -32,11 +32,15 @@ export default function ParkingBooking(props) {
   //============================ START DATE AND TIME ============================
 
   const [startTime, setStartTime] = useState("00:00");
-  const [friend, setfriend] = useState(null);
+  const [friend, setFriend] = useState(null);
   const [friendsList, setFriendsList] = useState([]);
   const [endTime, setEndTime] = useState("00:00");
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [blocks, setBlocks] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [friendNames, setFriendNames] = useState([]);
+  let pickerRef = null;
 
   const unsubscribe = props.navigation.addListener("didFocus", () => {
     console.log("focussed");
@@ -55,9 +59,6 @@ export default function ParkingBooking(props) {
       type: "success",
     });
   };
-  const [isVisible, setIsVisible] = useState(false);
-  const [rating, setRating] = useState(0);
-  let pickerRef = null;
 
   useEffect(() => {
     db.collection("users")
@@ -66,10 +67,13 @@ export default function ParkingBooking(props) {
       .where("booking", "==", true)
       .onSnapshot((querySnapShot) => {
         let friends = [];
+        let friendNms = [];
         querySnapShot.forEach((doc) => {
           friends.push({ id: doc.id, ...doc.data() });
+          friendNms.push(doc.data().displayName);
         });
-        setFriendsList(friends);
+        setFriendNames([...friendNms]);
+        setFriendsList([...friends]);
       });
   }, []);
 
@@ -155,6 +159,14 @@ export default function ParkingBooking(props) {
     }
   };
 
+  const handleSetFriend = (username) => {
+    friendsList.map((item) => {
+      if (item.displayName === username) {
+        setFriend(item);
+      }
+    });
+  };
+
   const handleBooking = () => {
     const data = {
       startTime: startTime,
@@ -162,7 +174,7 @@ export default function ParkingBooking(props) {
       selectedBlock: selectedBlock,
     };
 
-    props.navigation.navigate("Parking", { data: data, friend: friend });
+    props.navigation.navigate("Parking", { data: data, friend: friend.id });
     setIsVisible(false);
   };
 
@@ -231,38 +243,37 @@ export default function ParkingBooking(props) {
                   mode="dropdown"
                   selectedValue={friend}
                   style={styles.picker}
-                  onValueChange={(itemValue, itemIndex) => setfriend(itemValue)}
+                  onValueChange={(itemValue, itemIndex) => setFriend(itemValue)}
                 >
                   <Picker.Item label={"Select"} value={""} disabled />
                   {friendsList.map((v, index) => {
-                    return <Picker.Item label={v.displayName} value={v.id} />;
+                    return <Picker.Item label={v.displayName} value={v} />;
                   })}
                 </Picker>
               </View>
             ) : (
-              <View style={{ justifyContent: "space-around" }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    pickerRef.show();
-                  }}
-                >
-                  <Text style={{ fontSize: 20 }}>
-                    {friend === null ? "Select Friend" : friend}
-                  </Text>
-                </TouchableOpacity>
-                <ReactNativePickerModule
-                  pickerRef={(e) => (pickerRef = e)}
-                  selectedValue={friend}
-                  title={"Select Friend"}
-                  items={friendsList}
-                  onCancel={() => {
-                    console.log("Cancelled");
-                  }}
-                  onValueChange={(valueText, index) => {
-                    setfriend(valueText.id);
-                  }}
-                />
-              </View>
+              friendNames && (
+                <View style={{ justifyContent: "space-around" }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      pickerRef.show();
+                    }}
+                  >
+                    <Text style={{ fontSize: 20 }}>
+                      {friend === null ? "Select Friend" : friend.displayName}
+                    </Text>
+                  </TouchableOpacity>
+                  <ReactNativePickerModule
+                    pickerRef={(e) => (pickerRef = e)}
+                    selectedValue={friend}
+                    title={"Select Friend"}
+                    items={friendNames}
+                    onValueChange={(valueText, index) => {
+                      handleSetFriend(valueText);
+                    }}
+                  />
+                </View>
+              )
             )}
           </Col>
           <Row size={60}>
