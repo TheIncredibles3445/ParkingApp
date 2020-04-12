@@ -191,6 +191,6 @@ Profile.navigationOptions = {
   title: "My Profile",
   headerTintColor: "white",
   headerStyle: {
-    backgroundColor: "#005992",
+    backgroundColor: "#5a91bf",
   },
 };

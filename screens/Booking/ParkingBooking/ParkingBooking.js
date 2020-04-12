@@ -38,23 +38,23 @@ export default function ParkingBooking(props) {
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [blocks, setBlocks] = useState([]);
 
-  const unsubscribe = props.navigation.addListener('didFocus', () => {
-    console.log('focussed');
-    track()
-});
+  const unsubscribe = props.navigation.addListener("didFocus", () => {
+    console.log("focussed");
+    track();
+  });
 
-const track = async()=>{
-  let old = await db.collection("tracking").doc("track").get()
-  let newTrack = parseInt(old.data().parking) + 1
-  db.collection("tracking").doc("track").update({ parking: newTrack})
-  AsyncStorage.setItem("parking", "yes");
-  
-  showMessage({
-    message: newTrack + " User/Users Trying To Book a Parking Right Now!!",
-    //description: newTrack + " Users Are Trying To Book a Parking Right Now !!",
-    type: "success"
-  })
-}
+  const track = async () => {
+    let old = await db.collection("tracking").doc("track").get();
+    let newTrack = parseInt(old.data().parking) + 1;
+    db.collection("tracking").doc("track").update({ parking: newTrack });
+    AsyncStorage.setItem("parking", "yes");
+
+    showMessage({
+      message: newTrack + " User/Users Trying To Book a Parking Right Now!!",
+      //description: newTrack + " Users Are Trying To Book a Parking Right Now !!",
+      type: "success",
+    });
+  };
   const [isVisible, setIsVisible] = useState(false);
   const [rating, setRating] = useState(0);
   let pickerRef = null;
@@ -307,7 +307,12 @@ const track = async()=>{
           </Row>
         </Grid>
       </Row>
-      <FlashMessage position="bottom" animationDuration={700} duration={4000} style={{marginBottom:100}} />
+      <FlashMessage
+        position="bottom"
+        animationDuration={700}
+        duration={4000}
+        style={{ marginBottom: 100 }}
+      />
       <Modal animationType="slide" transparent={true} visible={isVisible}>
         <View style={styles.centeredView}>
           <View style={{ ...styles.modalView }}>
@@ -393,7 +398,7 @@ const track = async()=>{
                     <TouchableOpacity
                       onPress={() => handleBooking()}
                       style={{
-                        backgroundColor: "#263c5a",
+                        backgroundColor: "#B0C4DE",
                         height: 50,
                         width: 150,
                         borderRadius: 10,
@@ -402,7 +407,7 @@ const track = async()=>{
                     >
                       <Text
                         style={{
-                          color: "white",
+                          color: "#263c5a",
                           textAlign: "center",
                           fontWeight: "bold",
                         }}
