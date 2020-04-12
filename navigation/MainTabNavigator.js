@@ -344,7 +344,13 @@ const AppDrawerNavigator = createDrawerNavigator(
           {loggedInUser && (
             <SafeAreaView style={{ marginTop: "19%" }}>
               <Avatar
-                source={{ uri: loggedInUser.photoURL }}
+                source={{
+                  uri:
+                    loggedInUser.photoURL !== "" &&
+                    loggedInUser.photoURL !== null
+                      ? loggedInUser.photoURL
+                      : "No Text",
+                }}
                 size="large"
                 rounded
                 overlayContainerStyle={{
