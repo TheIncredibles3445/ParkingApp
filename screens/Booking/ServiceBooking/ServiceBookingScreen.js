@@ -22,10 +22,11 @@ import * as Animatable from 'react-native-animatable';
 import FlashMessage from "react-native-flash-message";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
+const useForceUpdate = () => useState()[1];
 export default function ServiceBookingScreen(props) {
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState("");
-
+  const forceUpdate = useForceUpdate();
   const [block, setBlock] = useState([]);
   const [selectedBlock, setSelectedBlock] = useState();
 
@@ -40,7 +41,7 @@ export default function ServiceBookingScreen(props) {
   const sBlock = useRef();
   const sService = useRef();
   const [showTime, setShowTime] = useState(false);
-
+  
   
   useEffect(() => {
     manageTimeRange();
@@ -192,7 +193,7 @@ export default function ServiceBookingScreen(props) {
      // `2:30 PM ${moment().format("YYYY-MM-DD")}`,
       `3:00 PM ${moment().format("YYYY-MM-DD")}`,
       `3:30 PM ${moment().format("YYYY-MM-DD")}`,
-      // `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
+       `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
       // `7:30 PM ${moment().format("YYYY-MM-DD")}`,
       // `8:00 PM ${moment().format("YYYY-MM-DD")}`,
       // `8:30 PM ${moment().format("YYYY-MM-DD")}`,
@@ -341,7 +342,7 @@ export default function ServiceBookingScreen(props) {
         {services.length !== 0 ? (
           <Picker
           mode="dropdown"
-            selectedValue={selectedService.Name}
+            selectedValue={selectedService}
             itemStyle={{ height: 60 }}
             style={{
               height: 50,
@@ -353,9 +354,9 @@ export default function ServiceBookingScreen(props) {
               marginRight: "auto",
               marginLeft: "auto"
             }}
-            onValueChange={(itemValue) => setSelectedService(itemValue) || console.log("service-------------------",selectedService)}
+            onValueChange={(itemValue) => setSelectedService(itemValue) || forceUpdate()}
           >
-            <Picker.Item label="SERVICES" value="" />
+            <Picker.Item label={selectedService? selectedService.Name : "Service"} value="" />
             {services.map(s => (
               <Picker.Item label={s.Name} value={s} />
             ))}
@@ -379,7 +380,7 @@ export default function ServiceBookingScreen(props) {
             }}
             onValueChange={itemValue => setSelectedBlock(itemValue)|| console.log("service-------------------",selectedService)}
           >
-            <Picker.Item label={"BLOCK"} value={""} disabled />
+            <Picker.Item label={selectedBlock? selectedBlock.name : "Block"} value={""} disabled />
             {block.map(s => (
               <Picker.Item label={s.name} value={s} />
             ))}
@@ -403,7 +404,7 @@ export default function ServiceBookingScreen(props) {
             }}
             onValueChange={itemValue => setSelectedParking(itemValue)}
           >
-            <Picker.Item label={"PARKING"} value={""} disabled />
+            <Picker.Item label={selectedParking ? selectedParking.name:"PARKING"} value={""} disabled />
             {parking.map(a => (
               <Picker.Item label={a.name + ""} value={a} />
             ))}
@@ -426,7 +427,7 @@ export default function ServiceBookingScreen(props) {
           }}
           onValueChange={itemValue => setSelectedTime(itemValue)}
         >
-          <Picker.Item label={"Available Times"} value={""} disabled />
+          <Picker.Item label={selectedTime ? selectedTime.split(" ")[0] + " " + selectedTime.split(" ")[1]:"Available Times"} value={""} disabled />
           {finalTimingList.current.map(a => (
             <Picker.Item
               label={a.split(" ")[0] + " " + a.split(" ")[1]}
@@ -500,6 +501,7 @@ export default function ServiceBookingScreen(props) {
         <TouchableOpacity style={{ backgroundColor: "#5a91bf", padding: 5, width: "45%", height: 50, alignItems: "center",marginBottom: "5%",marginLeft: "20%",  }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
       ) : null}
       <FlashMessage position="bottom" animationDuration={300} duration={3000} />
+     
     </ScrollView>
   );
 }
