@@ -196,14 +196,14 @@ export default function ParcialPayment(props) {
                         marginBottom: 4,
                         marginTop: 4,
                         marginRight: "auto",
-                        marginLeft: "auto"
+                        marginLeft: "auto" 
                     }}
                     onValueChange={itemValue => setSelectedPayment(itemValue)}
                 >
                     <Picker.Item label={"Payment For"} value={""} disabled />
 
-                    {user && parseInt(user.pendingAmount) > 0 ? <Picker.Item label={"Bookings"} value={"Bookings"} /> : null}
-                    {user && parseInt(user.AdvPendingAmount) > 0 ? <Picker.Item label={"Advertisement"} value={"Advertisement"} /> : null}
+                    {user && user.pendingAmount > 0? <Picker.Item label={"Bookings"} value={"Bookings"} /> : null}
+                    {user && user.advPendingAmount > 0 ? <Picker.Item label={"Advertisement"} value={"Advertisement"} /> : null}
 
                 </Picker>
 
@@ -314,6 +314,7 @@ export default function ParcialPayment(props) {
       disabled={
         firstName &&
           provider &&
+          amount &&
           lastName &&
           cardNumber &&
           expiry &&

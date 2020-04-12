@@ -177,18 +177,18 @@ export default function ServiceBookingScreen(props) {
       `7:30 AM ${moment().format("YYYY-MM-DD")}`,
       `8:00 AM ${moment().format("YYYY-MM-DD")}`,
       `8:30 AM ${moment().format("YYYY-MM-DD")}`,
-      `9:00 AM ${moment().format("YYYY-MM-DD")}`,
-      `9:30 AM ${moment().format("YYYY-MM-DD")}`,
+      //`9:00 AM ${moment().format("YYYY-MM-DD")}`,
+     // `9:30 AM ${moment().format("YYYY-MM-DD")}`,
       `10:00 AM ${moment().format("YYYY-MM-DD")}`,
-      `10:30 AM ${moment().format("YYYY-MM-DD")}`,
+     // `10:30 AM ${moment().format("YYYY-MM-DD")}`,
       `11:00 AM ${moment().format("YYYY-MM-DD")}`,
       `11:30 AM ${moment().format("YYYY-MM-DD")}`,
-      `12:00 PM ${moment().format("YYYY-MM-DD")}`,
+     // `12:00 PM ${moment().format("YYYY-MM-DD")}`,
       `12:30 PM ${moment().format("YYYY-MM-DD")}`,
-      `1:00 PM ${moment().format("YYYY-MM-DD")}`,
+     // `1:00 PM ${moment().format("YYYY-MM-DD")}`,
       `1:30 PM ${moment().format("YYYY-MM-DD")}`,
       `2:00 PM ${moment().format("YYYY-MM-DD")}`,
-      `2:30 PM ${moment().format("YYYY-MM-DD")}`,
+     // `2:30 PM ${moment().format("YYYY-MM-DD")}`,
       `3:00 PM ${moment().format("YYYY-MM-DD")}`,
       `3:30 PM ${moment().format("YYYY-MM-DD")}`,
       // `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
@@ -331,14 +331,16 @@ export default function ServiceBookingScreen(props) {
     })
 
   }
+  //,paddingTop:20
 
   return (
-    <ScrollView style={{ width: "100%", backgroundColor:'#F0F8FF', height:"100%" }}>
+    <ScrollView style={{ width: "100%", backgroundColor:'#F0F8FF', height:"100%",paddingTop:20 }}>
 
       <Animatable.View animation="fadeInRight" delay={2}>
         {services.length !== 0 ? (
           <Picker
             selectedValue={selectedService}
+            itemStyle={{ height: 60 }}
             style={{
               height: 50,
               width: 200,
@@ -362,6 +364,7 @@ export default function ServiceBookingScreen(props) {
         {block.length !== 0 ? (
           <Picker
             selectedValue={selectedBlock}
+            itemStyle={{ height: 60 }}
             style={{
               height: 50,
               width: 200,
@@ -385,6 +388,7 @@ export default function ServiceBookingScreen(props) {
         {parking.length !== 0 ? (
           <Picker
             selectedValue={selectedParking}
+            itemStyle={{ height: 60 }}
             style={{
               height: 50,
               width: 200,
@@ -407,6 +411,7 @@ export default function ServiceBookingScreen(props) {
       {showTime ? (
         <Picker
           selectedValue={selectedTime}
+          itemStyle={{ height: 60 }}
           style={{
             height: 50,
             width: 200,
@@ -490,7 +495,7 @@ export default function ServiceBookingScreen(props) {
        
       </Animatable.View>
       {userBookings.length !== 0 ? (
-        <TouchableOpacity style={{ backgroundColor: "#5a91bf", padding: 5, width: "40%", height: 50, alignItems: "center",marginBottom: "5%",marginLeft: "20%",  }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
+        <TouchableOpacity style={{ backgroundColor: "#5a91bf", padding: 5, width: "45%", height: 50, alignItems: "center",marginBottom: "5%",marginLeft: "20%",  }} onPress={() => confirm()}><Text style={{ fontSize: 20, color: "white" }}>Confirm Booking</Text></TouchableOpacity>
       ) : null}
       <FlashMessage position="bottom" animationDuration={300} duration={3000} />
     </ScrollView>

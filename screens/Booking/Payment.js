@@ -214,16 +214,17 @@ export default function Payment(props) {
       {userCards ? (
         <Picker
           selectedValue={selectedCard}
-          style={{
-            height: 50,
-            width: 200,
-            fontSize: 20,
-            backgroundColor: "#DCDCDC",
-            marginBottom: 4,
-            marginTop: 4,
-            marginRight: "auto",
-            marginLeft: "auto",
-          }}
+          itemStyle={{ height: 60 }}
+            style={{
+              height: 50,
+              width: 200,
+              fontSize: 20,
+              backgroundColor: "#DCDCDC",
+              marginBottom: 4,
+              marginTop: 4,
+              marginRight: "auto",
+              marginLeft: "auto"
+            }}
           onValueChange={(itemValue) => setSelectedCard(itemValue)}
         >
           <Picker.Item label={"Select A Card"} value={""} disabled />
