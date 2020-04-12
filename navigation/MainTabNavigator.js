@@ -107,8 +107,8 @@ HomeStack.path = "";
 
 const SettingsStack = createStackNavigator(
   {
-    // Settings: SettingsScreen,
-    Profile: ProfileScreen,
+    Settings: ProfileScreen,
+    // Profile: ProfileScreen,
     EditProfile: Profile,
     Card: PaymentCard,
     Vehicle: Vehicle,

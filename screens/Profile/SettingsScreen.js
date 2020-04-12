@@ -56,21 +56,21 @@ export default function SettingsScreen(props) {
   }
 
 
-  const CardStack = createStackNavigator({
-    Payment: PaymentCard,
-    AddCard: AddCard,
-  });
+  // const CardStack = createStackNavigator({
+  //   Payment: PaymentCard,
+  //   AddCard: AddCard,
+  // });
 
 
-  const MyDrawerNavigator = createDrawerNavigator({
-    Home: ProfileScreen,
-    Vehicle: VehicleStack,
-    Friends: LinksScreen,
-    Cards: CardStack,
-    PartialPayment: PartialPayment,
+//   const MyDrawerNavigator = createDrawerNavigator({
+//     Home: ProfileScreen,
+//     Vehicle: VehicleStack,
+//     Friends: LinksScreen,
+//     Cards: CardStack,
+//     PartialPayment: PartialPayment,
 
-    // AddVehicle: AddVehicle,
-  });
+//     // AddVehicle: AddVehicle,
+//   });
 
   const list = ["MY PROFILE", "PAYMENT", "VEHICLES", "FRIENDS", "MY POINTS"];
   const files = ["Profile", "Payment", "Vehicle", "Friends", "Reward"];

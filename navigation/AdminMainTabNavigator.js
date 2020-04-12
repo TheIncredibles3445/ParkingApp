@@ -53,6 +53,7 @@ import AllBookings from "../screens/Profile/AllBookings";
 import ParkingBookingsDetails from "../screens/Profile/ParkingBookingsDetails";
 import ServiceBookingDetails from "../screens/Profile/ServiceBookingDetails";
 import Direction from "../screens/Booking/Direction";
+import ProfileScreen from "../screens/Profile/ProfileScreen";
 
 
 
@@ -225,18 +226,22 @@ SettingsStack.path = "";
 //   }
 // }
 
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  SettingsStack,
-  AdminStack
-},
-  {tabBarOptions: {
-    style: {
-      backgroundColor: "#5a91bf"
+const tabNavigator = createBottomTabNavigator(
+  {
+    HomeStack,
+    SettingsStack,
+    AdminStack
+  },
+  {
+    tabBarOptions: {
+      activeTintColor:"#edf3f8",
+      inactiveTintColor: "white",
+      style: {
+        backgroundColor: "#5a91bf"
+      }
     }
   }
-}
-  ,);
+);
 
 tabNavigator.path = "";
 
