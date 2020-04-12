@@ -123,48 +123,48 @@ export default function ServiceBookingScreen(props) {
     let first = moment("7:00 AM").format("h:mm A")
     let second = moment("2:30 AM").format("h:mm A")
     console.log("timesssssssssssssssssssssssssssssssssss", now)
-    // if( parseInt(now.split(":")[0]) >= 3 && parseInt(now.split(":")[0]) <= 11 && now.split(":")[1].split(" ")[1] == "PM"){
-    //   Alert.alert(
-    //     "Sorry!",
-    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
-    //     [
-    //       {
-    //         text: "OK",
-    //         onPress: () => props.navigation.navigate("Home"),
-    //         style: "cancel"
-    //       }
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-    // else if(parseInt(now.split(":")[0]) >= 1 && parseInt(now.split(":")[0]) < 7 && now.split(":")[1].split(" ")[1] == "AM"){
-    //   Alert.alert(
-    //     "Sorry!",
-    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
-    //     [
-    //       {
-    //         text: "OK",
-    //         onPress: () => props.navigation.navigate("Home"),
-    //         style: "cancel"
-    //       }
-    //     ],
-    //     { cancelable: false }
-    //   ); 
-    // }
-    // else if(parseInt(now.split(":")[0]) == 12 && now.split(":")[1].split(" ")[1] == "AM"){
-    //   Alert.alert(
-    //     "Sorry!",
-    //     "Bookings Are Available At 7:00 AM - 3:00 PM",
-    //     [
-    //       {
-    //         text: "OK",
-    //         onPress: () => props.navigation.navigate("Home"),
-    //         style: "cancel"
-    //       }
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
+    if( parseInt(now.split(":")[0]) >= 3 && parseInt(now.split(":")[0]) <= 11 && now.split(":")[1].split(" ")[1] == "PM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    else if(parseInt(now.split(":")[0]) >= 1 && parseInt(now.split(":")[0]) < 7 && now.split(":")[1].split(" ")[1] == "AM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      ); 
+    }
+    else if(parseInt(now.split(":")[0]) == 12 && now.split(":")[1].split(" ")[1] == "AM"){
+      Alert.alert(
+        "Sorry!",
+        "Bookings Are Available At 7:00 AM - 3:00 PM",
+        [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
 
     let startTime = "";
     let hour = moment()
@@ -179,21 +179,21 @@ export default function ServiceBookingScreen(props) {
       `7:30 AM ${moment().format("YYYY-MM-DD")}`,
       `8:00 AM ${moment().format("YYYY-MM-DD")}`,
       `8:30 AM ${moment().format("YYYY-MM-DD")}`,
-      //`9:00 AM ${moment().format("YYYY-MM-DD")}`,
-     // `9:30 AM ${moment().format("YYYY-MM-DD")}`,
+      `9:00 AM ${moment().format("YYYY-MM-DD")}`,
+     `9:30 AM ${moment().format("YYYY-MM-DD")}`,
       `10:00 AM ${moment().format("YYYY-MM-DD")}`,
-     // `10:30 AM ${moment().format("YYYY-MM-DD")}`,
+      `10:30 AM ${moment().format("YYYY-MM-DD")}`,
       `11:00 AM ${moment().format("YYYY-MM-DD")}`,
       `11:30 AM ${moment().format("YYYY-MM-DD")}`,
-     // `12:00 PM ${moment().format("YYYY-MM-DD")}`,
+      `12:00 PM ${moment().format("YYYY-MM-DD")}`,
       `12:30 PM ${moment().format("YYYY-MM-DD")}`,
-     // `1:00 PM ${moment().format("YYYY-MM-DD")}`,
+      `1:00 PM ${moment().format("YYYY-MM-DD")}`,
       `1:30 PM ${moment().format("YYYY-MM-DD")}`,
       `2:00 PM ${moment().format("YYYY-MM-DD")}`,
-     // `2:30 PM ${moment().format("YYYY-MM-DD")}`,
+      `2:30 PM ${moment().format("YYYY-MM-DD")}`,
       `3:00 PM ${moment().format("YYYY-MM-DD")}`,
       `3:30 PM ${moment().format("YYYY-MM-DD")}`,
-       `4:00 PM ${moment().format("YYYY-MM-DD")}`, 
+       //`4:00 PM ${moment().format("YYYY-MM-DD")}`, 
       // `7:30 PM ${moment().format("YYYY-MM-DD")}`,
       // `8:00 PM ${moment().format("YYYY-MM-DD")}`,
       // `8:30 PM ${moment().format("YYYY-MM-DD")}`,
