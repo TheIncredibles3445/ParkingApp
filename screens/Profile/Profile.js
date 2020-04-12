@@ -161,25 +161,12 @@ export default function Profile(props) {
             />
           </View>
           <View style={{ marginTop: 20, alignItems: "center" }}>
-            <TouchableOpacity
-              onPress={() => handleLogout()}
-              style={{
-                backgroundColor: "#005992",
-                height: 50,
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  letterSpacing: 5,
-                }}
-              >
-                LOGOUT
-              </Text>
-            </TouchableOpacity>
+            <Button
+              onPress={handleSave}
+              title="SAVE"
+              buttonStyle={{ paddingEnd: 50, paddingStart: 50 }}
+              titleStyle={{ alignItems: "center" }}
+            />
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
