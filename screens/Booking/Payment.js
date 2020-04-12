@@ -247,7 +247,7 @@ export default function Payment(props) {
           <Text 
           style={{paddingTop: 20 ,paddingBottom: 20 ,paddingLeft: 20 ,
              fontWeight: "bold", fontSize: 20, color: "#284057",marginBottom: 30,
-             borderBottomWidth: 2, borderColor:"#284057" }}>Amount: {total.toFixed(2)} QR</Text>
+             borderBottomWidth: 2, borderColor:"#284057" }}>Amount: {total} QR</Text>
       }
       
           

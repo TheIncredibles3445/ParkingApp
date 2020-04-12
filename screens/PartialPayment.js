@@ -348,4 +348,4 @@ ParcialPayment.navigationOptions = {
   const styles = StyleSheet.create({
     input: { height: 40, borderColor:"#284057", borderWidth: 1, width: "60%" ,backgroundColor:"white", paddingLeft: 7},
     label: { fontSize: 15, color: "#284057", width: "30%",fontWeight:"bold" }
-  }) //backgroundColor:"white" fontWieght:"bold" , paddingLeft: 5
+  })
