@@ -19,6 +19,7 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import DatePicker from "react-native-datepicker";
 import { Button, Divider, Input } from "react-native-elements";
+import * as Animatable from "react-native-animatable";
 
 export default function DiscountsScreen(props) {
   const [discounts, setDiscounts] = useState([]);
@@ -42,6 +43,7 @@ export default function DiscountsScreen(props) {
       requiredPoints: parseInt(requiredPoints),
       active: active,
     });
+    props.navigation.navigate("Home");
   };
 
   return (
@@ -54,11 +56,20 @@ export default function DiscountsScreen(props) {
               marginLeft: "28%",
               color: "#263c5a",
               fontWeight: "bold",
+              marginBottom: "2%",
             }}
           >
             Discount Form
           </Text>
-          {/* <Divider style={{ marginTop: 3 }} /> */}
+          {/* <Animatable.View
+            animation="flash"
+            direction="alternate"
+            iterationCount={2}
+          >
+            <Text style={{ fontSize: 15, color: "#263c5a" }}>
+              Please create a discount for the users:
+            </Text>
+          </Animatable.View> */}
           <View style={{ flexDirection: "row" }}>
             <Text
               style={{
@@ -78,7 +89,7 @@ export default function DiscountsScreen(props) {
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
-                marginLeft: "4%",
+                marginLeft: "3%",
                 marginBottom: "1%",
                 marginTop: "5%",
                 backgroundColor: "#f5f5f5",
@@ -102,12 +113,12 @@ export default function DiscountsScreen(props) {
             </Text>
             <TextInput
               style={{
-                width: "59%",
+                width: "58.5%",
                 height: 30,
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
-                marginLeft: "5%",
+                marginLeft: "4%",
                 marginBottom: "1%",
                 marginTop: "3.5%",
                 backgroundColor: "#f5f5f5",
@@ -137,7 +148,7 @@ export default function DiscountsScreen(props) {
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
-                marginLeft: "10%",
+                marginLeft: "9%",
                 marginBottom: "1%",
                 marginTop: "2.5%",
                 backgroundColor: "#f5f5f5",
@@ -160,7 +171,7 @@ export default function DiscountsScreen(props) {
               style={{
                 marginBottom: 10,
                 fontSize: 15,
-                marginLeft: 3,
+                marginLeft: 2,
                 marginTop: "7%",
               }}
             >
@@ -169,16 +180,18 @@ export default function DiscountsScreen(props) {
 
             <TextInput
               style={{
-                width: "56%",
+                width: "54.5%",
                 height: 32,
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
                 marginLeft: "20%",
                 marginBottom: "2%",
-                marginTop: "5%",
+                marginTop: "6%",
                 backgroundColor: "#f5f5f5",
               }}
+              keyboardType={"numeric"}
+              numeric
               value={usage}
               onChangeText={(num) => setUsage(num)}
               placeholder=" Usage .."
@@ -198,16 +211,18 @@ export default function DiscountsScreen(props) {
 
             <TextInput
               style={{
-                width: "60%",
+                width: "59%",
                 height: 28,
                 borderColor: "gray",
                 borderWidth: 1,
                 borderRadius: 5,
-                marginLeft: "3%",
+                marginLeft: "2%",
                 marginBottom: "3%",
                 marginTop: "5%",
                 backgroundColor: "#f5f5f5",
               }}
+              keyboardType={"numeric"}
+              numeric
               value={requiredPoints}
               onChangeText={(num) => setRequiredPoints(num)}
               placeholder=" Required Points .."
@@ -218,8 +233,8 @@ export default function DiscountsScreen(props) {
             <Text style={{ fontSize: 15, marginTop: "4%" }}>Start Date: </Text>
             <DatePicker
               style={{
-                width: "72%",
-                marginLeft: "1.9%",
+                width: "71.5%",
+                marginLeft: "0.5%",
                 marginTop: "2%",
                 marginBottom: "6%",
                 fontSize: 15,
@@ -258,8 +273,8 @@ export default function DiscountsScreen(props) {
             <Text style={{ fontSize: 15, marginTop: "2%" }}>End Date: </Text>
             <DatePicker
               style={{
-                width: "72%",
-                marginLeft: "4%",
+                width: "71%",
+                marginLeft: "3%",
                 marginTop: "1%",
                 marginBottom: "5%",
                 fontSize: 15,
@@ -308,8 +323,6 @@ export default function DiscountsScreen(props) {
               title="Create"
               buttonStyle={{
                 paddingEnd: 50,
-                borderWidth: 1,
-                borderColor: "#263c5a",
                 paddingStart: 50,
                 backgroundColor: "#B0C4DE",
               }}

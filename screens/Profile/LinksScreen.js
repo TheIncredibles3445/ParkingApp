@@ -16,7 +16,13 @@ import {
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { SearchBar, Badge, Divider, Avatar } from "react-native-elements";
+import {
+  SearchBar,
+  Badge,
+  Divider,
+  Avatar,
+  CheckBox,
+} from "react-native-elements";
 import db from "../../db.js";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { Card } from "react-native-shadow-cards";
@@ -324,7 +330,7 @@ const LinksScreen = (props) => {
           Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{ marginTop: 22, backgroundColor: "#E7EAEB", flex: 1 }}>
+        <View style={{ marginTop: 22, backgroundColor: "#F0F8FF", flex: 1 }}>
           <View>
             <Text
               style={{
@@ -344,10 +350,10 @@ const LinksScreen = (props) => {
                   //Item Separator View
                   renderItem={({ item }) => {
                     return (
-                      <View key={item.id}>
+                      <ScrollView key={item.id}>
                         <Card
                           style={{
-                            height: "100%",
+                            height: "97%",
                             width: "95%",
                             margin: 4,
                             marginRight: "auto",
@@ -399,7 +405,7 @@ const LinksScreen = (props) => {
                             </View>
                           </View>
                         </Card>
-                      </View>
+                      </ScrollView>
                     );
                   }}
                   enableEmptySections={true}
@@ -456,7 +462,7 @@ const LinksScreen = (props) => {
       />
 
       <Modal animationType="slide" transparent={false} visible={modalVisible2}>
-        <View style={{ marginTop: 22, backgroundColor: "#E7EAEB", flex: 1 }}>
+        <View style={{ marginTop: 22, backgroundColor: "#F0F8FF", flex: 1 }}>
           <View>
             <Text
               style={{
@@ -480,7 +486,7 @@ const LinksScreen = (props) => {
                           {/* style={{ width: "95%", margin: 4 , marginRight:"auto", marginLeft:"auto"}} */}
                           <Card
                             style={{
-                              height: "100%",
+                              height: "97%",
                               width: "95%",
                               margin: 4,
                               marginRight: "auto",
@@ -494,7 +500,7 @@ const LinksScreen = (props) => {
                                 source={{ uri: item.photoURL }}
                                 size={70}
                               />
-                              <Text style={{ marginTop: 10, marginLeft: 10 }}>
+                              <Text style={{ marginTop: 5, marginLeft: 10 }}>
                                 {item.displayName}
 
                                 {console.log(
@@ -511,6 +517,7 @@ const LinksScreen = (props) => {
                                     false: "#767577",
                                     true: "#81b0ff",
                                   }}
+                                  style={{ marginLeft: "4%" }}
                                   thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                                   ios_backgroundColor="#3e3e3e"
                                   onValueChange={() =>
@@ -521,8 +528,7 @@ const LinksScreen = (props) => {
 
                                 <View
                                   style={{
-                                    marginLeft: "59%",
-                                    marginRight: 8,
+                                    marginLeft: "50%",
                                     width: 120,
                                     backgroundColor: "#B0C4DE",
                                   }}
@@ -588,13 +594,12 @@ const LinksScreen = (props) => {
       </Text>
       <ScrollView>
         <View>
-          {/* <Button title="hi" disabled={user.points>=d.requiredPoints ? false:true}/> */}
-          {/* this is a map that will go through all the users from the db  */}
           <FlatList
             data={users}
             //Item Separator View
             renderItem={({ item }) => {
-              return item.id !== firebase.auth().currentUser.uid ? (
+              return item.id !== firebase.auth().currentUser.uid &&
+                item.role !== "admin" ? (
                 !checkFriend(item.id) ? (
                   <View>
                     {/* {console.log("my friendss", item.id)} */}
@@ -628,10 +633,14 @@ const LinksScreen = (props) => {
                           {/* in here i checked if the current user friend list include the user id that he/she just followed
                         if yes show requested if no show follow  as a title for the button */}
                           <Button
+                            // titleStyle={{
+                            //   alignItems: "center",
+                            //   color: "#263c5a",
+                            // }}
                             color={
                               myfriendList.includes(item.id)
                                 ? "white"
-                                : "#263c5a"
+                                : "#243447"
                             }
                             onPress={
                               myfriendList.includes(item.id)
@@ -696,7 +705,7 @@ const styles = StyleSheet.create({
   num: {
     width: 100,
     height: 35,
-    marginLeft: "42%",
+    marginLeft: "35%",
     borderWidth: 1,
     borderColor: "#B0C4DE",
     marginTop: 47,
@@ -706,7 +715,7 @@ const styles = StyleSheet.create({
   num2: {
     width: 100,
     height: 35,
-    marginLeft: "42%",
+    marginLeft: "35%",
     marginTop: 47,
     backgroundColor: "gray",
     //color: "#263c5a",
